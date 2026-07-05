@@ -103,7 +103,7 @@ export function computeResults(
   const cefr = CEFR_ORDER[cefrIndex];
   const stage = STAGE_BY_CEFR[cefr];
 
-  // "Cambridge Readiness if relevant" — only shown once a learner is
+  // "Exam Readiness if relevant" — only shown once a learner is
   // at least Explorer/A2, since below that there's no meaningful
   // nearby Cambridge exam to be "ready" for yet.
   const readiness =

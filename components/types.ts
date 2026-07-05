@@ -25,7 +25,7 @@ export type StageName =
   | "Master";
 
 /**
- * Cambridge Readiness status. Intentionally three states only —
+ * Exam Readiness status. Intentionally three states only —
  * matches the Design System's single-arc gauge (Section 7.2).
  * Never render this as a raw number/percentage to the learner;
  * always resolve to one of these three honest states first.

@@ -28,7 +28,7 @@ export interface MyJourneySummary {
   overallProgress: { percentage: number; unitLabel: string };
   studyTime: { hours: number; minutes: number; trendLabel?: string };
   studyConsistency: { daysActive: number; daysInPeriod: number };
-  cambridgeReadiness: { status: ReadinessStatus; examLabel: string } | null;
+  examReadiness: { status: ReadinessStatus; examLabel: string } | null;
   completedUnits: { completed: number; total: number };
   masteryBySkill: Array<{ skill: Skill; percentage: number }>;
   studyPathPreview: StudyPathNodeData[];
@@ -94,7 +94,7 @@ export async function getMyJourneySummary(): Promise<MyJourneySummary | null> {
     },
     studyTime: { hours: 0, minutes: 0 },
     studyConsistency: { daysActive: 0, daysInPeriod: 30 },
-    cambridgeReadiness: placement.readiness,
+    examReadiness: placement.readiness,
     completedUnits: { completed: 0, total: studyPathPreview.length },
     masteryBySkill,
     studyPathPreview,

@@ -19,12 +19,16 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { StageBadge, CefrBadge } from "@/components/ui/Badge";
 import { STAGE_NAME_TO_SLUG } from "@/constants/cefr";
+import { trackEvent } from "@/services/analyticsService";
 
 export default function MyJourneyPage() {
   const [summary, setSummary] = useState<MyJourneySummary | null | undefined>(undefined);
 
   useEffect(() => {
-    getMyJourneySummary().then(setSummary);
+    getMyJourneySummary().then((data) => {
+      setSummary(data);
+      trackEvent("my_journey_viewed", { hasPlacementResult: Boolean(data) });
+    });
   }, []);
 
   if (summary === undefined) {
@@ -66,11 +70,11 @@ export default function MyJourneyPage() {
     { type: "studyConsistency", daysActive: summary.studyConsistency.daysActive, daysInPeriod: summary.studyConsistency.daysInPeriod },
     { type: "completedUnits", completed: summary.completedUnits.completed, total: summary.completedUnits.total },
   ];
-  if (summary.cambridgeReadiness) {
+  if (summary.examReadiness) {
     metrics.push({
-      type: "cambridgeReadiness",
-      status: summary.cambridgeReadiness.status,
-      examLabel: summary.cambridgeReadiness.examLabel,
+      type: "examReadiness",
+      status: summary.examReadiness.status,
+      examLabel: summary.examReadiness.examLabel,
     });
   }
 
@@ -114,9 +118,11 @@ export default function MyJourneyPage() {
         <p className="text-h3 mb-2">Recommended Next Step</p>
         <p className="text-body text-ink-soft mb-6">{summary.recommendedNextStep.description}</p>
         <div className="flex flex-wrap gap-3">
-          <Button variant="primary">
-            Continue: {summary.recommendedNextStep.label}
-          </Button>
+          <Link href="/learn-preview">
+            <Button variant="primary">
+              Continue: {summary.recommendedNextStep.label}
+            </Button>
+          </Link>
           <Link href={`/my-journey/study-path/${stageSlug}`}>
             <Button variant="secondary">View Study Path</Button>
           </Link>
