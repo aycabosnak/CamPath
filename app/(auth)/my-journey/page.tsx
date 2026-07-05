@@ -9,8 +9,9 @@
  * file has no hardcoded numbers, so swapping the service's internals
  * to call GET /api/users/me/summary later requires no change here.
  */
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { getMyJourneySummary, type MyJourneySummary } from "@/services/myJourneyService";
 import { MyJourneyMetricCard, type MyJourneyMetric } from "@/components/dashboard/MyJourneyMetricCard";
 import { MasteryBarList } from "@/components/ui/MasteryBar";
@@ -22,7 +23,9 @@ import { STAGE_NAME_TO_SLUG } from "@/constants/cefr";
 import { trackEvent } from "@/services/analyticsService";
 
 export default function MyJourneyPage() {
+  const router = useRouter();
   const [summary, setSummary] = useState<MyJourneySummary | null | undefined>(undefined);
+  const studyPathRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     getMyJourneySummary().then((data) => {
@@ -30,6 +33,15 @@ export default function MyJourneyPage() {
       trackEvent("my_journey_viewed", { hasPlacementResult: Boolean(data) });
     });
   }, []);
+
+  function scrollToStudyPath() {
+    studyPathRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function goToUnit(nodeId: string) {
+    const node = summary?.studyPathPreview.find((n) => n.id === nodeId);
+    if (node) router.push(`/learn/unit-${node.order}`);
+  }
 
   if (summary === undefined) {
     return (
@@ -120,28 +132,34 @@ export default function MyJourneyPage() {
         <p className="text-body mb-4">{summary.recommendedNextStep.label}</p>
         <p className="text-body text-ink-soft mb-6">{summary.recommendedNextStep.description}</p>
         <div className="flex flex-wrap gap-3">
-          <Link href="/learn-preview">
+          <Link href="/learn/unit-1">
             <Button variant="primary">Start Unit 1</Button>
           </Link>
-          <Link href={`/my-journey/study-path/${stageSlug}`}>
-            <Button variant="secondary">View Study Path</Button>
-          </Link>
-          <Link href={`/practice/${summary.weakestSkill}/${stageSlug}`}>
+          <Button variant="secondary" onClick={scrollToStudyPath}>
+            View Study Path
+          </Button>
+          <Link href="/practice/weakest-skill">
             <Button variant="secondary">Practice Weakest Skill</Button>
           </Link>
         </div>
       </Card>
 
       {/* --- Compact Study Path preview --- */}
-      <Card>
-        <div className="flex items-center justify-between mb-4">
-          <p className="text-h3">Study Path</p>
-          <Link href={`/my-journey/study-path/${stageSlug}`} className="btn btn-tertiary btn-sm p-0">
-            View full path →
-          </Link>
-        </div>
-        <StudyPath nodes={summary.studyPathPreview.slice(0, 3)} mode="guided" />
-      </Card>
+      <div ref={studyPathRef}>
+        <Card>
+          <div className="flex items-center justify-between mb-4">
+            <p className="text-h3">Study Path</p>
+            <Link href={`/my-journey/study-path/${stageSlug}`} className="btn btn-tertiary btn-sm p-0">
+              View full path →
+            </Link>
+          </div>
+          <StudyPath
+            nodes={summary.studyPathPreview.slice(0, 3)}
+            mode="guided"
+            onSelectNode={goToUnit}
+          />
+        </Card>
+      </div>
     </main>
   );
 }
