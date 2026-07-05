@@ -111,7 +111,7 @@ export default function LevelTestResultsPage() {
   // this keeps the pattern identical to a real fetch-based version).
   if (result === undefined) {
     return (
-      <main className="max-w-2xl mx-auto px-6 py-16">
+      <main className="max-w-3xl mx-auto px-6 py-16">
         <p className="text-small text-ink-soft">Loading your results…</p>
       </main>
     );
@@ -120,7 +120,7 @@ export default function LevelTestResultsPage() {
   // Empty state — someone landed here without taking the test.
   if (result === null) {
     return (
-      <main className="max-w-2xl mx-auto px-6 py-16">
+      <main className="max-w-3xl mx-auto px-6 py-16">
         <p className="text-h2 mb-4">No results yet.</p>
         <p className="text-body text-ink-soft mb-8">
           Take the Placement Test to see your CamPath starting point.

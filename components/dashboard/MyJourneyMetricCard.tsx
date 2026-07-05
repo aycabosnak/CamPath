@@ -1,5 +1,5 @@
 import React from "react";
-import { Card } from "../ui/Card";
+import { Card, MetricCard } from "../ui/Card";
 import { ProgressBar } from "../ui/ProgressBar";
 import { ReadinessGauge } from "../ui/ReadinessGauge";
 import type { ReadinessStatus, StageName, CefrLevel, Skill } from "../types";
@@ -52,23 +52,19 @@ export function MyJourneyMetricCard({ metric }: MyJourneyMetricCardProps) {
 
     case "studyTime":
       return (
-        <Card>
-          <p className="card-eyebrow">Study Time This Week</p>
-          <p className="card-value">
-            {metric.hours}h {metric.minutes}m
-          </p>
-          {metric.trendLabel && <p className="card-trend">{metric.trendLabel}</p>}
-        </Card>
+        <MetricCard
+          eyebrow="Study Time This Week"
+          value={`${metric.hours}h ${metric.minutes}m`}
+          trend={metric.trendLabel}
+        />
       );
 
     case "studyConsistency":
       return (
-        <Card>
-          <p className="card-eyebrow">Study Consistency</p>
-          <p className="card-value">
-            {metric.daysActive} / {metric.daysInPeriod} days
-          </p>
-        </Card>
+        <MetricCard
+          eyebrow="Study Consistency"
+          value={`${metric.daysActive} / ${metric.daysInPeriod} days`}
+        />
       );
 
     case "examReadiness":
@@ -84,12 +80,7 @@ export function MyJourneyMetricCard({ metric }: MyJourneyMetricCardProps) {
 
     case "completedUnits":
       return (
-        <Card>
-          <p className="card-eyebrow">Completed Units</p>
-          <p className="card-value">
-            {metric.completed} / {metric.total}
-          </p>
-        </Card>
+        <MetricCard eyebrow="Completed Units" value={`${metric.completed} / ${metric.total}`} />
       );
   }
 }

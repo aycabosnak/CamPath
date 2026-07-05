@@ -19,7 +19,6 @@ import { StudyPath } from "@/components/study-path/StudyPath";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { StageBadge, CefrBadge } from "@/components/ui/Badge";
-import { STAGE_NAME_TO_SLUG } from "@/constants/cefr";
 import { trackEvent } from "@/services/analyticsService";
 
 export default function MyJourneyPage() {
@@ -61,14 +60,12 @@ export default function MyJourneyPage() {
         </p>
         <Link href="/level-test">
           <Button variant="primary" size="lg">
-            Take Placement Test
+            Start Placement Test
           </Button>
         </Link>
       </main>
     );
   }
-
-  const stageSlug = STAGE_NAME_TO_SLUG[summary.stage];
 
   const metrics: MyJourneyMetric[] = [
     { type: "currentStage", stage: summary.stage, cefr: summary.cefr },
@@ -156,9 +153,6 @@ export default function MyJourneyPage() {
         <Card>
           <div className="flex items-center justify-between mb-4">
             <p className="text-h3">Study Path</p>
-            <Link href={`/my-journey/study-path/${stageSlug}`} className="btn btn-tertiary btn-sm p-0">
-              View full path →
-            </Link>
           </div>
           <StudyPath
             nodes={summary.studyPathPreview.slice(0, 3)}

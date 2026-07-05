@@ -67,7 +67,7 @@ export default function WeakestSkillPracticePage() {
           Take the Placement Test first so we know where to focus your practice.
         </p>
         <Link href="/level-test">
-          <Button variant="primary">Take Placement Test</Button>
+          <Button variant="primary">Start Placement Test</Button>
         </Link>
       </main>
     );

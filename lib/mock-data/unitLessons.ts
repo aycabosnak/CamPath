@@ -4,7 +4,8 @@
  * Real, fixed content for the three unit pages linked from My
  * Journey's Study Path preview (/learn/unit-1, /learn/unit-2,
  * /learn/unit-3). Kept as static, keyed content rather than the
- * stage-lookup pattern used by lessonPrototype.ts, because these
+ * stage-lookup pattern used by the earlier Learn Preview prototype
+ * (since removed — see the production-readiness audit), because these
  * three units are specific, named destinations the user explicitly
  * asked for — not a generic "whatever the learner's stage is" slot.
  */
