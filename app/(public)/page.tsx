@@ -139,23 +139,25 @@ export default function HomePage() {
             ))}
           </div>
           <Link href="/level-test">
-            <Button variant="primary">Start Placement Test</Button>
+            <Button variant="primary">Begin the Test</Button>
           </Link>
         </Card>
       </section>
 
       {/* --- Learning Journey --- */}
-      <section className="max-w-3xl mx-auto px-6 py-16">
+      <section className="max-w-xl mx-auto px-6 py-16">
         <p className="text-h2 mb-10 text-center">How CamPath works</p>
-        <div className="grid gap-8" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))" }}>
+        <div className="flex flex-col gap-6">
           {JOURNEY_STEPS.map((s) => (
-            <div key={s.step}>
-              <p className="text-data mb-2" style={{ fontSize: "24px" }}>{s.step}</p>
-              <p className="text-h3 mb-2">
-                {s.title}
-                {s.comingSoon && <span className="text-caption normal-case"> · Coming Soon</span>}
-              </p>
-              <p className="text-small text-ink-soft">{s.body}</p>
+            <div key={s.step} className="flex items-start gap-4">
+              <p className="text-data flex-shrink-0" style={{ fontSize: "20px", width: "28px" }}>{s.step}</p>
+              <div>
+                <p className="text-h3 mb-1">
+                  {s.title}
+                  {s.comingSoon && <span className="text-caption normal-case"> · Coming Soon</span>}
+                </p>
+                <p className="text-small text-ink-soft">{s.body}</p>
+              </div>
             </div>
           ))}
         </div>
