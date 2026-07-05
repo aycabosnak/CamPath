@@ -152,10 +152,6 @@ export function UnitLessonView({ unitSlug }: { unitSlug: string }) {
                 {existingRecord.correctFirstTry ? "✅ Correct" : "🔍 Reviewed"}
               </p>
             </div>
-            <div>
-              <p className="card-eyebrow mb-1">Time Spent</p>
-              <p className="text-body">{existingRecord.minutesSpent} min</p>
-            </div>
           </div>
         </Card>
 
