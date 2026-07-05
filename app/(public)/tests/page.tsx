@@ -15,7 +15,6 @@ import Link from "next/link";
 import { getTestLevels, type TestLevelWithCount } from "@/services/testsService";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { CefrBadge } from "@/components/ui/Badge";
 
 export default function TestsPage() {
   const [levels, setLevels] = useState<TestLevelWithCount[] | null>(null);
@@ -46,7 +45,7 @@ export default function TestsPage() {
         {levels.map((level) => (
           <Card key={level.slug}>
             <div className="flex items-center gap-2 mb-2 flex-wrap">
-              {level.cefr && <CefrBadge level={level.cefr} />}
+              <span className="badge badge-neutral">{level.shortLabel}</span>
               {level.isRecommended && (
                 <span className="badge badge-pine">Recommended for you</span>
               )}
