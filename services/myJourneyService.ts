@@ -15,6 +15,7 @@
  * change won't require touching the page.
  */
 import { UNITS_PER_STAGE } from "@/lib/mock-data/myJourneyData";
+import { getLessonContentForStage } from "@/lib/mock-data/lessonPrototype";
 import { STAGE_NAME_TO_SLUG } from "@/constants/cefr";
 import type { PlacementResult } from "@/services/placementTestService";
 import type { StageName, CefrLevel, Skill, ReadinessStatus, StudyPathNodeState } from "@/components/types";
@@ -48,14 +49,20 @@ function readPlacementResult(): PlacementResult | null {
 function buildStudyPathPreview(stage: StageName): StudyPathNodeData[] {
   const slug = STAGE_NAME_TO_SLUG[stage];
   const titles = UNITS_PER_STAGE[slug] ?? [];
+  // The first unit must match what Learn Preview actually opens —
+  // otherwise My Journey promises one lesson and delivers another.
+  // Positions 2+ stay as generic mock titles since only one real
+  // lesson prototype exists this sprint.
+  const realFirstLesson = getLessonContentForStage(stage);
 
   return titles.map((title, i) => {
     const state: StudyPathNodeState = i === 0 ? "recommended" : "notStarted";
+    const displayTitle = i === 0 ? realFirstLesson.title : title;
     return {
       id: `${slug}_unit_${i + 1}`,
       order: i + 1,
       state,
-      title: `Unit ${i + 1} · ${title}`,
+      title: `Unit ${i + 1} · ${displayTitle}`,
       subtitle: i === 0 ? "Recommended next" : "Not started · available anytime",
     };
   });

@@ -116,12 +116,12 @@ export default function MyJourneyPage() {
       {/* --- Recommended next step --- */}
       <Card className="mb-6">
         <p className="text-h3 mb-2">Recommended Next Step</p>
+        <p className="card-eyebrow mb-1">First Recommended Lesson</p>
+        <p className="text-body mb-4">{summary.recommendedNextStep.label}</p>
         <p className="text-body text-ink-soft mb-6">{summary.recommendedNextStep.description}</p>
         <div className="flex flex-wrap gap-3">
           <Link href="/learn-preview">
-            <Button variant="primary">
-              Continue: {summary.recommendedNextStep.label}
-            </Button>
+            <Button variant="primary">Start Unit 1</Button>
           </Link>
           <Link href={`/my-journey/study-path/${stageSlug}`}>
             <Button variant="secondary">View Study Path</Button>
