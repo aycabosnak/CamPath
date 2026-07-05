@@ -36,6 +36,17 @@ const STATE_CLASS: Record<StudyPathNodeState, string> = {
  * A completed node shows a checkmark; a mastered node adds only a thin
  * gold ring, never a star or trophy icon.
  *
+ * Hierarchy fix: a solid, filled "completed" badge is visually
+ * heavier than a plain-outline "current" one, which pulls the eye to
+ * the wrong place — the learner's next action, not what's already
+ * done, should read as most important. Rather than adding any new
+ * graphic, the current node's title/subtitle are set in Pine (the
+ * same "this is actionable" color used everywhere else in the
+ * system — see Visual Language color semantics), and its badge now
+ * carries a light Pine fill in addition to its border. Completed
+ * nodes stay in neutral Ink text — they're settled, they don't need
+ * to keep asking for attention.
+ *
  * Accessibility: rendered as a <button> when `onSelect` is provided,
  * so every node — including "not started" ones — is independently
  * reachable and activatable by keyboard, matching Free Mode's promise
@@ -50,6 +61,7 @@ export function StudyPathNode({
   isLast = false,
 }: StudyPathNodeProps) {
   const badgeContent = state === "completed" || state === "mastered" ? "✓" : order;
+  const isCurrent = state === "recommended";
 
   const content = (
     <div className={cn("path-node", isLast && "!pb-0")}>
@@ -57,8 +69,10 @@ export function StudyPathNode({
         {badgeContent}
       </div>
       <div>
-        <div className="text-small font-semibold">{title}</div>
-        <div className="text-caption normal-case">{subtitle}</div>
+        <div className={cn("text-small font-semibold", isCurrent && "text-pine")}>{title}</div>
+        <div className={cn("text-caption normal-case", isCurrent && "text-pine font-semibold")}>
+          {subtitle}
+        </div>
       </div>
     </div>
   );

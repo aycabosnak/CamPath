@@ -2,7 +2,8 @@ import React from "react";
 import { Card } from "../ui/Card";
 import { ProgressBar } from "../ui/ProgressBar";
 import { ReadinessGauge } from "../ui/ReadinessGauge";
-import type { ReadinessStatus, StageName, CefrLevel } from "../types";
+import { SkillBadge } from "../ui/Badge";
+import type { ReadinessStatus, StageName, CefrLevel, Skill } from "../types";
 
 /**
  * MyJourneyMetricCard
@@ -23,7 +24,7 @@ export type MyJourneyMetric =
   | { type: "overallProgress"; percentage: number; unitLabel: string }
   | { type: "studyTime"; hours: number; minutes: number; trendLabel?: string }
   | { type: "studyConsistency"; daysActive: number; daysInPeriod: number }
-  | { type: "examReadiness"; status: ReadinessStatus; examLabel: string }
+  | { type: "examReadiness"; status: ReadinessStatus; examLabel: string; averageMastery: number; weakestSkill: Skill }
   | { type: "completedUnits"; completed: number; total: number };
 
 export interface MyJourneyMetricCardProps {
@@ -80,6 +81,10 @@ export function MyJourneyMetricCard({ metric }: MyJourneyMetricCardProps) {
         <Card>
           <p className="card-eyebrow mb-2">Exam Readiness</p>
           <ReadinessGauge status={metric.status} examLabel={metric.examLabel} />
+          <p className="text-small text-ink-soft mt-3">
+            Based on {metric.averageMastery}% average mastery —{" "}
+            <SkillBadge skill={metric.weakestSkill} /> needs the most attention.
+          </p>
         </Card>
       );
 

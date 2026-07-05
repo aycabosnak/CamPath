@@ -29,7 +29,14 @@ export interface MyJourneySummary {
   overallProgress: { percentage: number; unitLabel: string };
   studyTime: { hours: number; minutes: number; trendLabel?: string };
   studyConsistency: { daysActive: number; daysInPeriod: number };
-  examReadiness: { status: ReadinessStatus; examLabel: string } | null;
+  /** `averageMastery`/`weakestSkill` exist so the UI can explain WHY
+   *  this readiness level was reached, not just state it. */
+  examReadiness: {
+    status: ReadinessStatus;
+    examLabel: string;
+    averageMastery: number;
+    weakestSkill: Skill;
+  } | null;
   completedUnits: { completed: number; total: number };
   masteryBySkill: Array<{ skill: Skill; percentage: number }>;
   studyPathPreview: StudyPathNodeData[];
@@ -67,7 +74,7 @@ function buildStudyPathPreview(
     const unitSlug = `unit-${order}`;
     const realLesson = UNIT_LESSONS[unitSlug];
     const isReal = Boolean(realLesson);
-    const completed = progress.completedLessons.includes(unitSlug);
+    const completed = Boolean(progress.completions[unitSlug]);
 
     let state: StudyPathNodeState;
     let subtitle: string;
@@ -138,9 +145,15 @@ export async function getMyJourneySummary(): Promise<MyJourneySummary | null> {
 
   const overallAverageMastery =
     masteryBySkill.reduce((sum, m) => sum + m.percentage, 0) / masteryBySkill.length;
+  const weakestSkill = findWeakestSkill(masteryBySkill);
 
   const examReadiness = placement.readiness
-    ? { status: deriveReadinessStatus(overallAverageMastery), examLabel: placement.readiness.examLabel }
+    ? {
+        status: deriveReadinessStatus(overallAverageMastery),
+        examLabel: placement.readiness.examLabel,
+        averageMastery: Math.round(overallAverageMastery),
+        weakestSkill,
+      }
     : null;
 
   return {
@@ -174,7 +187,7 @@ export async function getMyJourneySummary(): Promise<MyJourneySummary | null> {
           description: "You've completed every lesson available in this preview — more units are coming soon.",
           unitSlug: null,
         },
-    weakestSkill: findWeakestSkill(masteryBySkill),
+    weakestSkill,
     fromPlacementTest: { stage: placement.stage, cefr: placement.cefr },
   };
 }
