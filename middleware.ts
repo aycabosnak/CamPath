@@ -1,45 +1,43 @@
 /**
  * middleware.ts — Auth & role-gating placeholder
  *
- * Real implementation depends on the chosen backend's token format
- * (see Database & API Design doc, Section 0 — JWT with a `role` claim).
- * This file only sketches the decision points so route groups have
- * a concrete enforcement point from day one.
+ * FIX (routing bug report): this previously redirected any request to
+ * an AUTH_PREFIXES route to "/login" whenever `session` was falsy —
+ * and since `session` is hardcoded to `null` until real auth exists,
+ * EVERY request to /my-journey, /account, or /writing was redirected
+ * to a page that was never built ("/login" doesn't exist), causing a
+ * 404. This is Design Review Report Finding #21 made concrete.
+ *
+ * Until real auth exists, there is nothing meaningful to gate, so
+ * this middleware no longer redirects student-auth routes at all —
+ * pretending to protect them with a permanently-null session was
+ * worse than not gating them, because it silently broke navigation.
+ * Teacher routes are left gated (with a comment, not a redirect to a
+ * nonexistent page) as a reminder for when real auth lands.
  */
 import { NextRequest, NextResponse } from "next/server";
 
-const TEACHER_PREFIX = "/teacher";
-const AUTH_PREFIXES = ["/my-journey", "/account", "/writing"];
 const INTERNAL_PREFIXES = ["/design-system"];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // TODO: replace with real session/JWT verification against the
-  // access token cookie once the auth API (Section 4.1) exists.
-  const session: { role?: "student" | "teacher" | "parent" | "admin" } | null = null;
-
+  // Internal/QA-only routes: still blocked in production builds.
   if (INTERNAL_PREFIXES.some((p) => pathname.startsWith(p))) {
     if (process.env.NODE_ENV === "production") {
       return NextResponse.redirect(new URL("/", request.url));
     }
   }
 
-  if (TEACHER_PREFIX && pathname.startsWith(TEACHER_PREFIX)) {
-    if (!session || session.role !== "teacher") {
-      return NextResponse.redirect(new URL("/login", request.url));
-    }
-  }
-
-  if (AUTH_PREFIXES.some((p) => pathname.startsWith(p))) {
-    if (!session) {
-      return NextResponse.redirect(new URL("/login", request.url));
-    }
-  }
+  // TODO once real auth exists (Database & API Design doc, Section 4.1):
+  // - Verify the access token cookie here.
+  // - Redirect unauthenticated users away from /my-journey, /account,
+  //   /writing, and unauthenticated/non-teacher users away from /teacher.
+  // - Only wire these redirects up once /login actually exists as a page.
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/my-journey/:path*", "/account/:path*", "/writing/:path*", "/teacher/:path*", "/design-system/:path*"],
+  matcher: ["/design-system/:path*"],
 };
