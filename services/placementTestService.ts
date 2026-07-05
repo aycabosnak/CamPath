@@ -50,6 +50,11 @@ export interface PlacementResult {
   totalCount: number;
   accuracyPercentage: number;
   studyPlan: StudyPlanGroup[];
+  /** True if submitted via the normal Finish button before time ran
+   *  out; false if submitted from the Time Expired screen. Set by
+   *  the caller (the take page knows the timer state; this service
+   *  doesn't) — see computeResults' completedOnTime parameter. */
+  completedOnTime: boolean;
 }
 
 const CEFR_ORDER: CefrLevel[] = ["A1", "A2", "B1", "B2", "C1", "C2"];
@@ -200,7 +205,8 @@ function buildStudyPlan(skill_breakdown: Record<Skill, number>): StudyPlanGroup[
  */
 export function computeResults(
   questions: PlacementQuestion[],
-  answers: PlacementAnswerMap
+  answers: PlacementAnswerMap,
+  completedOnTime: boolean = true
 ): PlacementResult {
   const skills: Skill[] = ["grammar", "vocabulary", "listening", "reading", "useOfEnglish", "writing"];
 
@@ -252,6 +258,7 @@ export function computeResults(
     totalCount,
     accuracyPercentage: totalCount ? Math.round((correctCount / totalCount) * 100) : 0,
     studyPlan: buildStudyPlan(skill_breakdown),
+    completedOnTime,
   };
 }
 

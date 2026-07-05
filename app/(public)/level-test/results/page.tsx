@@ -144,6 +144,7 @@ export default function LevelTestResultsPage() {
   const correctCount = result.correctCount ?? 0;
   const totalCount = result.totalCount ?? questionReview.length;
   const accuracyPercentage = result.accuracyPercentage ?? 0;
+  const completedOnTime = result.completedOnTime ?? true;
   const incorrectCount = totalCount - correctCount;
 
   const visibleReview =
@@ -156,7 +157,10 @@ export default function LevelTestResultsPage() {
         <StageBadge stage={result.stage} />
         <CefrBadge level={result.cefr} />
       </div>
-      <h1 className="text-display-l mb-10">You're starting at {result.stage}.</h1>
+      <h1 className="text-display-l mb-3">You're starting at {result.stage}.</h1>
+      <p className="text-small text-ink-soft mb-10">
+        {completedOnTime ? "Completed within the time limit." : "Completed after time expired."}
+      </p>
 
       <Card className="mb-6">
         <p className="text-h3 mb-4">Mastery by Skill</p>
