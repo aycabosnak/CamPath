@@ -1,14 +1,141 @@
+"use client";
+
 /**
- * My Journey Dashboard
+ * app/(auth)/my-journey/page.tsx
  *
- * PLACEHOLDER — scaffold only, no implementation yet.
- * Experience Blueprint 1.2. Uses MyJourneyMetricCard x6 + compact StudyPath preview.
+ * Experience Blueprint 1.2 — My Journey dashboard.
+ *
+ * Data comes exclusively through services/myJourneyService.ts — this
+ * file has no hardcoded numbers, so swapping the service's internals
+ * to call GET /api/users/me/summary later requires no change here.
  */
-export default function Page() {
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { getMyJourneySummary, type MyJourneySummary } from "@/services/myJourneyService";
+import { MyJourneyMetricCard, type MyJourneyMetric } from "@/components/dashboard/MyJourneyMetricCard";
+import { MasteryBarList } from "@/components/ui/MasteryBar";
+import { StudyPath } from "@/components/study-path/StudyPath";
+import { Card } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import { StageBadge, CefrBadge } from "@/components/ui/Badge";
+import { STAGE_NAME_TO_SLUG } from "@/constants/cefr";
+
+export default function MyJourneyPage() {
+  const [summary, setSummary] = useState<MyJourneySummary | null | undefined>(undefined);
+
+  useEffect(() => {
+    getMyJourneySummary().then(setSummary);
+  }, []);
+
+  if (summary === undefined) {
+    return (
+      <main className="max-w-4xl mx-auto px-6 py-16">
+        <p className="text-small text-ink-soft">Loading your journey…</p>
+      </main>
+    );
+  }
+
+  // Empty state — approved wording from the Experience Blueprint (1.2).
+  if (summary === null) {
+    return (
+      <main className="max-w-2xl mx-auto px-6 py-24 text-center">
+        <p className="text-h1 mb-4">Your journey starts with a placement test.</p>
+        <p className="text-body text-ink-soft mb-8">
+          Take a short assessment across six skills to get your CamPath
+          starting point.
+        </p>
+        <Link href="/level-test">
+          <Button variant="primary" size="lg">
+            Take Placement Test
+          </Button>
+        </Link>
+      </main>
+    );
+  }
+
+  const stageSlug = STAGE_NAME_TO_SLUG[summary.stage];
+
+  const metrics: MyJourneyMetric[] = [
+    { type: "currentStage", stage: summary.stage, cefr: summary.cefr },
+    {
+      type: "overallProgress",
+      percentage: summary.overallProgress.percentage,
+      unitLabel: summary.overallProgress.unitLabel,
+    },
+    { type: "studyTime", hours: summary.studyTime.hours, minutes: summary.studyTime.minutes, trendLabel: summary.studyTime.trendLabel },
+    { type: "studyConsistency", daysActive: summary.studyConsistency.daysActive, daysInPeriod: summary.studyConsistency.daysInPeriod },
+    { type: "completedUnits", completed: summary.completedUnits.completed, total: summary.completedUnits.total },
+  ];
+  if (summary.cambridgeReadiness) {
+    metrics.push({
+      type: "cambridgeReadiness",
+      status: summary.cambridgeReadiness.status,
+      examLabel: summary.cambridgeReadiness.examLabel,
+    });
+  }
+
   return (
-    <main className="max-w-3xl mx-auto px-6 py-16">
-      <p className="text-caption mb-2">Scaffold placeholder</p>
-      <h1 className="text-h1">My Journey Dashboard</h1>
+    <main className="max-w-4xl mx-auto px-6 py-16">
+      <p className="text-caption mb-2">My Journey</p>
+      <div className="flex items-center gap-3 mb-8">
+        <StageBadge stage={summary.stage} />
+        <CefrBadge level={summary.cefr} />
+      </div>
+
+      {/* --- Metric grid --- */}
+      <div className="grid gap-4 mb-10" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>
+        {metrics.map((metric, i) => (
+          <MyJourneyMetricCard key={i} metric={metric} />
+        ))}
+      </div>
+
+      {/* --- Mastery by skill --- */}
+      <Card className="mb-6">
+        <p className="text-h3 mb-4">Mastery by Skill</p>
+        <MasteryBarList items={summary.masteryBySkill} />
+      </Card>
+
+      {/* --- From your Placement Test (Experience Blueprint requirement: show recent result if available) --- */}
+      {summary.fromPlacementTest && (
+        <Card className="mb-6">
+          <p className="card-eyebrow mb-2">From Your Placement Test</p>
+          <div className="flex items-center gap-3 mb-2">
+            <StageBadge stage={summary.fromPlacementTest.stage} />
+            <CefrBadge level={summary.fromPlacementTest.cefr} />
+          </div>
+          <Link href="/level-test" className="btn btn-tertiary btn-sm p-0">
+            Retake Placement Test →
+          </Link>
+        </Card>
+      )}
+
+      {/* --- Recommended next step --- */}
+      <Card className="mb-6">
+        <p className="text-h3 mb-2">Recommended Next Step</p>
+        <p className="text-body text-ink-soft mb-6">{summary.recommendedNextStep.description}</p>
+        <div className="flex flex-wrap gap-3">
+          <Button variant="primary">
+            Continue: {summary.recommendedNextStep.label}
+          </Button>
+          <Link href={`/my-journey/study-path/${stageSlug}`}>
+            <Button variant="secondary">View Study Path</Button>
+          </Link>
+          <Link href={`/practice/${summary.weakestSkill}/${stageSlug}`}>
+            <Button variant="secondary">Practice Weakest Skill</Button>
+          </Link>
+        </div>
+      </Card>
+
+      {/* --- Compact Study Path preview --- */}
+      <Card>
+        <div className="flex items-center justify-between mb-4">
+          <p className="text-h3">Study Path</p>
+          <Link href={`/my-journey/study-path/${stageSlug}`} className="btn btn-tertiary btn-sm p-0">
+            View full path →
+          </Link>
+        </div>
+        <StudyPath nodes={summary.studyPathPreview.slice(0, 3)} mode="guided" />
+      </Card>
     </main>
   );
 }
