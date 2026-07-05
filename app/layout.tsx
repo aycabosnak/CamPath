@@ -3,11 +3,11 @@ import "./globals.css";
 /**
  * Root layout — shared by every route group.
  *
- * The disclaimer footer here is a direct response to Design Review
- * Report Finding #9 (Cambridge Assessment Academic Director): CamPath
- * uses Cambridge exam names and exam-readiness language without any
- * official affiliation. This notice is site-wide, not just on one
- * page, because the naming appears throughout the product.
+ * The disclaimer that used to live directly here now lives inside
+ * components/nav/Footer.tsx instead (see that file for why) — the
+ * new rich Footer is mounted in (public)/layout.tsx and
+ * (auth)/layout.tsx, not here, so it stays out of (teacher) and
+ * (internal), matching how Navbar is scoped.
  */
 export const metadata = {
   title: "CamPath",
@@ -17,15 +17,7 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body>
-        {children}
-        <footer style={{ borderTop: "1px solid var(--color-line)", padding: "24px", marginTop: "64px" }}>
-          <p className="text-caption normal-case" style={{ maxWidth: 720, margin: "0 auto" }}>
-            CamPath is an independent learning platform and is not affiliated with or
-            endorsed by Cambridge University Press &amp; Assessment.
-          </p>
-        </footer>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }
