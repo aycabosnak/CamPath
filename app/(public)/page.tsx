@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/Button";
 import { Card, LearningCard } from "@/components/ui/Card";
 import { SkillBadge } from "@/components/ui/Badge";
 import { trackEvent } from "@/services/analyticsService";
+import { TEST_LEVELS } from "@/constants/testLevels";
 import type { Skill } from "@/components/types";
 
 const SKILLS_MEASURED: Skill[] = ["grammar", "vocabulary", "listening", "reading", "useOfEnglish", "writing"];
@@ -43,16 +44,6 @@ const JOURNEY_STEPS = [
   { step: "1", title: "Take your Placement Test", body: "A short, honest assessment across six skills." },
   { step: "2", title: "Follow your path", body: "Lessons sequenced for your CEFR level — nothing locked." },
   { step: "3", title: "Track real progress", body: "My Journey shows what you've mastered, plainly." },
-];
-
-const PREVIEW_LEVELS = [
-  "A1 Elementary",
-  "A2 Pre-Intermediate",
-  "B1 Intermediate",
-  "B1+ Upper Intermediate",
-  "B2 Pre-Advanced",
-  "C1 Advanced",
-  "Grammar Shorts",
 ];
 
 const FEATURED_LESSONS = [
@@ -125,18 +116,25 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* --- Browse Tests (preview only — /tests ships in Step 2) --- */}
+      {/* --- Browse Tests (now real — /tests shipped in Step 2) --- */}
       <section className="max-w-3xl mx-auto px-6 py-16">
         <p className="text-h2 mb-2 text-center">Browse Tests</p>
         <p className="text-small text-ink-soft mb-10 text-center">
-          A full level-based test library is launching soon.
+          Complete, mixed Cambridge-style tests for every level.
         </p>
-        <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))" }}>
-          {PREVIEW_LEVELS.map((level) => (
-            <div key={level} className="card text-center">
-              <p className="text-small font-semibold">{level}</p>
-            </div>
+        <div className="grid gap-3 mb-8" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))" }}>
+          {TEST_LEVELS.map((level) => (
+            <Link key={level.slug} href={`/tests/${level.slug}`}>
+              <div className="card text-center" style={{ cursor: "pointer" }}>
+                <p className="text-small font-semibold">{level.title}</p>
+              </div>
+            </Link>
           ))}
+        </div>
+        <div className="text-center">
+          <Link href="/tests">
+            <Button variant="secondary">View All Tests</Button>
+          </Link>
         </div>
       </section>
 

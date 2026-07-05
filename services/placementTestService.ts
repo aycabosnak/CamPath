@@ -62,7 +62,12 @@ const STAGE_BY_CEFR: Record<CefrLevel, StageName> = {
   C2: "Master",
 };
 
-function isAnswerCorrect(question: PlacementQuestion, answer: unknown): boolean {
+/**
+ * Exported so any feature scoring a PlacementQuestion-shaped answer
+ * (Tests Architecture's test-taking page, in addition to this file's
+ * own computeResults) shares one correctness rule instead of two.
+ */
+export function isAnswerCorrect(question: PlacementQuestion, answer: unknown): boolean {
   switch (question.task_type) {
     case "multiple_choice":
     case "audio_multiple_choice":

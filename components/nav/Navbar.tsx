@@ -3,16 +3,14 @@
 /**
  * components/nav/Navbar.tsx
  *
- * Minimal navigation for CamPath's core learner flow. Deliberately
- * covers only routes that are fully implemented today.
+ * Minimal navigation for CamPath's core learner flow.
  *
- * "Tests" and "Lessons" are intentionally NOT included yet — this is
- * Step 1 of a multi-step navigation expansion (Home/Navbar/Footer
- * first, Tests architecture next, Search after that). Adding those
- * links now would point at pages that don't exist yet (/tests doesn't
- * exist at all; /learn is still an empty scaffold stub) — exactly the
- * "broken promise" pattern fixed in the last production-readiness
- * pass. They'll be added here the moment their real pages ship.
+ * "Tests" was added in the Tests Architecture sprint (Step 2), now
+ * that /tests is fully implemented — per the rule that nav items are
+ * only added once their destination route actually works.
+ *
+ * "Lessons" is still intentionally NOT included — /learn is still an
+ * empty scaffold stub. It'll be added the moment that page ships.
  *
  * "Practice" points at /practice/weakest-skill rather than the
  * /practice hub, because the hub itself is still an empty scaffold
@@ -31,6 +29,7 @@ import { cn } from "@/components/lib/cn";
 const NAV_LINKS = [
   { label: "Home", href: "/", match: (path: string) => path === "/" },
   { label: "Placement Test", href: "/level-test", match: (path: string) => path.startsWith("/level-test") },
+  { label: "Tests", href: "/tests", match: (path: string) => path.startsWith("/tests") },
   { label: "My Journey", href: "/my-journey", match: (path: string) => path.startsWith("/my-journey") },
   { label: "Practice", href: "/practice/weakest-skill", match: (path: string) => path.startsWith("/practice") },
 ];
