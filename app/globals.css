@@ -323,6 +323,7 @@
   /* "Recommended next" — outlined only, never locked/greyed-out */
   .node-badge-recommended {
     border: 2px solid var(--color-pine);
+    background: var(--color-pine-soft);
     color: var(--color-pine);
   }
   .node-badge-progress {

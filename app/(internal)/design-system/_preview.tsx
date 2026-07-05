@@ -67,7 +67,7 @@ const JOURNEY_METRICS: MyJourneyMetric[] = [
   { type: "overallProgress", percentage: 64, unitLabel: "Communicator · B1" },
   { type: "studyTime", hours: 3, minutes: 40, trendLabel: "↑ 45m vs last week" },
   { type: "studyConsistency", daysActive: 18, daysInPeriod: 30 },
-  { type: "examReadiness", status: "approaching", examLabel: "B1 Preliminary" },
+  { type: "examReadiness", status: "approaching", examLabel: "B1 Preliminary", averageMastery: 61, weakestSkill: "useOfEnglish" },
   { type: "completedUnits", completed: 4, total: 9 },
 ];
 

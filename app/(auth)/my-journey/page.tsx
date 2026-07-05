@@ -86,6 +86,8 @@ export default function MyJourneyPage() {
       type: "examReadiness",
       status: summary.examReadiness.status,
       examLabel: summary.examReadiness.examLabel,
+      averageMastery: summary.examReadiness.averageMastery,
+      weakestSkill: summary.examReadiness.weakestSkill,
     });
   }
 

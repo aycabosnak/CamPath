@@ -2,36 +2,37 @@
  * services/progressService.ts
  *
  * Single source of truth for everything "progress" — lesson
- * completion, accumulated study time, study-day consistency, and
- * practice-driven mastery adjustments. Every page/component that
- * needs to read or change progress goes through this file; nothing
- * else touches localStorage for progress data directly. This is the
- * "reusable progress helper" layer requested — avoids the same
- * completion/persistence logic being reimplemented per page.
+ * completion (with enough detail to show a meaningful completed
+ * state), accumulated study time, study-day consistency, and
+ * practice-driven mastery adjustments.
  *
- * Persistence: localStorage today, under one key. Swapping to a real
- * backend later (POST /api/users/me/progress/:lessonId, per the
- * Database & API Design doc) only requires changing the functions in
- * this file — callers already treat them as the source of truth.
+ * v1.1: completions are now a record keyed by unit slug, storing
+ * *when* and *how* a lesson was completed — not just a flat list of
+ * slugs. This was needed to make the "Already Completed" view show
+ * real information instead of a generic message. `completedLessons`
+ * (a plain string array) is no longer stored separately — it's
+ * always derived from `Object.keys(completions)`, so there is exactly
+ * one place completion is recorded.
  */
 import type { Skill } from "@/components/types";
 
+export interface LessonCompletionRecord {
+  completedAt: string; // ISO timestamp
+  correctFirstTry: boolean;
+  minutesSpent: number;
+}
+
 export interface ProgressState {
-  /** Unit slugs, e.g. "unit-1". Presence in this array = completed. */
-  completedLessons: string[];
-  /** Total accumulated study time, in minutes, across all lessons. */
+  completions: Record<string, LessonCompletionRecord>;
   studyTimeMinutes: number;
-  /** Unique ISO dates (YYYY-MM-DD) on which the learner did something. */
   studyDates: string[];
-  /** Practice-driven mastery adjustments, layered on top of the
-   *  placement test's skill_breakdown by myJourneyService. */
   masteryOverrides: Partial<Record<Skill, number>>;
 }
 
 const STORAGE_KEY = "campath_progress_state";
 
 const DEFAULT_STATE: ProgressState = {
-  completedLessons: [],
+  completions: {},
   studyTimeMinutes: 0,
   studyDates: [],
   masteryOverrides: {},
@@ -41,15 +42,33 @@ function todayIso(): string {
   return new Date().toISOString().slice(0, 10);
 }
 
+/**
+ * Migrates the previous shape (`completedLessons: string[]`, no
+ * per-lesson detail) into the current one, so a browser that already
+ * has prototype data from an earlier sprint doesn't lose progress or
+ * crash. Each migrated lesson gets a synthetic "completed now" record
+ * — we have no real timestamp for it, and that's an honest tradeoff.
+ */
+function migrate(parsed: any): ProgressState {
+  if (parsed && parsed.completions) {
+    return { ...DEFAULT_STATE, ...parsed };
+  }
+  if (parsed && Array.isArray(parsed.completedLessons)) {
+    const completions: Record<string, LessonCompletionRecord> = {};
+    for (const slug of parsed.completedLessons) {
+      completions[slug] = { completedAt: new Date().toISOString(), correctFirstTry: true, minutesSpent: 1 };
+    }
+    return { ...DEFAULT_STATE, ...parsed, completions };
+  }
+  return DEFAULT_STATE;
+}
+
 function readState(): ProgressState {
   if (typeof window === "undefined") return DEFAULT_STATE;
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (!raw) return DEFAULT_STATE;
-    const parsed = JSON.parse(raw);
-    // Merge with defaults so older/partial saved states (from before a
-    // field existed) never crash a page that expects the new shape.
-    return { ...DEFAULT_STATE, ...parsed };
+    return migrate(JSON.parse(raw));
   } catch {
     return DEFAULT_STATE;
   }
@@ -71,51 +90,60 @@ export function getProgressState(): ProgressState {
 }
 
 export function isLessonCompleted(unitSlug: string): boolean {
-  return readState().completedLessons.includes(unitSlug);
+  return Boolean(readState().completions[unitSlug]);
+}
+
+export function getLessonCompletion(unitSlug: string): LessonCompletionRecord | null {
+  return readState().completions[unitSlug] ?? null;
 }
 
 export interface CompleteLessonResult {
   alreadyCompleted: boolean;
+  record: LessonCompletionRecord;
   state: ProgressState;
 }
 
 /**
  * Idempotent by design: calling this twice for the same unitSlug
- * never duplicates the completion or double-counts study time —
- * directly answers the "prevent duplicate completions" requirement.
+ * never overwrites the original completion record or double-counts
+ * study time — it just returns the existing record.
  */
-export function completeLesson(unitSlug: string, minutesSpent: number): CompleteLessonResult {
+export function completeLesson(
+  unitSlug: string,
+  minutesSpent: number,
+  correctFirstTry: boolean
+): CompleteLessonResult {
   let state = readState();
-
-  if (state.completedLessons.includes(unitSlug)) {
-    return { alreadyCompleted: true, state };
+  const existing = state.completions[unitSlug];
+  if (existing) {
+    return { alreadyCompleted: true, record: existing, state };
   }
+
+  const record: LessonCompletionRecord = {
+    completedAt: new Date().toISOString(),
+    correctFirstTry,
+    minutesSpent: Math.max(0, minutesSpent),
+  };
 
   state = {
     ...state,
-    completedLessons: [...state.completedLessons, unitSlug],
-    studyTimeMinutes: state.studyTimeMinutes + Math.max(0, minutesSpent),
+    completions: { ...state.completions, [unitSlug]: record },
+    studyTimeMinutes: state.studyTimeMinutes + record.minutesSpent,
   };
   state = markStudyDayActive(state);
   writeState(state);
-  return { alreadyCompleted: false, state };
+  return { alreadyCompleted: false, record, state };
 }
 
 /**
- * Prototype heuristic for "completing a practice session": since the
- * full Practice module isn't built yet, one click of "Start Practice"
- * simulates a session that raises that skill's mastery. This is
- * explicitly a placeholder — once real Practice exercises exist,
- * this should be driven by actual UserExerciseAttempt results
- * (Database & API Design doc), not a fixed bump.
+ * Prototype heuristic for "completing a practice session" — see
+ * previous sprint's note: once real Practice exercises exist, this
+ * should be driven by actual attempt results, not a fixed bump.
  */
 export function recordPracticeSession(skill: Skill, currentPercentage: number, bump = 40): ProgressState {
   let state = readState();
   const newValue = Math.min(100, currentPercentage + bump);
-  state = {
-    ...state,
-    masteryOverrides: { ...state.masteryOverrides, [skill]: newValue },
-  };
+  state = { ...state, masteryOverrides: { ...state.masteryOverrides, [skill]: newValue } };
   state = markStudyDayActive(state);
   writeState(state);
   return state;
