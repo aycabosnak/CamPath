@@ -227,7 +227,7 @@ export function computeResults(
   const readiness =
     cefrIndex >= 1
       ? {
-          status: (overallScore >= 70 ? "ready" : overallScore >= 45 ? "approaching" : "notReady") as ReadinessStatus,
+          status: deriveReadinessStatus(overallScore),
           examLabel: nearestExamLabel(cefr),
         }
       : null;
@@ -248,6 +248,19 @@ export function computeResults(
     accuracyPercentage: totalCount ? Math.round((correctCount / totalCount) * 100) : 0,
     studyPlan: buildStudyPlan(skill_breakdown),
   };
+}
+
+/**
+ * Shared threshold logic for turning a 0-100 average score into a
+ * ReadinessStatus. Extracted so any service that recomputes readiness
+ * from a mastery average (this file, and myJourneyService after a
+ * practice session changes mastery) uses the exact same thresholds —
+ * duplicating this logic in two places would let them silently drift.
+ */
+export function deriveReadinessStatus(overallScore: number): ReadinessStatus {
+  if (overallScore >= 70) return "ready";
+  if (overallScore >= 45) return "approaching";
+  return "notReady";
 }
 
 function nearestExamLabel(cefr: CefrLevel): string {

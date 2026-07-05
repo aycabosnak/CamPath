@@ -3,26 +3,27 @@
 /**
  * app/(public)/practice/weakest-skill/page.tsx
  *
- * Shows the learner's two lowest-scoring skills from their placement
- * result, side by side, each with its own "Start Practice" entry
- * point. Computed dynamically from My Journey's summary rather than
- * hardcoded to "Vocabulary and Listening" — whichever two skills are
- * actually weakest for this learner's real answers will show here.
+ * Shows the learner's two lowest-scoring skills, computed dynamically
+ * from their real placement + progress data — never hardcoded.
  *
- * "Start Practice" links into the existing /practice/[skill]/[level]
- * placeholder route — building out real Practice exercises is a
- * separate, larger scope (paused per the Design Review Report), so
- * this page completes the navigation without speculatively expanding
- * the Practice module itself.
+ * "Start Practice" here simulates completing one short practice
+ * session (services/progressService.recordPracticeSession) since the
+ * full Practice module with real exercises is out of scope this
+ * sprint (paused per the Design Review Report). This is explicitly a
+ * prototype heuristic, called out in code comments, not a permanent
+ * design — once real Practice exercises exist, mastery should be
+ * recalculated from actual UserExerciseAttempt results instead.
  */
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { getMyJourneySummary, type MyJourneySummary } from "@/services/myJourneyService";
-import { STAGE_NAME_TO_SLUG } from "@/constants/cefr";
+import { recordPracticeSession } from "@/services/progressService";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { SkillBadge } from "@/components/ui/Badge";
 import { MasteryBarList } from "@/components/ui/MasteryBar";
+import { trackEvent } from "@/services/analyticsService";
+import type { Skill } from "@/components/types";
 
 const SKILL_DESCRIPTIONS: Record<string, string> = {
   grammar: "Short, focused drills on the grammar points you found hardest.",
@@ -35,10 +36,20 @@ const SKILL_DESCRIPTIONS: Record<string, string> = {
 
 export default function WeakestSkillPracticePage() {
   const [summary, setSummary] = useState<MyJourneySummary | null | undefined>(undefined);
+  const [justPracticed, setJustPracticed] = useState<Skill | null>(null);
 
   useEffect(() => {
     getMyJourneySummary().then(setSummary);
   }, []);
+
+  function startPractice(skill: Skill, currentPercentage: number) {
+    recordPracticeSession(skill, currentPercentage);
+    trackEvent("practice_started", { skill });
+    setJustPracticed(skill);
+    // Re-fetch so the mastery bars and weakest-skill cards reflect the
+    // update instantly, without a page reload.
+    getMyJourneySummary().then(setSummary);
+  }
 
   if (summary === undefined) {
     return (
@@ -62,7 +73,6 @@ export default function WeakestSkillPracticePage() {
     );
   }
 
-  const stageSlug = STAGE_NAME_TO_SLUG[summary.stage];
   const weakestTwo = [...summary.masteryBySkill].sort((a, b) => a.percentage - b.percentage).slice(0, 2);
 
   return (
@@ -83,9 +93,15 @@ export default function WeakestSkillPracticePage() {
             </div>
             <p className="text-h3 mb-2">{item.percentage}% mastery</p>
             <p className="text-small text-ink-soft mb-6">{SKILL_DESCRIPTIONS[item.skill]}</p>
-            <Link href={`/practice/${item.skill}/${stageSlug}`}>
-              <Button variant="primary">Start Practice</Button>
-            </Link>
+            {justPracticed === item.skill ? (
+              <p className="text-small" style={{ color: "var(--color-pine)" }}>
+                ✓ Practice completed — mastery updated.
+              </p>
+            ) : (
+              <Button variant="primary" onClick={() => startPractice(item.skill, item.percentage)}>
+                Start Practice
+              </Button>
+            )}
           </Card>
         ))}
       </div>
