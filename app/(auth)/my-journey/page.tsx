@@ -39,8 +39,7 @@ export default function MyJourneyPage() {
   }
 
   function goToUnit(nodeId: string) {
-    const node = summary?.studyPathPreview.find((n) => n.id === nodeId);
-    if (node) router.push(`/learn/unit-${node.order}`);
+    router.push(`/learn/${nodeId}`);
   }
 
   if (summary === undefined) {
@@ -132,9 +131,15 @@ export default function MyJourneyPage() {
         <p className="text-body mb-4">{summary.recommendedNextStep.label}</p>
         <p className="text-body text-ink-soft mb-6">{summary.recommendedNextStep.description}</p>
         <div className="flex flex-wrap gap-3">
-          <Link href="/learn/unit-1">
-            <Button variant="primary">Start Unit 1</Button>
-          </Link>
+          {summary.recommendedNextStep.unitSlug ? (
+            <Link href={`/learn/${summary.recommendedNextStep.unitSlug}`}>
+              <Button variant="primary">Continue Learning</Button>
+            </Link>
+          ) : (
+            <Button variant="primary" disabled>
+              All Lessons Completed
+            </Button>
+          )}
           <Button variant="secondary" onClick={scrollToStudyPath}>
             View Study Path
           </Button>
