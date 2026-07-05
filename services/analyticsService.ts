@@ -22,7 +22,9 @@ export type AnalyticsEventName =
   | "learn_preview_opened"
   | "lesson_started"
   | "lesson_completed"
-  | "practice_started";
+  | "practice_started"
+  | "test_started"
+  | "test_completed";
 
 export interface AnalyticsEvent {
   event: AnalyticsEventName;
