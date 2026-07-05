@@ -1,0 +1,380 @@
+/**
+ * CamPath — Global Design System CSS
+ * Design System v1.0 — "Progress over Points"
+ *
+ * Structure:
+ *   1. CSS custom properties (source of truth for raw values —
+ *      used anywhere Tailwind classes can't reach, e.g. inline SVG,
+ *      dynamically computed widths for progress bars)
+ *   2. Base layer — resets, global focus/motion rules
+ *   3. Component layer — reusable classes for buttons, cards, forms,
+ *      progress, readiness gauge, mastery bars, Study Path nodes
+ *
+ * Turkish reasoning for each block lives in the accompanying chat
+ * message and in campath-design-system.md. Comments here stay in
+ * English and are intentionally short — implementation notes only.
+ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ==========================================================
+   1. CSS CUSTOM PROPERTIES
+   ========================================================== */
+:root {
+  /* Color */
+  --color-paper: #F1F3F0;
+  --color-paper-raised: #FFFFFF;
+  --color-ink: #16232C;
+  --color-ink-soft: #4B5A5F;
+  --color-pine: #2F5D53;
+  --color-pine-hover: #264D45;
+  --color-pine-soft: rgba(47, 93, 83, 0.12);
+  --color-gold: #A9762C;
+  --color-gold-soft: rgba(169, 118, 44, 0.14);
+  --color-sage: #6C8C87;
+  --color-sage-soft: rgba(108, 140, 135, 0.14);
+  --color-brick: #8C4A3B;
+  --color-brick-soft: rgba(140, 74, 59, 0.12);
+  --color-line: #DCE0D9;
+
+  /* Typography */
+  --font-display: 'Newsreader', Georgia, serif;
+  --font-body: 'Source Sans 3', -apple-system, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+  /* Spacing (4px base) */
+  --space-1: 4px;  --space-2: 8px;  --space-3: 12px; --space-4: 16px;
+  --space-6: 24px; --space-8: 32px; --space-12: 48px; --space-16: 64px;
+  --space-24: 96px;
+
+  /* Radius */
+  --radius-card: 12px;
+  --radius-btn: 8px;
+  --radius-chip: 6px;
+  --radius-node: 12px;
+
+  /* Shadow */
+  --shadow-card: 0 1px 2px rgba(22, 35, 44, 0.04);
+
+  /* Motion — the ONLY easing curve used across CamPath.
+     No bounce/elastic/spring curves anywhere in the product. */
+  --ease-calm: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-micro: 200ms;
+  --duration-section: 500ms;
+}
+
+/* ==========================================================
+   2. BASE LAYER
+   ========================================================== */
+@layer base {
+  body {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+  }
+
+  h1, h2 {
+    font-family: var(--font-display);
+    font-weight: 500;
+  }
+
+  /* Accessibility: focus is never removed, only styled.
+     Manifesto Check: a visually confident product must also be a
+     navigable one — this is non-negotiable across every component. */
+  :focus-visible {
+    outline: 2px solid var(--color-pine);
+    outline-offset: 2px;
+  }
+
+  /* Reduced motion: every animated property in this file collapses
+     to an instant state change. No exceptions, including the
+     readiness gauge and progress fills. */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* ==========================================================
+   3. COMPONENT LAYER
+   ========================================================== */
+@layer components {
+
+  /* ---------- Typography utilities ---------- */
+  .text-display-xl { font-family: var(--font-display); font-weight: 500; font-size: 56px; line-height: 64px; }
+  .text-display-l  { font-family: var(--font-display); font-weight: 500; font-size: 40px; line-height: 48px; }
+  .text-h1         { font-family: var(--font-display); font-weight: 500; font-size: 32px; line-height: 40px; }
+  .text-h2         { font-family: var(--font-display); font-weight: 500; font-size: 24px; line-height: 32px; }
+  .text-h3         { font-family: var(--font-body);    font-weight: 600; font-size: 20px; line-height: 28px; }
+  .text-body-l     { font-family: var(--font-body);    font-size: 18px; line-height: 28px; }
+  .text-small      { font-family: var(--font-body);    font-size: 14px; line-height: 20px; }
+  .text-caption    { font-family: var(--font-body);    font-size: 12px; line-height: 16px; letter-spacing: 0.02em; text-transform: uppercase; color: var(--color-ink-soft); }
+  /* Use for ANY number representing real measured data — never decorative. */
+  .text-data       { font-family: var(--font-mono);    font-weight: 600; color: var(--color-ink); }
+
+  /* ---------- Buttons ---------- */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    padding: 0 var(--space-6);
+    border-radius: var(--radius-btn);
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 14px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: background-color var(--duration-micro) var(--ease-calm),
+                border-color var(--duration-micro) var(--ease-calm);
+  }
+  .btn-lg { height: 48px; font-size: 15px; }
+  .btn-sm { height: 32px; font-size: 13px; padding: 0 var(--space-4); }
+
+  .btn-primary {
+    background: var(--color-pine);
+    color: var(--color-paper);
+  }
+  .btn-primary:hover { background: var(--color-pine-hover); }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--color-ink);
+    border-color: var(--color-ink);
+  }
+  .btn-secondary:hover { background: rgba(22, 35, 44, 0.05); }
+
+  .btn-tertiary {
+    background: transparent;
+    color: var(--color-pine);
+    padding: 0;
+    height: auto;
+  }
+  .btn-tertiary:hover { text-decoration: underline; }
+
+  /* ---------- Cards ---------- */
+  .card {
+    background: var(--color-paper-raised);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+    padding: var(--space-4);
+    transition: border-color var(--duration-micro) var(--ease-calm);
+    /* Intentionally no transform/scale/shadow-lift on hover — see
+       Manifesto Check in campath-design-system.md Section 4. */
+  }
+  .card:hover { border-color: var(--color-pine); }
+
+  .card-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-ink-soft);
+    margin-bottom: var(--space-1);
+  }
+  .card-value {
+    font-family: var(--font-mono);
+    font-size: 28px;
+    font-weight: 600;
+  }
+  .card-trend {
+    font-size: 13px;
+    color: var(--color-sage);
+    margin-top: var(--space-1);
+  }
+
+  /* ---------- Forms ---------- */
+  .field-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: var(--space-2);
+    color: var(--color-ink);
+  }
+  .field {
+    width: 100%;
+    height: 40px;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-btn);
+    padding: 0 var(--space-3);
+    font-family: var(--font-body);
+    font-size: 14px;
+    background: var(--color-paper-raised);
+    color: var(--color-ink);
+    transition: box-shadow var(--duration-micro) var(--ease-calm),
+                border-color var(--duration-micro) var(--ease-calm);
+  }
+  .field:focus {
+    outline: none; /* replaced by the box-shadow ring below, not removed entirely */
+    border-color: var(--color-pine);
+    box-shadow: 0 0 0 3px var(--color-pine-soft);
+  }
+  .field-error {
+    border-color: var(--color-brick);
+  }
+  .field-error-msg {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--color-brick);
+    margin-top: calc(var(--space-2) * -1);
+    margin-bottom: var(--space-4);
+  }
+
+  /* ---------- Progress: linear ---------- */
+  .progress-track {
+    background: var(--color-line);
+    height: 6px;
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    background: var(--color-pine);
+    height: 100%;
+    border-radius: 99px;
+    /* Fills only when the underlying value changes — never a looping
+       or ambient animation. See Animation Principles. */
+    transition: width var(--duration-section) var(--ease-calm);
+  }
+
+  /* ---------- Cambridge Readiness Gauge ----------
+     Semi-circular arc. State is ALWAYS paired with a text label in
+     markup (e.g. aria-label="Ready" or a visible <span>) — color
+     alone never carries the meaning. See Accessibility rules. */
+  .gauge-arc-track { stroke: var(--color-line); }
+  .gauge-arc-not-ready  { stroke: var(--color-sage); }
+  .gauge-arc-approaching { stroke: var(--color-pine); }
+  .gauge-arc-ready { stroke: var(--color-gold); }
+  .gauge-status-not-ready   { color: var(--color-sage); font-family: var(--font-mono); font-weight: 600; }
+  .gauge-status-approaching { color: var(--color-pine); font-family: var(--font-mono); font-weight: 600; }
+  .gauge-status-ready       { color: var(--color-gold); font-family: var(--font-mono); font-weight: 600; }
+
+  /* ---------- Mastery by Skill: horizontal bars (primary view) ----------
+     Accessible-first: pair with role="progressbar" + aria-valuenow in
+     markup. Radar chart is an optional secondary view — see
+     campath-design-system.md Section 7.3. */
+  .mastery-row {
+    display: grid;
+    grid-template-columns: 110px 1fr 40px;
+    align-items: center;
+    gap: var(--space-3);
+  }
+  .mastery-track {
+    background: var(--color-line);
+    height: 8px;
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .mastery-fill {
+    background: var(--color-pine);
+    height: 100%;
+    border-radius: 99px;
+    transition: width var(--duration-section) var(--ease-calm);
+  }
+
+  /* ---------- Study Path nodes ----------
+     Renamed from "Study Tree" — vertical, non-branching layout.
+     Rounded-square badges (never circular "game bubble" nodes).
+     No lock icon exists in this system: nothing is technically
+     locked, per the approved v2.0 architecture decision. */
+  .path-node {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    position: relative;
+    padding-bottom: var(--space-8);
+  }
+  .path-node:last-child { padding-bottom: 0; }
+  .path-node::before {
+    content: '';
+    position: absolute;
+    left: 19px;
+    top: 40px;
+    bottom: 0;
+    width: 1px;
+    background: rgba(22, 35, 44, 0.15);
+  }
+  .path-node:last-child::before { display: none; }
+
+  .node-badge {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-node);
+    flex-shrink: 0;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-paper-raised);
+    border: 1.5px solid var(--color-line);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-ink-soft);
+  }
+  /* "Recommended next" — outlined only, never locked/greyed-out */
+  .node-badge-recommended {
+    border: 2px solid var(--color-pine);
+    color: var(--color-pine);
+  }
+  .node-badge-progress {
+    background: var(--color-pine-soft);
+    border-color: var(--color-pine);
+    color: var(--color-pine);
+  }
+  .node-badge-done {
+    background: var(--color-pine);
+    border-color: var(--color-pine);
+    color: var(--color-paper);
+  }
+  /* Mastery adds a thin gold ring — never a star/trophy icon */
+  .node-badge-mastered {
+    box-shadow: 0 0 0 3px var(--color-gold-soft), 0 0 0 4.5px var(--color-gold);
+  }
+
+  /* ---------- Badge / Chip ----------
+     All four badge variants (CEFR, Stage, Skill, Status) reuse the same
+     shape and sizing — only the color pairing changes, and every
+     color pairing comes from the existing token set. No new hues are
+     introduced for badges. */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    height: 22px;
+    padding: 0 var(--space-2);
+    border-radius: var(--radius-chip);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+  .badge-neutral {
+    background: rgba(22, 35, 44, 0.06);
+    color: var(--color-ink-soft);
+  }
+  .badge-pine {
+    background: var(--color-pine-soft);
+    color: var(--color-pine);
+  }
+  .badge-gold {
+    background: var(--color-gold-soft);
+    color: var(--color-gold);
+  }
+  .badge-sage {
+    background: var(--color-sage-soft);
+    color: var(--color-sage);
+  }
+  .badge-brick {
+    background: var(--color-brick-soft);
+    color: var(--color-brick);
+  }
+}
