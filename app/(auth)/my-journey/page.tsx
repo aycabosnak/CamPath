@@ -113,10 +113,9 @@ export default function MyJourneyPage() {
       {summary.fromPlacementTest && (
         <Card className="mb-6">
           <p className="card-eyebrow mb-2">From Your Placement Test</p>
-          <div className="flex items-center gap-3 mb-2">
-            <StageBadge stage={summary.fromPlacementTest.stage} />
-            <CefrBadge level={summary.fromPlacementTest.cefr} />
-          </div>
+          <p className="text-small text-ink-soft mb-3">
+            Your Current Stage above reflects your Placement Test result.
+          </p>
           <Link href="/level-test" className="btn btn-tertiary btn-sm p-0">
             Retake Placement Test →
           </Link>

@@ -85,6 +85,10 @@ export default function WeakestSkillPracticePage() {
         <MasteryBarList items={summary.masteryBySkill} />
       </Card>
 
+      <p className="text-small text-ink-soft mb-4">
+        Starting practice logs a short session for that skill and updates your mastery right away.
+      </p>
+
       <div className="grid gap-4 mb-8" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))" }}>
         {weakestTwo.map((item) => (
           <Card key={item.skill}>

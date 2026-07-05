@@ -145,13 +145,11 @@ function QuestionInput({
       return (
         <div>
           {question.task_type === "audio_multiple_choice" && (
-            <div className="card mb-4 flex items-center gap-3">
-              <Button variant="secondary" size="sm" disabled aria-label="Play audio (placeholder)">
-                ▶ Play
-              </Button>
-              <span className="text-small text-ink-soft">
-                Audio placeholder — listening clips will play here.
-              </span>
+            <div className="card mb-4">
+              <p className="text-small text-ink-soft">
+                🎧 Listening question — audio playback isn't available in this preview.
+                Read the question and choose the most likely answer.
+              </p>
             </div>
           )}
           <div className="flex flex-col gap-2" role="radiogroup" aria-label={question.prompt}>
