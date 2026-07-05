@@ -22,6 +22,12 @@ export interface TestLevelMeta {
   slug: string;
   title: string;
   cefr: CefrLevel | null; // null for Grammar Shorts, which isn't level-specific
+  /** Short badge text — deliberately separate from `cefr` because the
+   *  strict CefrLevel union has no "B1+" value. Without this, B1
+   *  Intermediate and B1+ Upper Intermediate would render an
+   *  identical "B1" badge and be hard to tell apart at a glance
+   *  (found during the Tests Architecture QA pass). */
+  shortLabel: string;
   bridge: string | null;
   description: string;
 }
@@ -31,6 +37,7 @@ export const TEST_LEVELS: TestLevelMeta[] = [
     slug: "a1-elementary",
     title: "A1 Elementary",
     cefr: "A1",
+    shortLabel: "A1",
     bridge: "Maps to: Foundation",
     description: "The basics — everyday phrases, simple present tense, and core vocabulary.",
   },
@@ -38,6 +45,7 @@ export const TEST_LEVELS: TestLevelMeta[] = [
     slug: "a2-pre-intermediate",
     title: "A2 Pre-Intermediate",
     cefr: "A2",
+    shortLabel: "A2",
     bridge: "Maps to: Explorer",
     description: "Talking about the past, making comparisons, and describing daily routines.",
   },
@@ -45,6 +53,7 @@ export const TEST_LEVELS: TestLevelMeta[] = [
     slug: "b1-intermediate",
     title: "B1 Intermediate",
     cefr: "B1",
+    shortLabel: "B1",
     bridge: "Maps to: Communicator",
     description: "Expressing opinions, real future possibilities, and everyday narrative tenses.",
   },
@@ -52,6 +61,7 @@ export const TEST_LEVELS: TestLevelMeta[] = [
     slug: "b1-plus-upper-intermediate",
     title: "B1+ Upper Intermediate",
     cefr: "B1",
+    shortLabel: "B1+",
     bridge: "Bridges toward: Independent",
     description: "Consolidating B1 grammar while building toward more complex, abstract language.",
   },
@@ -59,6 +69,7 @@ export const TEST_LEVELS: TestLevelMeta[] = [
     slug: "b2-pre-advanced",
     title: "B2 Pre-Advanced",
     cefr: "B2",
+    shortLabel: "B2",
     bridge: "Maps to: Independent",
     description: "Passive voice, reported speech, and a wider range of linking devices.",
   },
@@ -66,6 +77,7 @@ export const TEST_LEVELS: TestLevelMeta[] = [
     slug: "c1-advanced",
     title: "C1 Advanced",
     cefr: "C1",
+    shortLabel: "C1",
     bridge: "Maps to: Advanced",
     description: "Nuanced argumentation, idiomatic language, and academic register.",
   },
@@ -73,6 +85,7 @@ export const TEST_LEVELS: TestLevelMeta[] = [
     slug: "grammar-shorts",
     title: "Grammar Shorts",
     cefr: null,
+    shortLabel: "GS",
     bridge: null,
     description: "Quick, focused grammar-only drills — for any level, whenever you need a refresher.",
   },

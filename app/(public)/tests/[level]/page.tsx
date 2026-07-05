@@ -14,7 +14,6 @@ import type { TestLevelMeta } from "@/constants/testLevels";
 import type { TestSummary } from "@/lib/mock-data/tests";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { CefrBadge } from "@/components/ui/Badge";
 
 export default function TestLevelPage() {
   const params = useParams<{ level: string }>();
@@ -51,7 +50,7 @@ export default function TestLevelPage() {
         <Link href="/tests" className="text-ink-soft">Tests</Link> / {meta.title}
       </p>
       <div className="flex items-center gap-2 mb-4">
-        {meta.cefr && <CefrBadge level={meta.cefr} />}
+        <span className="badge badge-neutral">{meta.shortLabel}</span>
       </div>
       <h1 className="text-display-l mb-4">{meta.title}</h1>
       <p className="text-body-l text-ink-soft mb-2">{meta.description}</p>
