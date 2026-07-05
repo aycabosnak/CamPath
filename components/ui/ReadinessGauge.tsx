@@ -40,7 +40,7 @@ const ARC_LENGTH = 188.5;
  * ReadinessGauge
  *
  * Product Reasoning: deliberately a SINGLE arc, unlike multi-ring
- * fitness-app gauges — Cambridge Readiness answers one honest
+ * fitness-app gauges — Exam Readiness answers one honest
  * question ("how ready are you for this exam?"), not a multi-goal
  * competition. See Design System Section 7.2.
  *
@@ -62,7 +62,7 @@ export function ReadinessGauge({ status, examLabel, className }: ReadinessGaugeP
       className={cn("text-center", className)}
       style={{ width: 150 }}
       role="img"
-      aria-label={`Cambridge Readiness for ${examLabel}: ${meta.text}`}
+      aria-label={`Exam Readiness for ${examLabel}: ${meta.text}`}
     >
       <svg viewBox="0 0 150 90" width={150} height={90} aria-hidden="true">
         <path

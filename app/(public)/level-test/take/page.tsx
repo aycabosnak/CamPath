@@ -26,6 +26,7 @@ import { ProgressBar } from "@/components/ui/ProgressBar";
 import { Button } from "@/components/ui/Button";
 import { TextField } from "@/components/ui/Form";
 import { cn } from "@/components/lib/cn";
+import { trackEvent } from "@/services/analyticsService";
 
 const RESULTS_STORAGE_KEY = "campath_level_test_result";
 
@@ -37,6 +38,7 @@ export default function LevelTestTakePage() {
 
   useEffect(() => {
     getPlacementQuestions().then(setQuestions);
+    trackEvent("level_test_started");
   }, []);
 
   if (!questions) {
@@ -66,6 +68,7 @@ export default function LevelTestTakePage() {
 
   function finishTest() {
     const result = computeResults(questions!, answers);
+    trackEvent("level_test_completed", { stage: result.stage, cefr: result.cefr });
     // Stand-in for a real backend session: the future LevelTestSession
     // (Database & API Design doc) will hold this server-side, keyed by
     // session_id/guest_token, and /level-test/results will fetch it via

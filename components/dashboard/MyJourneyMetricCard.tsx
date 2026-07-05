@@ -23,7 +23,7 @@ export type MyJourneyMetric =
   | { type: "overallProgress"; percentage: number; unitLabel: string }
   | { type: "studyTime"; hours: number; minutes: number; trendLabel?: string }
   | { type: "studyConsistency"; daysActive: number; daysInPeriod: number }
-  | { type: "cambridgeReadiness"; status: ReadinessStatus; examLabel: string }
+  | { type: "examReadiness"; status: ReadinessStatus; examLabel: string }
   | { type: "completedUnits"; completed: number; total: number };
 
 export interface MyJourneyMetricCardProps {
@@ -75,10 +75,10 @@ export function MyJourneyMetricCard({ metric }: MyJourneyMetricCardProps) {
         </Card>
       );
 
-    case "cambridgeReadiness":
+    case "examReadiness":
       return (
         <Card>
-          <p className="card-eyebrow mb-2">Cambridge Readiness</p>
+          <p className="card-eyebrow mb-2">Exam Readiness</p>
           <ReadinessGauge status={metric.status} examLabel={metric.examLabel} />
         </Card>
       );

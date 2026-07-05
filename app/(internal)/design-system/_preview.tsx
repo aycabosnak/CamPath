@@ -67,7 +67,7 @@ const JOURNEY_METRICS: MyJourneyMetric[] = [
   { type: "overallProgress", percentage: 64, unitLabel: "Communicator · B1" },
   { type: "studyTime", hours: 3, minutes: 40, trendLabel: "↑ 45m vs last week" },
   { type: "studyConsistency", daysActive: 18, daysInPeriod: 30 },
-  { type: "cambridgeReadiness", status: "approaching", examLabel: "B1 Preliminary" },
+  { type: "examReadiness", status: "approaching", examLabel: "B1 Preliminary" },
   { type: "completedUnits", completed: 4, total: 9 },
 ];
 
@@ -147,7 +147,7 @@ export default function DesignSystemPreview() {
         <p className="text-small font-semibold mb-3">Mastery by Skill (bar-first view)</p>
         <MasteryBarList items={MASTERY_DATA} className="max-w-md mb-10" />
 
-        <p className="text-small font-semibold mb-3">Cambridge Readiness Gauge — all three states</p>
+        <p className="text-small font-semibold mb-3">Exam Readiness Gauge — all three states</p>
         <div className="flex flex-wrap gap-12">
           <ReadinessGauge status="notReady" examLabel="B2 First" />
           <ReadinessGauge status="approaching" examLabel="B2 First" />
@@ -173,7 +173,7 @@ export default function DesignSystemPreview() {
       {/* 5. MY JOURNEY METRIC CARDS -------------------------------------- */}
       <Section
         title="My Journey Metric Cards"
-        note="Six distinct data shapes, not one generic stat card — check that Cambridge Readiness never renders as a raw percentage here."
+        note="Six distinct data shapes, not one generic stat card — check that Exam Readiness never renders as a raw percentage here."
       >
         <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>
           {JOURNEY_METRICS.map((metric, i) => (

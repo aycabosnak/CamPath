@@ -22,6 +22,7 @@ import { ReadinessGauge } from "@/components/ui/ReadinessGauge";
 import { StageBadge, CefrBadge } from "@/components/ui/Badge";
 import type { PlacementResult } from "@/services/placementTestService";
 import type { Skill } from "@/components/types";
+import { trackEvent } from "@/services/analyticsService";
 
 const RESULTS_STORAGE_KEY = "campath_level_test_result";
 
@@ -40,7 +41,11 @@ export default function LevelTestResultsPage() {
 
   useEffect(() => {
     const raw = localStorage.getItem(RESULTS_STORAGE_KEY);
-    setResult(raw ? (JSON.parse(raw) as PlacementResult) : null);
+    const parsed = raw ? (JSON.parse(raw) as PlacementResult) : null;
+    setResult(parsed);
+    if (parsed) {
+      trackEvent("results_viewed", { stage: parsed.stage, cefr: parsed.cefr });
+    }
   }, []);
 
   // Loading state (brief — reading localStorage is synchronous, but
@@ -92,7 +97,7 @@ export default function LevelTestResultsPage() {
 
       {result.readiness && (
         <Card className="mb-6">
-          <p className="text-h3 mb-4">Cambridge Readiness</p>
+          <p className="text-h3 mb-4">Exam Readiness</p>
           <ReadinessGauge status={result.readiness.status} examLabel={result.readiness.examLabel} />
         </Card>
       )}
