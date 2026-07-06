@@ -23,9 +23,7 @@ import { Button } from "@/components/ui/Button";
 import { cn } from "@/components/lib/cn";
 import { trackEvent } from "@/services/analyticsService";
 
-function formatCompletedDate(iso: string): string {
-  return new Date(iso).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
-}
+import { formatDate } from "@/lib/formatDate";
 
 export function UnitLessonView({ unitSlug }: { unitSlug: string }) {
   const [content, setContent] = useState<UnitLessonContent | null | undefined>(undefined);
@@ -144,7 +142,7 @@ export function UnitLessonView({ unitSlug }: { unitSlug: string }) {
           <div className="flex flex-wrap gap-x-8 gap-y-3">
             <div>
               <p className="card-eyebrow mb-1">Completed</p>
-              <p className="text-body">{formatCompletedDate(existingRecord.completedAt)}</p>
+              <p className="text-body">{formatDate(existingRecord.completedAt)}</p>
             </div>
             <div>
               <p className="card-eyebrow mb-1">Guided Question</p>

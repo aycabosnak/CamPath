@@ -41,6 +41,11 @@
 - services/readinessCalculator.ts — unused, built ahead of Mock Exams.
 - RESULTS_STORAGE_KEY duplicated (identical value) in two service files instead of one shared constant.
 - Two parallel progress data namespaces (completions vs. curriculumCompletions) inside one ProgressState — resolved at the dashboard level (My Journey reads both correctly) but not at the data level (still two systems, not one).
+- StudyPath's Guided/Free mode toggle (`onModeChange`) is exercised only in the internal Design System preview — no real product screen currently offers a mode switch. Documented capability, not currently used; not removed.
+
+**Resolved during the Engineering Cleanup Sprint (2026-07):**
+- ~~`/my-journey/study-path/[level]` scaffold stub~~ — deleted. Unreachable, and its purpose (a full Study Path view) is now served by `/tests/[level]`'s StudyPath rendering; unlike other scaffold pages, this wasn't a future feature, it was a superseded one.
+- ~~Date formatting duplicated identically in three places~~ — extracted to `lib/formatDate.ts`.
 
 ## Deferred Features
 
