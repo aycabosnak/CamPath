@@ -12,6 +12,25 @@ This applies to Mixed Tests and Progress Checks (Placement Test is a deliberate 
 
 ---
 
+## The Reading Passage Rule
+
+> **Assessment passages may evaluate the same reading skill and task type as their lesson, but must never reuse the lesson passage itself.**
+
+Discovered during the B1 alignment audit: B1's Mixed Test reused its Reading lesson's exact passage verbatim (the library renovation notice). This is the *opposite* failure mode from the Governing Rule above — instead of testing untaught content, it let a learner answer correctly from memorized recall of the lesson text rather than by applying the reading skill to something new. A follow-up audit of every Reading assessment in the project found the same problem in a subtler form in A1 as well: the Mixed Test's Reading item shared its lesson's exact context and sentence pattern (a museum entrance-fee notice, "Children under N: free") even though the specific numbers differed — close enough to hand the learner a memorized shortcut instead of requiring genuine comprehension of new text.
+
+**What counts as a violation:** reusing the lesson's passage verbatim, reusing its specific context/scenario, reusing its specific wording or sentence structure, or reusing distinctive details (names, numbers, locations) closely enough that a learner could answer from recall rather than comprehension.
+
+**What is explicitly fine:** reusing the same **task type** (e.g., "locate one factual detail in a short notice," or "sequence narrative events") with a genuinely different scenario, different vocabulary, and different specific details. A2's Mixed Test and Progress Check, for example, both use short first-person-morning-routine narratives (matching the taught narrative-sequencing skill) but with different characters (David, Elena) and different specific events — this is correct reuse of a *skill and format*, not of a *text*.
+
+**Practical authoring check, before any Reading assessment item is considered done:**
+1. Does this item test the same reading sub-skill as the level's Reading lesson? (It should — see the Governing Rule above.)
+2. Could a learner answer this correctly purely by remembering the lesson's passage, without reading this item's text at all?
+3. If the answer to (2) is yes, the passage must be rewritten with a new scenario, new details, and new wording — same skill, same difficulty, same task type, different text.
+
+This rule now applies to every future level (A2's remaining gaps if any, B1+, B2, C1) the same way the Governing Rule does.
+
+---
+
 ## Placement Test
 
 **Purpose:** Find a first-time learner's starting CEFR level and CamPath Stage before they've studied anything.
