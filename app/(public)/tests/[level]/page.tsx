@@ -3,64 +3,50 @@
 /**
  * app/(public)/tests/[level]/page.tsx
  *
- * Level detail — now the full curriculum home for a level, not just
- * a test list. Shows the approved learning sequence: Grammar ->
- * Vocabulary -> Reading -> Writing -> Mixed Tests -> Progress Check,
- * plus reserved (Coming Soon) Listening and Speaking sections so the
- * architecture is future-proof without pretending content exists yet.
+ * UX review follow-up (all High-severity fixes applied):
+ * - The Stage bridge line ("Maps to: Foundation") only renders once
+ *   the learner has an actual Placement Test result — otherwise it's
+ *   unexplained internal jargon on a first-time visitor's first
+ *   content page.
+ * - Lessons + Mixed Tests + Progress Check now render as ONE
+ *   sequence through the existing StudyPath/StudyPathNode components
+ *   (reused, not reinvented) — the current step visually stands out,
+ *   completed steps are quiet, nothing is locked.
  *
- * This is the reference template: A2 through C1 render through this
- * exact same page once their content is added to
- * lib/mock-data/curriculumLessons.ts / tests.ts / progressChecks.ts —
- * nothing here is A1-specific except the data it happens to find.
+ * This remains the reference template: A2 through C1 render through
+ * this exact same page once their content exists.
  */
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { getTestLevelDetail } from "@/services/testsService";
-import { getLessonsGroupedBySkill, getProgressCheck } from "@/services/curriculumService";
-import { isCurriculumLessonCompleted, getProgressCheckRecord } from "@/services/progressService";
+import { getTestLevelDetail, getRecommendedLevelSlug } from "@/services/testsService";
+import { getLevelSequence, type LevelSequenceNode } from "@/services/curriculumService";
 import type { TestLevelMeta } from "@/constants/testLevels";
-import type { TestSummary } from "@/lib/mock-data/tests";
-import type { CurriculumLesson } from "@/lib/mock-data/curriculumLessons";
-import type { ProgressCheckContent } from "@/lib/mock-data/progressChecks";
-import type { Skill } from "@/components/types";
-import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { SkillBadge } from "@/components/ui/Badge";
-
-const SKILL_LABELS: Record<Skill, string> = {
-  grammar: "Grammar",
-  vocabulary: "Vocabulary",
-  listening: "Listening",
-  reading: "Reading",
-  useOfEnglish: "Use of English",
-  writing: "Writing",
-};
+import { StudyPath } from "@/components/study-path/StudyPath";
+import type { StudyPathNodeData } from "@/components/study-path/StudyPath";
 
 interface LevelData {
   meta: TestLevelMeta;
-  tests: TestSummary[];
-  lessonGroups: Array<{ skill: Skill; lessons: CurriculumLesson[] }>;
-  progressCheck: ProgressCheckContent | null;
+  sequence: LevelSequenceNode[];
+  hasPlacementResult: boolean;
 }
 
 export default function TestLevelPage() {
   const params = useParams<{ level: string }>();
+  const router = useRouter();
   const [data, setData] = useState<LevelData | null | undefined>(undefined);
 
   useEffect(() => {
-    Promise.all([
-      getTestLevelDetail(params.level),
-      getLessonsGroupedBySkill(params.level),
-      getProgressCheck(params.level),
-    ]).then(([detail, lessonGroups, progressCheck]) => {
-      if (!detail) {
-        setData(null);
-        return;
+    Promise.all([getTestLevelDetail(params.level), getLevelSequence(params.level)]).then(
+      ([detail, sequence]) => {
+        if (!detail) {
+          setData(null);
+          return;
+        }
+        setData({ meta: detail.meta, sequence, hasPlacementResult: getRecommendedLevelSlug() !== null });
       }
-      setData({ meta: detail.meta, tests: detail.tests, lessonGroups, progressCheck });
-    });
+    );
   }, [params.level]);
 
   if (data === undefined) {
@@ -82,9 +68,15 @@ export default function TestLevelPage() {
     );
   }
 
-  const { meta, tests, lessonGroups, progressCheck } = data;
-  const progressCheckDone = getProgressCheckRecord(meta.slug);
-  const checkLabel = meta.isBridge ? "Bridge Check" : "Progress Check";
+  const { meta, sequence, hasPlacementResult } = data;
+
+  const hrefById = new Map(sequence.map((n) => [n.id, n.href]));
+  const nodes: StudyPathNodeData[] = sequence.map(({ href, ...node }) => node);
+
+  function goToNode(nodeId: string) {
+    const href = hrefById.get(nodeId);
+    if (href) router.push(href);
+  }
 
   return (
     <main className="max-w-2xl mx-auto px-6 py-16">
@@ -97,33 +89,24 @@ export default function TestLevelPage() {
       </div>
       <h1 className="text-display-l mb-4">{meta.pageTitle}</h1>
       <p className="text-body-l text-ink-soft mb-2">{meta.description}</p>
-      {meta.bridge && <p className="text-small text-ink-soft mb-10">{meta.bridge}</p>}
+      {/* Only shown once the learner has real Stage context — see
+          file header. Prevents unexplained jargon on a first visit. */}
+      {meta.bridge && hasPlacementResult && (
+        <p className="text-small text-ink-soft mb-10">{meta.bridge}</p>
+      )}
+      {!(meta.bridge && hasPlacementResult) && <div className="mb-10" />}
 
-      {/* --- Lessons, grouped by skill, in the approved sequence order --- */}
-      {lessonGroups.map((group) => (
-        <div key={group.skill} className="mb-8">
-          <div className="mb-3">
-            <SkillBadge skill={group.skill} />
-          </div>
-          <div className="flex flex-col gap-2">
-            {group.lessons.map((lesson) => {
-              const done = isCurriculumLessonCompleted(lesson.id);
-              return (
-                <Link key={lesson.id} href={`/tests/${meta.slug}/lessons/${lesson.id}`}>
-                  <div className="card flex items-center justify-between" style={{ cursor: "pointer" }}>
-                    <p className="text-body font-semibold">{lesson.title}</p>
-                    {done && <span className="text-small" style={{ color: "var(--color-pine)" }}>✓ Completed</span>}
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
+      {/* --- The full learning sequence: Lessons -> Mixed Tests -> Progress Check --- */}
+      {nodes.length > 0 && (
+        <div className="mb-10">
+          <p className="text-h3 mb-4">{meta.isBridge ? "Bridge Path" : "Learning Path"}</p>
+          <StudyPath nodes={nodes} mode="guided" onSelectNode={goToNode} />
         </div>
-      ))}
+      )}
 
       {/* --- Reserved sections: no content yet, architecture already exists --- */}
       {(["listening", "speaking"] as const).map((skill) => (
-        <div key={skill} className="mb-8">
+        <div key={skill} className="mb-6">
           <p className="card-eyebrow mb-3">{skill === "listening" ? "Listening" : "Speaking"}</p>
           <div className="card" style={{ opacity: 0.6 }}>
             <p className="text-small text-ink-soft">Coming Soon</p>
@@ -131,50 +114,6 @@ export default function TestLevelPage() {
         </div>
       ))}
 
-      {/* --- Mixed Tests --- */}
-      <div className="mb-8">
-        <p className="card-eyebrow mb-3">Mixed Tests</p>
-        <div className="flex flex-col gap-2">
-          {tests.map((test) =>
-            test.status === "available" ? (
-              <Link key={test.id} href={`/tests/${meta.slug}/${test.id}`}>
-                <div className="card" style={{ cursor: "pointer" }}>
-                  <p className="text-h3 mb-1">{test.title}</p>
-                  <p className="text-small text-ink-soft">Grammar · Vocabulary · Reading</p>
-                </div>
-              </Link>
-            ) : (
-              <div key={test.id} className="card" style={{ opacity: 0.6 }}>
-                <p className="text-h3 mb-1">{test.title}</p>
-                <p className="text-small text-ink-soft">Coming Soon</p>
-              </div>
-            )
-          )}
-        </div>
-      </div>
-
-      {/* --- Progress Check / Bridge Check --- */}
-      <div className="mb-8">
-        <p className="card-eyebrow mb-3">{checkLabel}</p>
-        {progressCheck ? (
-          <Link href={`/tests/${meta.slug}/progress-check`}>
-            <div className="card" style={{ cursor: "pointer" }}>
-              <p className="text-h3 mb-1">{progressCheck.title}</p>
-              <p className="text-small text-ink-soft">
-                {progressCheckDone
-                  ? `✓ Completed — ${progressCheckDone.correctCount}/${progressCheckDone.totalCount}`
-                  : "A short, honest diagnostic — not a pass/fail gate."}
-              </p>
-            </div>
-          </Link>
-        ) : (
-          <div className="card" style={{ opacity: 0.6 }}>
-            <p className="text-small text-ink-soft">Coming Soon</p>
-          </div>
-        )}
-      </div>
-
-      {/* --- Mock Exam --- */}
       <div>
         <p className="card-eyebrow mb-3">Mock Exam</p>
         <div className="card" style={{ opacity: 0.6 }}>

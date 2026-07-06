@@ -231,6 +231,20 @@ const A1_TEST_1_SECTIONS: TestSection[] = [
       },
     ],
   },
+  {
+    skill: "writing",
+    questions: [
+      {
+        id: "a1t1_writing_1",
+        skill: "writing",
+        task_type: "multiple_choice",
+        cefr_weight: "A1",
+        prompt: "Which is written correctly on a form?",
+        options: ["name: anna lee", "Name: Anna Lee", "NAME anna LEE", "Name; Anna, Lee"],
+        correct_answer: "Name: Anna Lee",
+      },
+    ],
+  },
 ];
 
 const TESTS_BY_LEVEL: Record<string, TestContent[]> = {

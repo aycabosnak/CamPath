@@ -40,3 +40,108 @@ export async function getLessonsGroupedBySkill(
     lessons: lessons.filter((l) => l.skill === skill),
   })).filter((group) => group.lessons.length > 0);
 }
+
+export interface LevelSequenceNode {
+  id: string;
+  order: number;
+  state: "completed" | "recommended" | "notStarted";
+  title: string;
+  subtitle: string;
+  href: string;
+}
+
+/**
+ * UX review follow-up: builds ONE sequential list spanning lessons,
+ * Mixed Tests, and the Progress Check — rendered through the same
+ * StudyPath/StudyPathNode components already proven on My Journey.
+ * This directly reuses an existing, already-solved pattern (current
+ * item stands out, completed items are quiet, nothing is locked)
+ * instead of inventing a new visual language for "what's next".
+ */
+export async function getLevelSequence(levelSlug: string): Promise<LevelSequenceNode[]> {
+  const { isCurriculumLessonCompleted, getProgressCheckRecord } = await import("@/services/progressService");
+  const { getTestsForLevel } = await import("@/lib/mock-data/tests");
+
+  const lessons = await getLessonsForLevel(levelSlug);
+  const orderedLessons = SEQUENCE_ORDER.flatMap((skill) => lessons.filter((l) => l.skill === skill));
+  const tests = getTestsForLevel(levelSlug).filter((t) => t.status === "available");
+  const progressCheck = await getProgressCheckData(levelSlug);
+
+  let order = 0;
+  let recommendedAssigned = false;
+  const nodes: LevelSequenceNode[] = [];
+
+  for (const lesson of orderedLessons) {
+    order += 1;
+    const completed = isCurriculumLessonCompleted(lesson.id);
+    nodes.push({
+      id: lesson.id,
+      order,
+      state: completed ? "completed" : !recommendedAssigned ? "recommended" : "notStarted",
+      title: lesson.title,
+      subtitle: completed ? "✓ Completed" : !recommendedAssigned ? "▶ Continue" : "Not Started",
+      href: `/tests/${levelSlug}/lessons/${lesson.id}`,
+    });
+    if (!completed) recommendedAssigned = true;
+  }
+
+  for (const test of tests) {
+    order += 1;
+    // Mixed Tests are rehearsal — always shown as available, never
+    // marked "completed" from a single attempt (they're retakeable).
+    nodes.push({
+      id: test.id,
+      order,
+      state: !recommendedAssigned ? "recommended" : "notStarted",
+      title: test.title,
+      subtitle: !recommendedAssigned ? "▶ Continue" : "Not Started",
+      href: `/tests/${levelSlug}/${test.id}`,
+    });
+    recommendedAssigned = true;
+  }
+
+  if (progressCheck) {
+    order += 1;
+    const done = getProgressCheckRecord(levelSlug);
+    nodes.push({
+      id: "progress-check",
+      order,
+      state: done ? "completed" : !recommendedAssigned ? "recommended" : "notStarted",
+      title: progressCheck.title,
+      subtitle: done ? "✓ Completed" : !recommendedAssigned ? "▶ Continue" : "Not Started",
+      href: `/tests/${levelSlug}/progress-check`,
+    });
+  }
+
+  return nodes;
+}
+  label: string;
+  href: string;
+}
+
+/**
+ * UX review follow-up: resolves what "next" means after finishing a
+ * lesson, so the completion screen can offer a contextual action
+ * instead of a generic "Back to Level". Falls back to the level's
+ * first available Mixed Test once the last lesson in sequence is
+ * done — the learner never has to re-scan the level page to find
+ * their next step manually.
+ */
+export async function getNextStepAfterLesson(levelSlug: string, lessonId: string): Promise<NextStep> {
+  const lessons = await getLessonsForLevel(levelSlug);
+  const orderedBySkill = SEQUENCE_ORDER.flatMap((skill) => lessons.filter((l) => l.skill === skill));
+  const currentIndex = orderedBySkill.findIndex((l) => l.id === lessonId);
+  const next = currentIndex >= 0 ? orderedBySkill[currentIndex + 1] : undefined;
+
+  if (next) {
+    return { label: `Continue to ${next.title}`, href: `/tests/${levelSlug}/lessons/${next.id}` };
+  }
+
+  const { getTestsForLevel } = await import("@/lib/mock-data/tests");
+  const firstAvailableTest = getTestsForLevel(levelSlug).find((t) => t.status === "available");
+  if (firstAvailableTest) {
+    return { label: "Continue to Mixed Test", href: `/tests/${levelSlug}/${firstAvailableTest.id}` };
+  }
+
+  return { label: "Back to Level", href: `/tests/${levelSlug}` };
+}

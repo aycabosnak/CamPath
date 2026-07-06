@@ -3,23 +3,22 @@
 /**
  * components/curriculum/CurriculumLessonView.tsx
  *
- * The Level Curriculum's lesson runner — the reference template this
- * A1 sprint exists to validate. Every future level (A2 through C1)
- * reuses this exact component; only lib/mock-data/curriculumLessons.ts
- * grows.
+ * UX review follow-up:
+ * - Steps through 3 guided questions per lesson (was 1), same
+ *   question-by-question pattern already proven on the Placement
+ *   Test and Mixed Tests — no new interaction pattern introduced.
+ * - Completion screen now offers a contextual next step (next lesson,
+ *   or the Mixed Test if this was the last lesson) instead of a
+ *   generic "Back to Level", via services/curriculumService's
+ *   getNextStepAfterLesson.
  *
- * Deliberately parallels app/(public)/learn/_shared/UnitLessonView.tsx
- * in structure (explanation/intro -> question -> check -> complete)
- * because that interaction pattern is already proven — but it is a
- * SEPARATE component because it writes to a separate progress
- * namespace (completeCurriculumLesson, not completeLesson) and reads
- * a different content shape (optional `passage` for Reading). Merging
- * the two would risk cross-contaminating the Study Path's completion
- * data, which the current sprint is explicitly not allowed to touch.
+ * Still a separate component from app/(public)/learn/_shared/
+ * UnitLessonView.tsx — different progress namespace, different
+ * content shape (optional `passage`, multi-question).
  */
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { getLesson } from "@/services/curriculumService";
+import { getLesson, getNextStepAfterLesson, type NextStep } from "@/services/curriculumService";
 import type { CurriculumLesson } from "@/lib/mock-data/curriculumLessons";
 import {
   isCurriculumLessonCompleted,
@@ -28,6 +27,7 @@ import {
 } from "@/services/progressService";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { ProgressBar } from "@/components/ui/ProgressBar";
 import { cn } from "@/components/lib/cn";
 import { trackEvent } from "@/services/analyticsService";
 
@@ -37,10 +37,13 @@ function formatDate(iso: string): string {
 
 export function CurriculumLessonView({ levelSlug, lessonId }: { levelSlug: string; lessonId: string }) {
   const [lesson, setLesson] = useState<CurriculumLesson | null | undefined>(undefined);
+  const [qIndex, setQIndex] = useState(0);
   const [selected, setSelected] = useState<string | null>(null);
   const [checked, setChecked] = useState(false);
+  const [allCorrect, setAllCorrect] = useState(true);
   const [justCompleted, setJustCompleted] = useState(false);
   const [existingRecord, setExistingRecord] = useState<ReturnType<typeof getCurriculumLessonCompletion>>(null);
+  const [nextStep, setNextStep] = useState<NextStep | null>(null);
   const startTimeRef = useRef<number>(Date.now());
 
   useEffect(() => {
@@ -50,6 +53,7 @@ export function CurriculumLessonView({ levelSlug, lessonId }: { levelSlug: strin
       if (data) {
         if (isCurriculumLessonCompleted(lessonId)) {
           setExistingRecord(getCurriculumLessonCompletion(lessonId));
+          getNextStepAfterLesson(levelSlug, lessonId).then(setNextStep);
         } else {
           trackEvent("lesson_started", { unit: lessonId, title: data.title });
         }
@@ -73,28 +77,49 @@ export function CurriculumLessonView({ levelSlug, lessonId }: { levelSlug: strin
     );
   }
 
-  const isCorrect = selected === lesson.question.correctAnswer;
+  const totalQuestions = lesson.questions.length;
+  const question = lesson.questions[qIndex];
+  const isCorrect = selected === question.correctAnswer;
 
-  function handleComplete() {
+  function checkAnswer() {
+    if (!isCorrect) setAllCorrect(false);
+    setChecked(true);
+  }
+
+  async function handleComplete() {
     const minutesSpent = Math.max(1, Math.round((Date.now() - startTimeRef.current) / 60000));
-    const result = completeCurriculumLesson(lessonId, minutesSpent, isCorrect);
+    const result = completeCurriculumLesson(lessonId, minutesSpent, allCorrect);
     trackEvent("lesson_completed", {
       unit: lessonId,
       title: lesson!.title,
-      gotItRightFirstTry: isCorrect,
+      allCorrect,
       alreadyCompleted: result.alreadyCompleted,
     });
     setExistingRecord(result.record);
+    setNextStep(await getNextStepAfterLesson(levelSlug, lessonId));
     setJustCompleted(true);
   }
 
-  const backLink = `/tests/${levelSlug}`;
+  function goNextQuestion() {
+    if (qIndex < totalQuestions - 1) {
+      setQIndex((i) => i + 1);
+      setSelected(null);
+      setChecked(false);
+    } else {
+      handleComplete();
+    }
+  }
 
+  // --- Completed (this visit or a return visit) ---
   if (existingRecord) {
     return (
       <main className="max-w-2xl mx-auto px-6 py-16">
         {justCompleted && (
-          <div className="card mb-8" style={{ borderColor: "var(--color-pine)", background: "var(--color-pine-soft)" }} role="status">
+          <div
+            className="card mb-8"
+            style={{ borderColor: "var(--color-pine)", background: "var(--color-pine-soft)" }}
+            role="status"
+          >
             <p className="text-h3 mb-1">✓ Lesson completed successfully!</p>
           </div>
         )}
@@ -107,15 +132,17 @@ export function CurriculumLessonView({ levelSlug, lessonId }: { levelSlug: strin
               <p className="text-body">{formatDate(existingRecord.completedAt)}</p>
             </div>
             <div>
-              <p className="card-eyebrow mb-1">Guided Question</p>
-              <p className="text-body">{existingRecord.correctFirstTry ? "✅ Correct" : "🔍 Reviewed"}</p>
+              <p className="card-eyebrow mb-1">Guided Practice</p>
+              <p className="text-body">{existingRecord.correctFirstTry ? "✅ All correct" : "🔍 Reviewed"}</p>
             </div>
           </div>
         </Card>
         <p className="text-body text-ink-soft mb-8">{lesson.completionMessage}</p>
-        <Link href={backLink}>
-          <Button variant="primary" size="lg">Back to Level</Button>
-        </Link>
+        {nextStep && (
+          <Link href={nextStep.href}>
+            <Button variant="primary" size="lg">{nextStep.label}</Button>
+          </Link>
+        )}
       </main>
     );
   }
@@ -150,39 +177,46 @@ export function CurriculumLessonView({ levelSlug, lessonId }: { levelSlug: strin
         </Card>
       )}
 
-      <p className="text-h3 mb-4">{lesson.question.prompt}</p>
-      <div className="flex flex-col gap-2 mb-6" role="radiogroup" aria-label={lesson.question.prompt}>
-        {lesson.question.options.map((option) => {
-          const isSelected = selected === option;
-          return (
-            <button
-              key={option}
-              type="button"
-              role="radio"
-              aria-checked={isSelected}
-              disabled={checked}
-              onClick={() => setSelected(option)}
-              className={cn("card text-left w-full cursor-pointer", isSelected && "border-pine bg-pine-soft")}
-            >
-              {option}
-            </button>
-          );
-        })}
+      <ProgressBar
+        value={Math.round((qIndex / totalQuestions) * 100)}
+        label={`Guided Practice — Question ${qIndex + 1} of ${totalQuestions}`}
+      />
+
+      <div className="mt-6 mb-6">
+        <p className="text-h3 mb-4">{question.prompt}</p>
+        <div className="flex flex-col gap-2" role="radiogroup" aria-label={question.prompt}>
+          {question.options.map((option) => {
+            const isSelected = selected === option;
+            return (
+              <button
+                key={option}
+                type="button"
+                role="radio"
+                aria-checked={isSelected}
+                disabled={checked}
+                onClick={() => setSelected(option)}
+                className={cn("card text-left w-full cursor-pointer", isSelected && "border-pine bg-pine-soft")}
+              >
+                {option}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {checked && (
         <Card className="mb-6">
-          <p className="text-body">{isCorrect ? lesson.question.successFeedback : lesson.question.reviewFeedback}</p>
+          <p className="text-body">{isCorrect ? question.successFeedback : question.reviewFeedback}</p>
         </Card>
       )}
 
       {!checked ? (
-        <Button variant="primary" size="lg" disabled={!selected} onClick={() => setChecked(true)}>
+        <Button variant="primary" size="lg" disabled={!selected} onClick={checkAnswer}>
           Check Answer
         </Button>
       ) : (
-        <Button variant="primary" size="lg" onClick={handleComplete}>
-          Complete Lesson
+        <Button variant="primary" size="lg" onClick={goNextQuestion}>
+          {qIndex < totalQuestions - 1 ? "Next Question" : "Complete Lesson"}
         </Button>
       )}
     </main>

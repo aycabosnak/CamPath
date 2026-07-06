@@ -185,9 +185,26 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* --- Featured Lessons (only real lessons) --- */}
+      {/* --- Start Your Learning Journey (the real onboarding path) --- */}
+      <section className="max-w-2xl mx-auto px-6 py-16 text-center">
+        <p className="card-eyebrow mb-2">Start Your Learning Journey</p>
+        <p className="text-h2 mb-4">Pick your level and follow a complete, structured path.</p>
+        <p className="text-body text-ink-soft mb-8">
+          Every level combines Grammar, Vocabulary, Reading, and Writing
+          lessons with mixed tests and an honest Progress Check — in
+          the right order, from the start.
+        </p>
+        <Link href="/tests">
+          <Button variant="primary" size="lg">Browse Levels</Button>
+        </Link>
+      </section>
+
+      {/* --- Featured Lessons (exploratory — a taste, not the onboarding path) --- */}
       <section className="max-w-3xl mx-auto px-6 py-16">
-        <p className="text-h2 mb-10 text-center">Featured Lessons</p>
+        <p className="text-h2 mb-2 text-center">Featured Lessons</p>
+        <p className="text-small text-ink-soft mb-10 text-center">
+          Try a lesson before you commit to a full level.
+        </p>
         <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>
           {FEATURED_LESSONS.map((lesson) => (
             <LearningCard
