@@ -20,6 +20,8 @@
 
 - **A1 Elementary:** 4 lessons (Grammar/Vocabulary/Reading/Writing), 1 Mixed Test, 1 Progress Check. Passed a full UX review and educational review.
 - **A2 Pre-Intermediate:** Same structure. Passed a full educational quality audit, including a full assessment-alignment correction (Vocabulary/Reading sections were rewritten after failing the "traces back to a taught lesson" check).
+- **B1 Intermediate:** Ported from the legacy Study Path into the Level Curriculum system, expanded to 3 questions per lesson, added a Reading lesson (didn't exist before), and had its Mixed Test rewritten section-by-section for alignment. Progress Check added.
+- **B1+ Bridge to B2:** Same 4-lesson structure (Present Perfect Continuous, Environment & Technology, Reading for Inference, For-and-Against Essays), 1 Mixed Test, 1 Bridge Check. Built proactively following the passage-reuse rule from day one — audited before release, not after.
 
 ## Known Limitations
 
@@ -27,8 +29,7 @@
 - **No real authentication.** /login is an honest placeholder page. All learner data lives in localStorage, tied to one browser on one device.
 - **No real backend.** Every service is written to be replaceable by a real API later, but none exists yet.
 - **Legacy Study Path still exists, unmigrated.** 3 lessons (unit-1/2/3), tied to CamPath Stage, not the Level Curriculum. Still shown in My Journey, still functional, but not expanded and not reconciled into one system.
-- **B1 content predates the current template.** 3 Study Path lessons + 1 Mixed Test exist but have not been through the alignment audit that A1/A2 passed.
-- **B1+, B2, C1 have no lesson content** — metadata (names, CEFR bridge text) only, Coming Soon everywhere.
+- **B2, C1 have no lesson content** — metadata (names, CEFR bridge text) only, Coming Soon everywhere.
 - **Listening and Speaking have no lesson format at all**, at any level — reserved as labeled Coming Soon sections, not designed yet.
 - **Mock Exams are not implemented** — Coming Soon placeholders only.
 - **Grammar Shorts has no content** — metadata only.
@@ -66,7 +67,6 @@
 
 ## Recommended Next Steps, in Order
 
-1. Bring B1's existing content up to the same template and alignment standard as A1/A2 (it predates both).
-2. Build B1+, B2, and C1 content using the now-validated A1/A2 template.
-3. Make a real resourcing decision on Listening/Speaking before building any more levels without them — every level shipped without these two skills increases the eventual retrofitting cost.
-4. Only after curriculum breadth is in place: begin real backend/auth migration, using the service-layer boundaries already designed for exactly this swap.
+1. Build B2 and C1 content using the now-validated A1/A2/B1/B1+ template.
+2. Make a real resourcing decision on Listening/Speaking before building any more levels without them — every level shipped without these two skills increases the eventual retrofitting cost.
+3. Only after curriculum breadth is in place: begin real backend/auth migration, using the service-layer boundaries already designed for exactly this swap.

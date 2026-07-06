@@ -507,6 +507,190 @@ export const CURRICULUM_LESSONS: Record<string, CurriculumLesson[]> = {
       completionMessage: "You can now introduce your opinions clearly in formal speaking or writing.",
     },
   ],
+
+  "b1-plus-upper-intermediate": [
+    {
+      id: "b1plus-grammar-1",
+      level: "b1-plus-upper-intermediate",
+      skill: "grammar",
+      title: "Present Perfect Continuous",
+      introLabel: "Explanation",
+      introText:
+        "We use the present perfect continuous (have/has been + verb-ing) to emphasise the duration of an action that started in the past and is still happening now. It's often used with 'for' and 'since'.",
+      examples: [
+        "I've been learning English for three years.",
+        "She's been working on this project since Monday.",
+        "They've been waiting for an hour.",
+      ],
+      questions: [
+        {
+          prompt: "Choose the correct sentence.",
+          options: [
+            "I have been study English for three years.",
+            "I have been studying English for three years.",
+            "I has been studying English for three years.",
+            "I am been studying English for three years.",
+          ],
+          correctAnswer: "I have been studying English for three years.",
+          reviewFeedback: "Review this concept — the structure is have/has + been + verb-ing.",
+          successFeedback: "Well done — that's correct.",
+        },
+        {
+          prompt: "Choose the correct sentence.",
+          options: [
+            "She's been working here since five years.",
+            "She's been working here for five years.",
+            "She's been work here for five years.",
+            "She's working here since five years.",
+          ],
+          correctAnswer: "She's been working here for five years.",
+          reviewFeedback: "Review this concept — use 'for' with a period of time (five years) and 'since' with a starting point (2019, Monday).",
+          successFeedback: "Well done — that's correct.",
+        },
+        {
+          prompt: "Choose the correct question.",
+          options: [
+            "How long have you been learning English?",
+            "How long you have been learning English?",
+            "How long are you been learning English?",
+            "How long have you being learning English?",
+          ],
+          correctAnswer: "How long have you been learning English?",
+          reviewFeedback: "Review this concept — questions invert to 'have + subject + been + verb-ing'.",
+          successFeedback: "Well done — that's correct.",
+        },
+      ],
+      completionMessage: "You can now describe how long an ongoing action has been happening.",
+    },
+    {
+      id: "b1plus-vocabulary-1",
+      level: "b1-plus-upper-intermediate",
+      skill: "vocabulary",
+      title: "Environment & Technology",
+      introLabel: "Useful Vocabulary",
+      introList: ["renewable energy", "pollution", "recycle", "device", "upgrade"],
+      examples: [
+        "Solar power is a good example of renewable energy.",
+        "Air pollution is a serious problem in big cities.",
+        "We should recycle more plastic and paper.",
+      ],
+      questions: [
+        {
+          prompt: "Choose the correct word: 'Wind and solar power are examples of ___ energy.'",
+          options: ["renewable", "polluted", "recycled", "upgraded"],
+          correctAnswer: "renewable",
+          reviewFeedback: "Review this concept — 'renewable energy' comes from sources that don't run out, like wind and sun.",
+          successFeedback: "Well done — that's correct.",
+        },
+        {
+          prompt: "Choose the correct word: 'Car exhaust is a major cause of air ___ in cities.'",
+          options: ["pollution", "recycling", "upgrade", "device"],
+          correctAnswer: "pollution",
+          reviewFeedback: "Review this concept — 'pollution' describes harmful substances released into the air or environment.",
+          successFeedback: "Well done — that's correct.",
+        },
+        {
+          prompt: "Choose the correct word: 'I need to ___ my phone; the battery barely lasts a day.'",
+          options: ["upgrade", "recycle", "pollute", "renew"],
+          correctAnswer: "upgrade",
+          reviewFeedback: "Review this concept — 'upgrade' means replacing something with a newer, better version.",
+          successFeedback: "Well done — that's correct.",
+        },
+      ],
+      completionMessage: "You can now discuss environmental and technology topics using accurate vocabulary.",
+    },
+    {
+      id: "b1plus-reading-1",
+      level: "b1-plus-upper-intermediate",
+      skill: "reading",
+      title: "Reading for Inference",
+      introLabel: "Reading Text",
+      passage:
+        "A growing number of city councils are introducing charges for plastic bags in supermarkets. Supporters argue that the policy has already reduced plastic waste significantly, while some shoppers complain that it simply shifts the cost onto customers without solving the bigger problem of packaging waste overall.",
+      questions: [
+        {
+          prompt: "According to the text, what have supporters of the charge noticed?",
+          options: [
+            "Plastic waste has increased.",
+            "Plastic waste has been significantly reduced.",
+            "Shoppers are happy about the cost.",
+            "Packaging waste has disappeared completely.",
+          ],
+          correctAnswer: "Plastic waste has been significantly reduced.",
+          reviewFeedback: "Review this concept — the text states supporters say the policy 'has already reduced plastic waste significantly'.",
+          successFeedback: "Well done — that's correct.",
+        },
+        {
+          prompt: "What do the shoppers who complain seem to think about the policy?",
+          options: [
+            "It fully solves the packaging problem.",
+            "It only shifts cost without solving the wider issue.",
+            "It has no effect on cost at all.",
+            "It should be more expensive.",
+          ],
+          correctAnswer: "It only shifts cost without solving the wider issue.",
+          reviewFeedback: "Review this concept — the complaint is that it 'shifts the cost... without solving the bigger problem'.",
+          successFeedback: "Well done — that's correct.",
+        },
+        {
+          prompt: "What can be concluded about opinions on this policy?",
+          options: [
+            "Everyone agrees it is a success.",
+            "Opinions are divided between supporters and critics.",
+            "No one has an opinion on it.",
+            "The policy has been cancelled.",
+          ],
+          correctAnswer: "Opinions are divided between supporters and critics.",
+          reviewFeedback: "Review this concept — the text presents two contrasting viewpoints, signalling a divided opinion, not consensus.",
+          successFeedback: "Well done — that's correct.",
+        },
+      ],
+      completionMessage: "You can now infer opinions and implied meaning from a longer text, not just explicit detail.",
+    },
+    {
+      id: "b1plus-writing-1",
+      level: "b1-plus-upper-intermediate",
+      skill: "writing",
+      title: "For-and-Against Essays",
+      introLabel: "Explanation",
+      introText:
+        "A for-and-against essay presents both sides of an issue before giving your own opinion. Use linking phrases like 'On the one hand... on the other hand...' and finish with a clear conclusion.",
+      examples: [
+        "On the one hand, technology makes learning more accessible. On the other hand, it can be a distraction in the classroom.",
+        "Some people believe cars should be banned from city centres, while others argue this would harm local businesses.",
+        "In conclusion, I believe the advantages outweigh the disadvantages.",
+      ],
+      questions: [
+        {
+          prompt: "Which phrase correctly introduces the first side of an argument?",
+          options: ["On the one hand,", "In conclusion,", "Finally,", "As a result,"],
+          correctAnswer: "On the one hand,",
+          reviewFeedback: "Review this concept — 'On the one hand' opens the first viewpoint, before contrasting it later.",
+          successFeedback: "Well done — that's correct.",
+        },
+        {
+          prompt: "Which phrase correctly introduces the opposing side?",
+          options: ["On the other hand,", "Firstly,", "For example,", "In my opinion,"],
+          correctAnswer: "On the other hand,",
+          reviewFeedback: "Review this concept — 'On the other hand' signals a contrasting viewpoint to the one just given.",
+          successFeedback: "Well done — that's correct.",
+        },
+        {
+          prompt: "Which sentence is an appropriate essay conclusion?",
+          options: [
+            "In conclusion, I believe the benefits outweigh the drawbacks.",
+            "On the one hand, this is a big issue.",
+            "For example, many people use phones daily.",
+            "On the other hand, some people disagree.",
+          ],
+          correctAnswer: "In conclusion, I believe the benefits outweigh the drawbacks.",
+          reviewFeedback: "Review this concept — a conclusion should summarise your overall view after presenting both sides.",
+          successFeedback: "Well done — that's correct.",
+        },
+      ],
+      completionMessage: "You can now structure a basic for-and-against essay with a clear conclusion.",
+    },
+  ],
 };
 
 export function getCurriculumLessonsForLevel(levelSlug: string): CurriculumLesson[] {

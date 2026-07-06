@@ -326,6 +326,122 @@ const A1_TEST_1_SECTIONS: TestSection[] = [
   },
 ];
 
+const B1PLUS_TEST_1_SECTIONS: TestSection[] = [
+  {
+    skill: "grammar",
+    questions: [
+      {
+        id: "b1plust1_grammar_1",
+        skill: "grammar",
+        task_type: "multiple_choice",
+        cefr_weight: "B1",
+        prompt: "Choose the correct sentence.",
+        options: [
+          "He has been living here for two years.",
+          "He has been live here for two years.",
+          "He is been living here for two years.",
+          "He have been living here for two years.",
+        ],
+        correct_answer: "He has been living here for two years.",
+      },
+      {
+        id: "b1plust1_grammar_2",
+        skill: "grammar",
+        task_type: "multiple_choice",
+        cefr_weight: "B1",
+        prompt: "Choose the correct sentence.",
+        options: [
+          "We have been waiting for the bus for twenty minutes.",
+          "We have being waiting for the bus for twenty minutes.",
+          "We have been wait for the bus for twenty minutes.",
+          "We are been waiting for the bus for twenty minutes.",
+        ],
+        correct_answer: "We have been waiting for the bus for twenty minutes.",
+      },
+    ],
+  },
+  {
+    skill: "vocabulary",
+    questions: [
+      {
+        id: "b1plust1_vocab_1",
+        skill: "vocabulary",
+        task_type: "multiple_choice",
+        cefr_weight: "B1",
+        prompt: "Choose the correct word: 'Many countries are investing in ___ energy like wind and solar power.'",
+        options: ["renewable", "polluted", "recycled", "broken"],
+        correct_answer: "renewable",
+      },
+      {
+        id: "b1plust1_vocab_2",
+        skill: "vocabulary",
+        task_type: "multiple_choice",
+        cefr_weight: "B1",
+        prompt: "Choose the correct word: 'Old phones and laptops should be ___ properly, not thrown away.'",
+        options: ["recycled", "polluted", "upgraded", "renewable"],
+        correct_answer: "recycled",
+      },
+    ],
+  },
+  {
+    skill: "reading",
+    questions: [
+      {
+        id: "b1plust1_reading_1",
+        skill: "reading",
+        task_type: "multiple_choice",
+        cefr_weight: "B1",
+        prompt:
+          "\"Several employers have started allowing staff to work from home permanently. Supporters say productivity has improved, but some managers worry that team communication has weakened as a result.\" — According to the text, what do supporters of remote work say has improved?",
+        options: ["Team communication", "Productivity", "Office attendance", "Management structure"],
+        correct_answer: "Productivity",
+      },
+      {
+        id: "b1plust1_reading_2",
+        skill: "reading",
+        task_type: "multiple_choice",
+        cefr_weight: "B1",
+        prompt: "In the same text, what concern do some managers raise?",
+        options: [
+          "Productivity has fallen",
+          "Team communication has weakened",
+          "Employees want to return to the office",
+          "Costs have increased",
+        ],
+        correct_answer: "Team communication has weakened",
+      },
+    ],
+  },
+  {
+    skill: "writing",
+    questions: [
+      {
+        id: "b1plust1_writing_1",
+        skill: "writing",
+        task_type: "multiple_choice",
+        cefr_weight: "B1",
+        prompt: "Which phrase best introduces one side of a debate?",
+        options: ["On the one hand,", "In conclusion,", "As a result,", "Therefore,"],
+        correct_answer: "On the one hand,",
+      },
+      {
+        id: "b1plust1_writing_2",
+        skill: "writing",
+        task_type: "multiple_choice",
+        cefr_weight: "B1",
+        prompt: "Which sentence shows a balanced conclusion after presenting both sides?",
+        options: [
+          "In conclusion, both viewpoints have merit, but I believe the benefits are greater.",
+          "On the one hand, this is important.",
+          "For instance, many people agree.",
+          "On the other hand, some disagree.",
+        ],
+        correct_answer: "In conclusion, both viewpoints have merit, but I believe the benefits are greater.",
+      },
+    ],
+  },
+];
+
 const TESTS_BY_LEVEL: Record<string, TestContent[]> = {
   "a1-elementary": [
     {
@@ -358,7 +474,14 @@ const TESTS_BY_LEVEL: Record<string, TestContent[]> = {
     { id: "mock-test", title: "Mock Test", status: "coming_soon", sections: [], hasListeningPlaceholder: false },
   ],
   "b1-plus-upper-intermediate": [
-    { id: "test-1", title: "Test 1", status: "coming_soon", sections: [], hasListeningPlaceholder: false },
+    {
+      id: "test-1",
+      title: "Test 1: Mixed Practice",
+      status: "available",
+      sections: B1PLUS_TEST_1_SECTIONS,
+      hasListeningPlaceholder: true,
+    },
+    { id: "review-test", title: "Review Test", status: "coming_soon", sections: [], hasListeningPlaceholder: false },
   ],
   "b2-pre-advanced": [
     { id: "test-1", title: "Test 1", status: "coming_soon", sections: [], hasListeningPlaceholder: false },

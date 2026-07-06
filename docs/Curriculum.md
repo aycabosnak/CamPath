@@ -11,7 +11,7 @@
 | A1 Elementary | `a1-elementary` | **Complete reference template** — 4 lessons, 1 Mixed Test, 1 Progress Check, educationally audited |
 | A2 Pre-Intermediate | `a2-pre-intermediate` | **Complete** — same structure as A1, educationally audited and aligned |
 | B1 Intermediate | `b1-intermediate` | Partial — 3 legacy Study Path lessons + 1 Mixed Test exist, but predate the Level Curriculum system and have not been through the alignment audit |
-| B1+ (Bridge) | `b1-plus-upper-intermediate` | Metadata only — labeled as a Bridge (not a formal level) in `constants/testLevels.ts`, no lessons yet |
+| B1+ (Bridge) | `b1-plus-upper-intermediate` | **Complete** — same 4-lesson/Mixed Test/Bridge Check structure, proactively audited for passage reuse before release |
 | B2 Pre-Advanced | `b2-pre-advanced` | Metadata + Coming Soon placeholders only |
 | C1 Advanced | `c1-advanced` | Metadata + Coming Soon placeholders only |
 | Grammar Shorts | `grammar-shorts` | Metadata only, no content — see Section 4 for what this is *for* |
