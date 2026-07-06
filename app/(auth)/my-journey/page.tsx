@@ -20,6 +20,7 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { StageBadge, CefrBadge } from "@/components/ui/Badge";
 import { trackEvent } from "@/services/analyticsService";
+import { formatDate } from "@/lib/formatDate";
 
 export default function MyJourneyPage() {
   const router = useRouter();
@@ -174,7 +175,7 @@ export default function MyJourneyPage() {
               <div key={m.id} className="flex items-center justify-between">
                 <p className={m.isBridge ? "text-small text-ink-soft" : "text-body"}>{m.label}</p>
                 <p className="text-caption normal-case text-ink-soft">
-                  {new Date(m.achievedAt).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" })}
+                  {formatDate(m.achievedAt)}
                 </p>
               </div>
             ))}

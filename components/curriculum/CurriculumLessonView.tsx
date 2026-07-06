@@ -31,9 +31,7 @@ import { ProgressBar } from "@/components/ui/ProgressBar";
 import { cn } from "@/components/lib/cn";
 import { trackEvent } from "@/services/analyticsService";
 
-function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
-}
+import { formatDate } from "@/lib/formatDate";
 
 export function CurriculumLessonView({ levelSlug, lessonId }: { levelSlug: string; lessonId: string }) {
   const [lesson, setLesson] = useState<CurriculumLesson | null | undefined>(undefined);
