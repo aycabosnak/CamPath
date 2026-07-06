@@ -22,8 +22,28 @@ export interface LessonCompletionRecord {
   minutesSpent: number;
 }
 
+export interface MilestoneRecord {
+  id: string; // levelSlug, unique per level
+  label: string; // e.g. "Completed A1 Elementary"
+  achievedAt: string; // ISO timestamp
+  isBridge: boolean; // true for B1+ — rendered lighter, not equal to a full level milestone
+}
+
+export interface ProgressCheckRecord {
+  completedAt: string;
+  correctCount: number;
+  totalCount: number;
+}
+
 export interface ProgressState {
   completions: Record<string, LessonCompletionRecord>;
+  /** Level Curriculum lesson completions (e.g. "a1-grammar-1") — a
+   *  deliberately separate namespace from `completions` above, which
+   *  belongs to the CamPath-Stage-based Study Path (unit-1/2/3) and
+   *  must not be touched by the new Level Curriculum architecture. */
+  curriculumCompletions: Record<string, LessonCompletionRecord>;
+  progressChecks: Record<string, ProgressCheckRecord>; // keyed by levelSlug
+  milestones: MilestoneRecord[];
   studyTimeMinutes: number;
   studyDates: string[];
   masteryOverrides: Partial<Record<Skill, number>>;
@@ -33,6 +53,9 @@ const STORAGE_KEY = "campath_progress_state";
 
 const DEFAULT_STATE: ProgressState = {
   completions: {},
+  curriculumCompletions: {},
+  progressChecks: {},
+  milestones: [],
   studyTimeMinutes: 0,
   studyDates: [],
   masteryOverrides: {},
@@ -133,6 +156,97 @@ export function completeLesson(
   state = markStudyDayActive(state);
   writeState(state);
   return { alreadyCompleted: false, record, state };
+}
+
+/**
+ * Level Curriculum equivalent of completeLesson() above — same
+ * idempotency guarantee, same shared study-time/study-day pool, but
+ * writes to `curriculumCompletions` instead of `completions` so the
+ * Study Path (unit-1/2/3) is never affected by Level Curriculum
+ * activity or vice versa.
+ */
+export function completeCurriculumLesson(
+  lessonId: string,
+  minutesSpent: number,
+  correctFirstTry: boolean
+): CompleteLessonResult {
+  let state = readState();
+  const existing = state.curriculumCompletions[lessonId];
+  if (existing) {
+    return { alreadyCompleted: true, record: existing, state };
+  }
+
+  const record: LessonCompletionRecord = {
+    completedAt: new Date().toISOString(),
+    correctFirstTry,
+    minutesSpent: Math.max(0, minutesSpent),
+  };
+
+  state = {
+    ...state,
+    curriculumCompletions: { ...state.curriculumCompletions, [lessonId]: record },
+    studyTimeMinutes: state.studyTimeMinutes + record.minutesSpent,
+  };
+  state = markStudyDayActive(state);
+  writeState(state);
+  return { alreadyCompleted: false, record, state };
+}
+
+export function isCurriculumLessonCompleted(lessonId: string): boolean {
+  return Boolean(readState().curriculumCompletions[lessonId]);
+}
+
+export function getCurriculumLessonCompletion(lessonId: string): LessonCompletionRecord | null {
+  return readState().curriculumCompletions[lessonId] ?? null;
+}
+
+/**
+ * Records a Progress Check result AND fires the level's Milestone in
+ * one atomic write — a Milestone only ever comes from a Progress
+ * Check completion (never from a single lesson or a Mixed Test), per
+ * the approved curriculum architecture. Idempotent: retaking a
+ * Progress Check updates the score record but never duplicates the
+ * Milestone.
+ */
+export function recordProgressCheck(
+  levelSlug: string,
+  correctCount: number,
+  totalCount: number,
+  milestoneLabel: string,
+  isBridge: boolean
+): ProgressState {
+  let state = readState();
+
+  state = {
+    ...state,
+    progressChecks: {
+      ...state.progressChecks,
+      [levelSlug]: { completedAt: new Date().toISOString(), correctCount, totalCount },
+    },
+  };
+
+  const alreadyHasMilestone = state.milestones.some((m) => m.id === levelSlug);
+  if (!alreadyHasMilestone) {
+    state = {
+      ...state,
+      milestones: [
+        ...state.milestones,
+        { id: levelSlug, label: milestoneLabel, achievedAt: new Date().toISOString(), isBridge },
+      ],
+    };
+  }
+
+  state = markStudyDayActive(state);
+  writeState(state);
+  return state;
+}
+
+export function getProgressCheckRecord(levelSlug: string): ProgressCheckRecord | null {
+  return readState().progressChecks[levelSlug] ?? null;
+}
+
+export function getMilestones(): MilestoneRecord[] {
+  return [...readState().milestones].sort((a, b) => b.achievedAt.localeCompare(a.achievedAt));
 }
 
 /**
