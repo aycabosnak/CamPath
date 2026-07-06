@@ -177,6 +177,97 @@ const A2_PROGRESS_CHECK_QUESTIONS: PlacementQuestion[] = [
   },
 ];
 
+const B1_PROGRESS_CHECK_QUESTIONS: PlacementQuestion[] = [
+  {
+    id: "b1pc_grammar_1",
+    skill: "grammar",
+    task_type: "multiple_choice",
+    cefr_weight: "B1",
+    prompt: "Choose the correct sentence.",
+    options: [
+      "If she finds a good job, she will move to the city.",
+      "If she will find a good job, she will move to the city.",
+      "If she found a good job, she will move to the city.",
+      "If she finds a good job, she would move to the city.",
+    ],
+    correct_answer: "If she finds a good job, she will move to the city.",
+  },
+  {
+    id: "b1pc_grammar_2",
+    skill: "grammar",
+    task_type: "gap_fill",
+    cefr_weight: "B1",
+    prompt: "If they ___ (arrive) early, they will get good seats.",
+    correct_answer: "arrive",
+  },
+  {
+    id: "b1pc_vocab_1",
+    skill: "vocabulary",
+    task_type: "multiple_choice",
+    cefr_weight: "B1",
+    prompt: "Choose the correct phrase: 'He ___ to save enough money to travel next summer.'",
+    options: ["aims", "look forward", "planning", "intended"],
+    correct_answer: "aims",
+  },
+  {
+    id: "b1pc_vocab_2",
+    skill: "vocabulary",
+    task_type: "multiple_choice",
+    cefr_weight: "B1",
+    prompt: "Choose the correct phrase: 'They ___ to open a new office next year.'",
+    options: ["intend", "look forward to", "aiming", "intends"],
+    correct_answer: "intend",
+  },
+  {
+    id: "b1pc_reading_1",
+    skill: "reading",
+    task_type: "multiple_choice",
+    cefr_weight: "B1",
+    prompt:
+      "\"Although the new policy was introduced to reduce costs, several departments reported that spending had actually increased in the first quarter.\" — What is suggested about the policy's effect?",
+    options: [
+      "It worked exactly as planned.",
+      "It may have had the opposite effect to what was intended.",
+      "It had no effect on spending.",
+      "It was cancelled immediately.",
+    ],
+    correct_answer: "It may have had the opposite effect to what was intended.",
+  },
+  {
+    id: "b1pc_reading_2",
+    skill: "reading",
+    task_type: "multiple_choice",
+    cefr_weight: "B1",
+    prompt:
+      "\"The workshop has been rescheduled to Friday. Please note that registration closes 24 hours before the new date.\" — When does registration close?",
+    options: ["Friday", "Thursday", "Saturday", "It is already closed"],
+    correct_answer: "Thursday",
+  },
+  {
+    id: "b1pc_writing_1",
+    skill: "writing",
+    task_type: "multiple_choice",
+    cefr_weight: "B1",
+    prompt: "Which phrase is most appropriate for opening a formal opinion piece?",
+    options: ["I personally think that", "If you ask me", "Everyone agrees that", "It's obvious that"],
+    correct_answer: "I personally think that",
+  },
+  {
+    id: "b1pc_writing_2",
+    skill: "writing",
+    task_type: "multiple_choice",
+    cefr_weight: "B1",
+    prompt: "Which sentence keeps a consistent formal register throughout?",
+    options: [
+      "In my opinion, the plan needs more funding, but whatever, it's not my call.",
+      "In my opinion, the plan needs more funding to succeed.",
+      "I reckon the plan needs more funding, in my opinion.",
+      "The plan needs more funding, if you know what I mean.",
+    ],
+    correct_answer: "In my opinion, the plan needs more funding to succeed.",
+  },
+];
+
 const PROGRESS_CHECKS: Record<string, ProgressCheckContent> = {
   "a1-elementary": {
     level: "a1-elementary",
@@ -187,6 +278,11 @@ const PROGRESS_CHECKS: Record<string, ProgressCheckContent> = {
     level: "a2-pre-intermediate",
     title: "A2 Pre-Intermediate — Progress Check",
     questions: A2_PROGRESS_CHECK_QUESTIONS,
+  },
+  "b1-intermediate": {
+    level: "b1-intermediate",
+    title: "B1 Intermediate — Progress Check",
+    questions: B1_PROGRESS_CHECK_QUESTIONS,
   },
 };
 

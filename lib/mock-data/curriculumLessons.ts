@@ -329,6 +329,184 @@ export const CURRICULUM_LESSONS: Record<string, CurriculumLesson[]> = {
       completionMessage: "You can now write a short, informal message to a friend.",
     },
   ],
+
+  "b1-intermediate": [
+    {
+      id: "b1-grammar-1",
+      level: "b1-intermediate",
+      skill: "grammar",
+      title: "First Conditional",
+      introLabel: "Explanation",
+      introText:
+        "We use the first conditional to talk about real possibilities in the future. The structure is: If + present simple, ... will + base verb.",
+      examples: [
+        "If it rains tomorrow, we will stay at home.",
+        "If she studies tonight, she will pass the exam.",
+        "You'll feel better if you get some rest.",
+      ],
+      questions: [
+        {
+          prompt: "Choose the correct sentence.",
+          options: [
+            "If it will rain, we will stay home.",
+            "If it rains, we will stay home.",
+            "If it rain, we stay home.",
+            "If it raining, we will stay home.",
+          ],
+          correctAnswer: "If it rains, we will stay home.",
+          reviewFeedback: "Review this concept — the if-clause uses present simple, not 'will'.",
+          successFeedback: "Well done — that's correct.",
+        },
+        {
+          prompt: "Choose the correct sentence.",
+          options: [
+            "If she misses the bus, she will be late.",
+            "If she will miss the bus, she will be late.",
+            "If she missed the bus, she will be late.",
+            "If she misses the bus, she would be late.",
+          ],
+          correctAnswer: "If she misses the bus, she will be late.",
+          reviewFeedback: "Review this concept — keep present simple in the if-clause and 'will' only in the result clause.",
+          successFeedback: "Well done — that's correct.",
+        },
+        {
+          prompt: "Choose the correct sentence.",
+          options: [
+            "We will go for a walk if it is sunny later.",
+            "We go will for a walk if it is sunny later.",
+            "We will go for a walk if it will be sunny later.",
+            "We would go for a walk if it is sunny later.",
+          ],
+          correctAnswer: "We will go for a walk if it is sunny later.",
+          reviewFeedback: "Review this concept — the result clause can come first, but the rule stays the same: present simple + will.",
+          successFeedback: "Well done — that's correct.",
+        },
+      ],
+      completionMessage: "You can now describe real future possibilities and their likely results.",
+    },
+    {
+      id: "b1-vocabulary-1",
+      level: "b1-intermediate",
+      skill: "vocabulary",
+      title: "Future Plans",
+      introLabel: "Useful Vocabulary",
+      introList: ["intend to", "plan to", "be going to", "look forward to", "aim to"],
+      examples: [
+        "I intend to finish the course by June.",
+        "She is planning to move abroad next year.",
+        "We're looking forward to the summer holidays.",
+      ],
+      questions: [
+        {
+          prompt: "Choose the word that best completes the sentence: \"I ___ study medicine next year.\"",
+          options: ["intend to", "intending", "intends", "intended"],
+          correctAnswer: "intend to",
+          reviewFeedback: "Review this concept — 'intend to' is followed by the base verb after 'I'.",
+          successFeedback: "Well done — that's correct.",
+        },
+        {
+          prompt: "Choose the correct phrase: 'We ___ visiting my parents this weekend.'",
+          options: ["look forward to", "intend", "aim", "plan"],
+          correctAnswer: "look forward to",
+          reviewFeedback: "Review this concept — 'look forward to' is followed by a gerund (-ing form).",
+          successFeedback: "Well done — that's correct.",
+        },
+        {
+          prompt: "Choose the correct phrase: 'She ___ to improve her English this year.'",
+          options: ["aims", "aim", "aiming", "aimed"],
+          correctAnswer: "aims",
+          reviewFeedback: "Review this concept — with 'she', the verb needs an -s: 'aims to'.",
+          successFeedback: "Well done — that's correct.",
+        },
+      ],
+      completionMessage: "You can now talk about future plans and intentions using common vocabulary.",
+    },
+    {
+      id: "b1-reading-1",
+      level: "b1-intermediate",
+      skill: "reading",
+      title: "Gist and Detail Practice",
+      introLabel: "Reading Text",
+      passage:
+        "\"The library will be closed for renovation from July 10th to August 1st. All borrowed books are due back by July 9th. Although the closure was announced with plenty of notice, several regular visitors said they were disappointed, since the library is normally open throughout the summer.\"",
+      questions: [
+        {
+          prompt: "By when must borrowed books be returned?",
+          options: ["July 1st", "July 9th", "July 10th", "August 1st"],
+          correctAnswer: "July 9th",
+          reviewFeedback: "Review this concept — the text states books are due back by July 9th, the day before closure.",
+          successFeedback: "Well done — that's correct.",
+        },
+        {
+          prompt: "What does the text suggest about how visitors feel?",
+          options: [
+            "They were not told in advance.",
+            "They are disappointed, despite the advance notice.",
+            "They are happy about the renovation.",
+            "They did not notice the closure.",
+          ],
+          correctAnswer: "They are disappointed, despite the advance notice.",
+          reviewFeedback: "Review this concept — 'although... plenty of notice... disappointed' signals disappointment despite fair warning.",
+          successFeedback: "Well done — that's correct.",
+        },
+        {
+          prompt: "What is unusual about this closure, according to the text?",
+          options: [
+            "It happens every summer.",
+            "The library is normally open all summer.",
+            "The library is always closed in July.",
+            "No reason was given for the closure.",
+          ],
+          correctAnswer: "The library is normally open all summer.",
+          reviewFeedback: "Review this concept — the text says the library is 'normally open throughout the summer', making this closure the exception.",
+          successFeedback: "Well done — that's correct.",
+        },
+      ],
+      completionMessage: "You can now identify both the explicit detail and the implied meaning in a short text.",
+    },
+    {
+      id: "b1-writing-1",
+      level: "b1-intermediate",
+      skill: "writing",
+      title: "Giving Opinions",
+      introLabel: "Useful Phrases",
+      introList: ["In my opinion, ...", "I personally think that ...", "From my point of view, ..."],
+      examples: [
+        "In my opinion, learning English online is very effective.",
+        "I personally think that group study helps motivation.",
+        "From my point of view, speaking practice is the most important skill.",
+      ],
+      questions: [
+        {
+          prompt: "You're writing a formal opinion essay. Which phrase fits best?",
+          options: ["In my opinion,", "I think,", "I guess,", "You know,"],
+          correctAnswer: "In my opinion,",
+          reviewFeedback: "Review this concept — 'I think', 'I guess', and 'You know' are all too conversational for formal writing; 'In my opinion' is the standard formal opener.",
+          successFeedback: "Well done — that's correct.",
+        },
+        {
+          prompt: "Which phrase is most appropriate for a formal opinion piece?",
+          options: ["From my point of view,", "If you ask me,", "Honestly,", "Whatever,"],
+          correctAnswer: "From my point of view,",
+          reviewFeedback: "Review this concept — 'If you ask me', 'Honestly', and 'Whatever' are casual spoken phrases, not formal writing openers.",
+          successFeedback: "Well done — that's correct.",
+        },
+        {
+          prompt: "Which sentence best introduces a personal opinion in formal writing?",
+          options: [
+            "I personally think that public transport should be free.",
+            "Everyone knows public transport should be free.",
+            "Public transport should obviously be free.",
+            "Public transport being free is a no-brainer.",
+          ],
+          correctAnswer: "I personally think that public transport should be free.",
+          reviewFeedback: "Review this concept — 'I personally think that' clearly signals a personal opinion; the others assert it as fact or use casual phrasing.",
+          successFeedback: "Well done — that's correct.",
+        },
+      ],
+      completionMessage: "You can now introduce your opinions clearly in formal speaking or writing.",
+    },
+  ],
 };
 
 export function getCurriculumLessonsForLevel(levelSlug: string): CurriculumLesson[] {
