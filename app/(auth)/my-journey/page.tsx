@@ -13,6 +13,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { getMyJourneySummary, type MyJourneySummary } from "@/services/myJourneyService";
+import { getMilestones } from "@/services/progressService";
 import { MyJourneyMetricCard, type MyJourneyMetric } from "@/components/dashboard/MyJourneyMetricCard";
 import { MasteryBarList } from "@/components/ui/MasteryBar";
 import { StudyPath } from "@/components/study-path/StudyPath";
@@ -24,11 +25,13 @@ import { trackEvent } from "@/services/analyticsService";
 export default function MyJourneyPage() {
   const router = useRouter();
   const [summary, setSummary] = useState<MyJourneySummary | null | undefined>(undefined);
+  const [milestones, setMilestones] = useState<ReturnType<typeof getMilestones>>([]);
   const studyPathRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     getMyJourneySummary().then((data) => {
       setSummary(data);
+      setMilestones(getMilestones());
       trackEvent("my_journey_viewed", { hasPlacementResult: Boolean(data) });
     });
   }, []);
@@ -160,6 +163,25 @@ export default function MyJourneyPage() {
           />
         </Card>
       </div>
+
+      {/* --- Milestones — fires only from a completed Progress/Bridge
+           Check (see progressService.recordProgressCheck). Calm,
+           factual list — no badge graphics, no celebration. */}
+      {milestones.length > 0 && (
+        <Card className="mt-6">
+          <p className="text-h3 mb-4">Milestones</p>
+          <div className="flex flex-col gap-3">
+            {milestones.map((m) => (
+              <div key={m.id} className="flex items-center justify-between">
+                <p className={m.isBridge ? "text-small text-ink-soft" : "text-body"}>{m.label}</p>
+                <p className="text-caption normal-case text-ink-soft">
+                  {new Date(m.achievedAt).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" })}
+                </p>
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
     </main>
   );
 }

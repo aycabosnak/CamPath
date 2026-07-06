@@ -21,13 +21,18 @@ import type { CefrLevel, StageName } from "@/components/types";
 export interface TestLevelMeta {
   slug: string;
   title: string;
-  cefr: CefrLevel | null; // null for Grammar Shorts, which isn't level-specific
-  /** Short badge text — deliberately separate from `cefr` because the
-   *  strict CefrLevel union has no "B1+" value. Without this, B1
-   *  Intermediate and B1+ Upper Intermediate would render an
-   *  identical "B1" badge and be hard to tell apart at a glance
-   *  (found during the Tests Architecture QA pass). */
+  /** Shown on the dedicated level page's H1 — distinct from `title`
+   *  (used in compact grids like Home/Footer where a long descriptive
+   *  title doesn't fit). Only B1+ currently differs from `title`. */
+  pageTitle: string;
+  cefr: CefrLevel | null;
   shortLabel: string;
+  /** True only for B1+ — approved architecture decision: B1+ is a
+   *  consolidation bridge between B1 and B2, not a formal CEFR level.
+   *  Affects Progress Check -> Milestone treatment (lighter, not
+   *  equal to a full level's milestone) and should gate any future
+   *  "this is a full level" UI language. */
+  isBridge: boolean;
   bridge: string | null;
   description: string;
 }
@@ -36,56 +41,70 @@ export const TEST_LEVELS: TestLevelMeta[] = [
   {
     slug: "a1-elementary",
     title: "A1 Elementary",
+    pageTitle: "A1 Elementary",
     cefr: "A1",
     shortLabel: "A1",
+    isBridge: false,
     bridge: "Maps to: Foundation",
     description: "The basics — everyday phrases, simple present tense, and core vocabulary.",
   },
   {
     slug: "a2-pre-intermediate",
     title: "A2 Pre-Intermediate",
+    pageTitle: "A2 Pre-Intermediate",
     cefr: "A2",
     shortLabel: "A2",
+    isBridge: false,
     bridge: "Maps to: Explorer",
     description: "Talking about the past, making comparisons, and describing daily routines.",
   },
   {
     slug: "b1-intermediate",
     title: "B1 Intermediate",
+    pageTitle: "B1 Intermediate",
     cefr: "B1",
     shortLabel: "B1",
+    isBridge: false,
     bridge: "Maps to: Communicator",
     description: "Expressing opinions, real future possibilities, and everyday narrative tenses.",
   },
   {
     slug: "b1-plus-upper-intermediate",
     title: "B1+ Upper Intermediate",
+    pageTitle: "B1+ — Bridge to B2",
     cefr: "B1",
     shortLabel: "B1+",
+    isBridge: true,
     bridge: "Bridges toward: Independent",
     description: "Consolidating B1 grammar while building toward more complex, abstract language.",
   },
   {
     slug: "b2-pre-advanced",
     title: "B2 Pre-Advanced",
+    pageTitle: "B2 Pre-Advanced",
     cefr: "B2",
     shortLabel: "B2",
+    isBridge: false,
     bridge: "Maps to: Independent",
     description: "Passive voice, reported speech, and a wider range of linking devices.",
   },
   {
     slug: "c1-advanced",
     title: "C1 Advanced",
+    pageTitle: "C1 Advanced",
     cefr: "C1",
     shortLabel: "C1",
+    isBridge: false,
     bridge: "Maps to: Advanced",
     description: "Nuanced argumentation, idiomatic language, and academic register.",
   },
   {
     slug: "grammar-shorts",
     title: "Grammar Shorts",
+    pageTitle: "Grammar Shorts",
     cefr: null,
     shortLabel: "GS",
+    isBridge: false,
     bridge: null,
     description: "Quick, focused grammar-only drills — for any level, whenever you need a refresher.",
   },

@@ -162,9 +162,87 @@ const B1_TEST_1_SECTIONS: TestSection[] = [
   },
 ];
 
+const A1_TEST_1_SECTIONS: TestSection[] = [
+  {
+    skill: "grammar",
+    questions: [
+      {
+        id: "a1t1_grammar_1",
+        skill: "grammar",
+        task_type: "multiple_choice",
+        cefr_weight: "A1",
+        prompt: "Choose the correct sentence.",
+        options: ["He am from Spain.", "He is from Spain.", "He are from Spain.", "He be from Spain."],
+        correct_answer: "He is from Spain.",
+      },
+      {
+        id: "a1t1_grammar_2",
+        skill: "grammar",
+        task_type: "gap_fill",
+        cefr_weight: "A1",
+        prompt: "We ___ (live) in a small flat.",
+        correct_answer: "live",
+      },
+    ],
+  },
+  {
+    skill: "vocabulary",
+    questions: [
+      {
+        id: "a1t1_vocab_1",
+        skill: "vocabulary",
+        task_type: "multiple_choice",
+        cefr_weight: "A1",
+        prompt: "Choose the correct word: 'I drink ___ every morning.'",
+        options: ["coffee", "chair", "window", "book"],
+        correct_answer: "coffee",
+      },
+      {
+        id: "a1t1_vocab_2",
+        skill: "vocabulary",
+        task_type: "multiple_choice",
+        cefr_weight: "A1",
+        prompt: "Which word is a number?",
+        options: ["Monday", "seven", "yellow", "table"],
+        correct_answer: "seven",
+      },
+    ],
+  },
+  {
+    skill: "reading",
+    questions: [
+      {
+        id: "a1t1_reading_1",
+        skill: "reading",
+        task_type: "multiple_choice",
+        cefr_weight: "A1",
+        prompt: "\"Museum entrance: 5 dollars. Children under 10: free.\" — How much does a 7-year-old pay?",
+        options: ["5 dollars", "Nothing", "10 dollars", "2 dollars"],
+        correct_answer: "Nothing",
+      },
+      {
+        id: "a1t1_reading_2",
+        skill: "reading",
+        task_type: "multiple_choice",
+        cefr_weight: "A1",
+        prompt: "\"Please wait here. The doctor will call your name.\" — What should you do?",
+        options: ["Go home", "Wait", "Call the doctor", "Leave a message"],
+        correct_answer: "Wait",
+      },
+    ],
+  },
+];
+
 const TESTS_BY_LEVEL: Record<string, TestContent[]> = {
   "a1-elementary": [
-    { id: "test-1", title: "Test 1", status: "coming_soon", sections: [], hasListeningPlaceholder: false },
+    {
+      id: "test-1",
+      title: "Test 1: Mixed Practice",
+      status: "available",
+      sections: A1_TEST_1_SECTIONS,
+      hasListeningPlaceholder: true,
+    },
+    { id: "review-test", title: "Review Test", status: "coming_soon", sections: [], hasListeningPlaceholder: false },
   ],
   "a2-pre-intermediate": [
     { id: "test-1", title: "Test 1", status: "coming_soon", sections: [], hasListeningPlaceholder: false },
