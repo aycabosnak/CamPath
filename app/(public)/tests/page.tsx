@@ -31,6 +31,8 @@ export default function TestsPage() {
     );
   }
 
+  const hasPlacementResult = levels.some((l) => l.isRecommended);
+
   return (
     <main className="max-w-3xl mx-auto px-6 py-16">
       <p className="text-caption mb-2">Tests</p>
@@ -41,7 +43,7 @@ export default function TestsPage() {
         real exam works.
       </p>
 
-      {!levels.some((l) => l.isRecommended) && (
+      {!hasPlacementResult && (
         <Card className="mb-10">
           <p className="text-small">
             Not sure where to start?{" "}
@@ -64,7 +66,12 @@ export default function TestsPage() {
             </div>
             <p className="text-h3 mb-2">{level.title}</p>
             <p className="text-small text-ink-soft mb-3">{level.description}</p>
-            {level.bridge && <p className="text-caption normal-case mb-3">{level.bridge}</p>}
+            {/* Same gating rule as the level detail page: unexplained
+                Stage jargon only appears once the learner has real
+                placement context (QA follow-up fix). */}
+            {level.bridge && hasPlacementResult && (
+              <p className="text-caption normal-case mb-3">{level.bridge}</p>
+            )}
             <p className="text-small text-ink-soft mb-4">
               {level.availableCount} of {level.totalCount} tests available
             </p>
