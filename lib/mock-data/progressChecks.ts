@@ -92,11 +92,95 @@ const A1_PROGRESS_CHECK_QUESTIONS: PlacementQuestion[] = [
   },
 ];
 
+const A2_PROGRESS_CHECK_QUESTIONS: PlacementQuestion[] = [
+  {
+    id: "a2pc_grammar_1",
+    skill: "grammar",
+    task_type: "multiple_choice",
+    cefr_weight: "A2",
+    prompt: "Choose the correct sentence.",
+    options: ["I didn't went home.", "I didn't go home.", "I not went home.", "I don't went home."],
+    correct_answer: "I didn't go home.",
+  },
+  {
+    id: "a2pc_grammar_2",
+    skill: "grammar",
+    task_type: "gap_fill",
+    cefr_weight: "A2",
+    prompt: "They ___ (have) a great holiday last summer.",
+    correct_answer: "had",
+  },
+  {
+    id: "a2pc_vocab_1",
+    skill: "vocabulary",
+    task_type: "multiple_choice",
+    cefr_weight: "A2",
+    prompt: "Choose the correct word: 'I travel to work by ___ every day.'",
+    options: ["train", "umbrella", "weather", "shop"],
+    correct_answer: "train",
+  },
+  {
+    id: "a2pc_vocab_2",
+    skill: "vocabulary",
+    task_type: "multiple_choice",
+    cefr_weight: "A2",
+    prompt: "Choose the correct word: 'It's raining, so take an ___.'",
+    options: ["umbrella", "coat", "bus", "train"],
+    correct_answer: "umbrella",
+  },
+  {
+    id: "a2pc_reading_1",
+    skill: "reading",
+    task_type: "multiple_choice",
+    cefr_weight: "A2",
+    prompt: "\"Museum tickets are half price on Wednesdays.\" — When are tickets cheaper?",
+    options: ["Monday", "Wednesday", "Friday", "Every day"],
+    correct_answer: "Wednesday",
+  },
+  {
+    id: "a2pc_reading_2",
+    skill: "reading",
+    task_type: "multiple_choice",
+    cefr_weight: "A2",
+    prompt: "\"Please arrive 15 minutes before your appointment.\" — How early should you arrive?",
+    options: ["5 minutes", "10 minutes", "15 minutes", "30 minutes"],
+    correct_answer: "15 minutes",
+  },
+  {
+    id: "a2pc_writing_1",
+    skill: "writing",
+    task_type: "multiple_choice",
+    cefr_weight: "A2",
+    prompt: "Which is an appropriate way to end a message to a friend?",
+    options: ["Best regards,", "See you soon!", "Yours sincerely,", "Respectfully,"],
+    correct_answer: "See you soon!",
+  },
+  {
+    id: "a2pc_writing_2",
+    skill: "writing",
+    task_type: "multiple_choice",
+    cefr_weight: "A2",
+    prompt: "Which sentence is written in an informal style?",
+    options: [
+      "I am writing to request information.",
+      "What time works for you?",
+      "Please find attached.",
+      "I would appreciate your response.",
+    ],
+    correct_answer: "What time works for you?",
+  },
+];
+
 const PROGRESS_CHECKS: Record<string, ProgressCheckContent> = {
   "a1-elementary": {
     level: "a1-elementary",
     title: "A1 Elementary — Progress Check",
     questions: A1_PROGRESS_CHECK_QUESTIONS,
+  },
+  "a2-pre-intermediate": {
+    level: "a2-pre-intermediate",
+    title: "A2 Pre-Intermediate — Progress Check",
+    questions: A2_PROGRESS_CHECK_QUESTIONS,
   },
 };
 

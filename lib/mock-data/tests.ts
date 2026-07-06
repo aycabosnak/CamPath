@@ -34,6 +34,96 @@ export interface TestContent extends TestSummary {
   hasListeningPlaceholder: boolean;
 }
 
+const A2_TEST_1_SECTIONS: TestSection[] = [
+  {
+    skill: "grammar",
+    questions: [
+      {
+        id: "a2t1_grammar_1",
+        skill: "grammar",
+        task_type: "multiple_choice",
+        cefr_weight: "A2",
+        prompt: "Choose the correct sentence.",
+        options: [
+          "She go to school yesterday.",
+          "She goes to school yesterday.",
+          "She went to school yesterday.",
+          "She going to school yesterday.",
+        ],
+        correct_answer: "She went to school yesterday.",
+      },
+      {
+        id: "a2t1_grammar_2",
+        skill: "grammar",
+        task_type: "gap_fill",
+        cefr_weight: "A2",
+        prompt: "Yesterday, we ___ (watch) a great film.",
+        correct_answer: "watched",
+      },
+    ],
+  },
+  {
+    skill: "vocabulary",
+    questions: [
+      {
+        id: "a2t1_vocab_1",
+        skill: "vocabulary",
+        task_type: "multiple_choice",
+        cefr_weight: "A2",
+        prompt: "Choose the correct word: 'I need to buy some bread and milk from the ___.'",
+        options: ["gym", "shop", "school", "bank"],
+        correct_answer: "shop",
+      },
+      {
+        id: "a2t1_vocab_2",
+        skill: "vocabulary",
+        task_type: "multiple_choice",
+        cefr_weight: "A2",
+        prompt: "Choose the correct word: 'It's very cold today, take a ___.'",
+        options: ["umbrella", "coat", "swimsuit", "sunscreen"],
+        correct_answer: "coat",
+      },
+    ],
+  },
+  {
+    skill: "reading",
+    questions: [
+      {
+        id: "a2t1_reading_1",
+        skill: "reading",
+        task_type: "multiple_choice",
+        cefr_weight: "A2",
+        prompt: "\"Bus 42 is delayed by 20 minutes due to traffic.\" — How late is the bus?",
+        options: ["10 minutes", "20 minutes", "30 minutes", "It is cancelled"],
+        correct_answer: "20 minutes",
+      },
+      {
+        id: "a2t1_reading_2",
+        skill: "reading",
+        task_type: "multiple_choice",
+        cefr_weight: "A2",
+        prompt: "\"The shop closes early on Sundays, at 3pm instead of 6pm.\" — What time does the shop close on Sunday?",
+        options: ["6pm", "3pm", "9am", "It is closed"],
+        correct_answer: "3pm",
+      },
+    ],
+  },
+  {
+    skill: "writing",
+    questions: [
+      {
+        id: "a2t1_writing_1",
+        skill: "writing",
+        task_type: "multiple_choice",
+        cefr_weight: "A2",
+        prompt: "Which is the best way to start a message to a close friend?",
+        options: ["Dear Sir or Madam,", "Hey!", "To whom it may concern,", "I am writing to inform you."],
+        correct_answer: "Hey!",
+      },
+    ],
+  },
+];
+
 const B1_TEST_1_SECTIONS: TestSection[] = [
   {
     skill: "grammar",
@@ -259,7 +349,14 @@ const TESTS_BY_LEVEL: Record<string, TestContent[]> = {
     { id: "review-test", title: "Review Test", status: "coming_soon", sections: [], hasListeningPlaceholder: false },
   ],
   "a2-pre-intermediate": [
-    { id: "test-1", title: "Test 1", status: "coming_soon", sections: [], hasListeningPlaceholder: false },
+    {
+      id: "test-1",
+      title: "Test 1: Mixed Practice",
+      status: "available",
+      sections: A2_TEST_1_SECTIONS,
+      hasListeningPlaceholder: true,
+    },
+    { id: "mock-test", title: "Mock Test", status: "coming_soon", sections: [], hasListeningPlaceholder: false },
   ],
   "b1-intermediate": [
     {
