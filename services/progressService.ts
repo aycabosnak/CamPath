@@ -35,6 +35,12 @@ export interface ProgressCheckRecord {
   totalCount: number;
 }
 
+export interface TestAttemptRecord {
+  completedAt: string;
+  correctCount: number;
+  totalCount: number;
+}
+
 export interface ProgressState {
   completions: Record<string, LessonCompletionRecord>;
   /** Level Curriculum lesson completions (e.g. "a1-grammar-1") — a
@@ -42,6 +48,12 @@ export interface ProgressState {
    *  belongs to the CamPath-Stage-based Study Path (unit-1/2/3) and
    *  must not be touched by the new Level Curriculum architecture. */
   curriculumCompletions: Record<string, LessonCompletionRecord>;
+  /** Keyed by test id (e.g. "test-1"). Records that a Mixed Test has
+   *  been attempted at least once — needed so getLevelProgress's
+   *  sequencing can move past it and recommend the Progress Check
+   *  next. Tests remain freely retakeable regardless: this is a
+   *  sequencing signal only, never a lock. */
+  testAttempts: Record<string, TestAttemptRecord>;
   progressChecks: Record<string, ProgressCheckRecord>; // keyed by levelSlug
   milestones: MilestoneRecord[];
   studyTimeMinutes: number;
@@ -54,6 +66,7 @@ const STORAGE_KEY = "campath_progress_state";
 const DEFAULT_STATE: ProgressState = {
   completions: {},
   curriculumCompletions: {},
+  testAttempts: {},
   progressChecks: {},
   milestones: [],
   studyTimeMinutes: 0,
@@ -208,12 +221,50 @@ export function getCurriculumLessonCompletion(lessonId: string): LessonCompletio
  * Progress Check updates the score record but never duplicates the
  * Milestone.
  */
+/**
+ * `skillBreakdown`, when provided, writes directly into the SAME
+ * masteryOverrides field Practice Weakest Skill already uses — no
+ * second mastery concept was introduced. Unlike Practice's "bump by
+ * 40" heuristic, a Progress Check is a real, deliberate assessment,
+ * so it SETS the measured percentage rather than nudging toward it.
+ */
+/**
+ * Records that a Mixed Test was attempted — sequencing signal only.
+ * Tests stay freely retakeable; this just lets getLevelProgress know
+ * the learner has been through it at least once, so the recommended
+ * sequence can advance to the Progress Check.
+ *
+ * Keyed by `${levelSlug}:${testId}`, not testId alone — test ids like
+ * "test-1" are reused across levels (every level's placeholder is
+ * named "test-1"), so a bare testId key would collide the moment a
+ * second level has a real Test 1.
+ */
+export function recordTestAttempt(levelSlug: string, testId: string, correctCount: number, totalCount: number): ProgressState {
+  let state = readState();
+  const key = `${levelSlug}:${testId}`;
+  state = {
+    ...state,
+    testAttempts: {
+      ...state.testAttempts,
+      [key]: { completedAt: new Date().toISOString(), correctCount, totalCount },
+    },
+  };
+  state = markStudyDayActive(state);
+  writeState(state);
+  return state;
+}
+
+export function getTestAttempt(levelSlug: string, testId: string): TestAttemptRecord | null {
+  return readState().testAttempts[`${levelSlug}:${testId}`] ?? null;
+}
+
 export function recordProgressCheck(
   levelSlug: string,
   correctCount: number,
   totalCount: number,
   milestoneLabel: string,
-  isBridge: boolean
+  isBridge: boolean,
+  skillBreakdown?: Partial<Record<Skill, number>>
 ): ProgressState {
   let state = readState();
 
@@ -224,6 +275,13 @@ export function recordProgressCheck(
       [levelSlug]: { completedAt: new Date().toISOString(), correctCount, totalCount },
     },
   };
+
+  if (skillBreakdown) {
+    state = {
+      ...state,
+      masteryOverrides: { ...state.masteryOverrides, ...skillBreakdown },
+    };
+  }
 
   const alreadyHasMilestone = state.milestones.some((m) => m.id === levelSlug);
   if (!alreadyHasMilestone) {

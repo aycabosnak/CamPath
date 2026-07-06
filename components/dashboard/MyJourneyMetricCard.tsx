@@ -80,7 +80,7 @@ export function MyJourneyMetricCard({ metric }: MyJourneyMetricCardProps) {
 
     case "completedUnits":
       return (
-        <MetricCard eyebrow="Completed Units" value={`${metric.completed} / ${metric.total}`} />
+        <MetricCard eyebrow="Completed Learning Items" value={`${metric.completed} / ${metric.total}`} />
       );
   }
 }

@@ -18,6 +18,7 @@ import Link from "next/link";
 import { getTest } from "@/services/testsService";
 import { getProgressCheck } from "@/services/curriculumService";
 import { isAnswerCorrect, type PlacementAnswerMap } from "@/services/placementTestService";
+import { recordTestAttempt } from "@/services/progressService";
 import type { TestContent } from "@/lib/mock-data/tests";
 import type { PlacementQuestion } from "@/lib/mock-data/placementQuestions";
 import { ProgressBar } from "@/components/ui/ProgressBar";
@@ -80,6 +81,7 @@ export default function TestTakingPage() {
 
   function completeTest() {
     const correctCount = flatQuestions.filter((q) => isAnswerCorrect(q, answers[q.id])).length;
+    recordTestAttempt(params.level, params.testId, correctCount, total);
     trackEvent("test_completed", { level: params.level, testId: params.testId, correctCount, total });
     setStep("complete");
   }
