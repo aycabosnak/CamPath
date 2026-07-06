@@ -79,8 +79,17 @@ export default function ProgressCheckPage() {
 
   if (complete) {
     const record = getProgressCheckRecord(params.level);
+    const milestoneLabel = meta?.isBridge ? "Bridge to B2 completed" : `${meta?.title ?? content.title} completed`;
     return (
       <main className="max-w-2xl mx-auto px-6 py-16">
+        <div
+          className="card mb-8"
+          style={{ borderColor: "var(--color-pine)", background: "var(--color-pine-soft)" }}
+          role="status"
+        >
+          <p className="text-h3 mb-1">✓ Milestone recorded</p>
+          <p className="text-small text-ink-soft">{milestoneLabel}</p>
+        </div>
         <p className="text-caption mb-2">{content.title}</p>
         <h1 className="text-h1 mb-6">{checkLabel} complete.</h1>
         <Card className="mb-6">

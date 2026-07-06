@@ -16,6 +16,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { getTest } from "@/services/testsService";
+import { getProgressCheck } from "@/services/curriculumService";
 import { isAnswerCorrect, type PlacementAnswerMap } from "@/services/placementTestService";
 import type { TestContent } from "@/lib/mock-data/tests";
 import type { PlacementQuestion } from "@/lib/mock-data/placementQuestions";
@@ -35,12 +36,14 @@ export default function TestTakingPage() {
   const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState<PlacementAnswerMap>({});
   const [step, setStep] = useState<Step>("questions");
+  const [hasProgressCheck, setHasProgressCheck] = useState(false);
 
   useEffect(() => {
     getTest(params.level, params.testId).then((data) => {
       setTest(data);
       if (data) trackEvent("test_started", { level: params.level, testId: params.testId });
     });
+    getProgressCheck(params.level).then((pc) => setHasProgressCheck(Boolean(pc)));
   }, [params.level, params.testId]);
 
   if (test === undefined) {
@@ -106,11 +109,13 @@ export default function TestTakingPage() {
           <p className="text-data" style={{ fontSize: "28px" }}>{correctCount} / {total}</p>
         </Card>
         <div className="flex flex-wrap gap-3">
+          {hasProgressCheck && (
+            <Link href={`/tests/${params.level}/progress-check`}>
+              <Button variant="primary" size="lg">Continue to Progress Check</Button>
+            </Link>
+          )}
           <Link href={`/tests/${params.level}`}>
-            <Button variant="primary" size="lg">Back to Level</Button>
-          </Link>
-          <Link href="/my-journey">
-            <Button variant="secondary" size="lg">Return to My Journey</Button>
+            <Button variant={hasProgressCheck ? "secondary" : "primary"} size="lg">Back to Level</Button>
           </Link>
         </div>
       </main>

@@ -35,11 +35,23 @@ export default function TestsPage() {
     <main className="max-w-3xl mx-auto px-6 py-16">
       <p className="text-caption mb-2">Tests</p>
       <h1 className="text-display-l mb-4">Find your level.</h1>
-      <p className="text-body-l text-ink-soft mb-12">
-        Complete, mixed Cambridge-style tests — Grammar, Vocabulary,
-        Reading, Use of English, and Writing together, the way a real
-        exam works.
+      <p className="text-body-l text-ink-soft mb-6">
+        Structured lessons and complete, mixed Cambridge-style tests —
+        Grammar, Vocabulary, Reading, and Writing together, the way a
+        real exam works.
       </p>
+
+      {!levels.some((l) => l.isRecommended) && (
+        <Card className="mb-10">
+          <p className="text-small">
+            Not sure where to start?{" "}
+            <Link href="/level-test" className="text-pine font-semibold">
+              Take the Placement Test
+            </Link>{" "}
+            to get a recommended level — or browse freely below.
+          </p>
+        </Card>
+      )}
 
       <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))" }}>
         {levels.map((level) => (
