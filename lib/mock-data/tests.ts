@@ -185,9 +185,14 @@ const B1_TEST_1_SECTIONS: TestSection[] = [
         task_type: "multiple_choice",
         cefr_weight: "B1",
         prompt:
-          "\"The library will be closed for renovation from July 10th to August 1st. All borrowed books are due back by July 9th.\" — By when must books be returned?",
-        options: ["July 1st", "July 9th", "July 10th", "August 1st"],
-        correct_answer: "July 9th",
+          "\"Deliveries are made between 9am and 1pm. If no one is home, the parcel will be left with a neighbour or returned to the depot.\" — What happens if no one is home?",
+        options: [
+          "The parcel is delivered again the next day.",
+          "The parcel is left with a neighbour or returned to the depot.",
+          "The delivery is cancelled.",
+          "The parcel is left outside the door.",
+        ],
+        correct_answer: "The parcel is left with a neighbour or returned to the depot.",
       },
       {
         id: "b1t1_reading_2",
@@ -290,9 +295,9 @@ const A1_TEST_1_SECTIONS: TestSection[] = [
         skill: "reading",
         task_type: "multiple_choice",
         cefr_weight: "A1",
-        prompt: "\"Museum entrance: 5 dollars. Children under 10: free.\" — How much does a 7-year-old pay?",
-        options: ["5 dollars", "Nothing", "10 dollars", "2 dollars"],
-        correct_answer: "Nothing",
+        prompt: "\"Park opens at 6am and closes at 9pm. No dogs allowed after 8pm.\" — What time does the park close?",
+        options: ["6am", "8pm", "9pm", "9am"],
+        correct_answer: "9pm",
       },
       {
         id: "a1t1_reading_2",
