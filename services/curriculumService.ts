@@ -59,7 +59,7 @@ export interface LevelSequenceNode {
  * instead of inventing a new visual language for "what's next".
  */
 export async function getLevelSequence(levelSlug: string): Promise<LevelSequenceNode[]> {
-  const { isCurriculumLessonCompleted, getProgressCheckRecord } = await import("@/services/progressService");
+  const { isCurriculumLessonCompleted, getProgressCheckRecord, getTestAttempt } = await import("@/services/progressService");
   const { getTestsForLevel } = await import("@/lib/mock-data/tests");
 
   const lessons = await getLessonsForLevel(levelSlug);
@@ -87,17 +87,18 @@ export async function getLevelSequence(levelSlug: string): Promise<LevelSequence
 
   for (const test of tests) {
     order += 1;
-    // Mixed Tests are rehearsal — always shown as available, never
-    // marked "completed" from a single attempt (they're retakeable).
+    // "Completed" = attempted at least once (sequencing signal only —
+    // tests stay freely retakeable regardless of this state).
+    const attempted = Boolean(getTestAttempt(levelSlug, test.id));
     nodes.push({
       id: test.id,
       order,
-      state: !recommendedAssigned ? "recommended" : "notStarted",
+      state: attempted ? "completed" : !recommendedAssigned ? "recommended" : "notStarted",
       title: test.title,
-      subtitle: !recommendedAssigned ? "▶ Continue" : "Not Started",
+      subtitle: attempted ? "✓ Completed" : !recommendedAssigned ? "▶ Continue" : "Not Started",
       href: `/tests/${levelSlug}/${test.id}`,
     });
-    recommendedAssigned = true;
+    if (!attempted) recommendedAssigned = true;
   }
 
   if (progressCheck) {
@@ -115,6 +116,81 @@ export async function getLevelSequence(levelSlug: string): Promise<LevelSequence
 
   return nodes;
 }
+
+export interface LevelProgressItem {
+  id: string;
+  type: "lesson" | "test" | "progressCheck";
+  title: string;
+  href: string;
+  completed: boolean;
+}
+
+export interface LevelProgress {
+  items: LevelProgressItem[];
+  completedCount: number;
+  totalCount: number;
+  /** First not-yet-completed item, or null if the level is fully done
+   *  (or has no content at all yet). */
+  nextItem: LevelProgressItem | null;
+}
+
+/**
+ * The single traversal of "this level's lessons, then tests, then
+ * progress check, in order" — extracted so getLevelSequence() (above,
+ * the level page's StudyPath rendering) and myJourneyService (the
+ * dashboard's numbers) never maintain two copies of this walk.
+ */
+export async function getLevelProgress(levelSlug: string): Promise<LevelProgress> {
+  const { isCurriculumLessonCompleted, getProgressCheckRecord, getTestAttempt } = await import("@/services/progressService");
+  const { getTestsForLevel } = await import("@/lib/mock-data/tests");
+
+  const lessons = await getLessonsForLevel(levelSlug);
+  const orderedLessons = SEQUENCE_ORDER.flatMap((skill) => lessons.filter((l) => l.skill === skill));
+  const tests = getTestsForLevel(levelSlug).filter((t) => t.status === "available");
+  const progressCheck = await getProgressCheckData(levelSlug);
+
+  const items: LevelProgressItem[] = [];
+
+  for (const lesson of orderedLessons) {
+    items.push({
+      id: lesson.id,
+      type: "lesson",
+      title: lesson.title,
+      href: `/tests/${levelSlug}/lessons/${lesson.id}`,
+      completed: isCurriculumLessonCompleted(lesson.id),
+    });
+  }
+  for (const test of tests) {
+    items.push({
+      id: test.id,
+      type: "test",
+      title: test.title,
+      href: `/tests/${levelSlug}/${test.id}`,
+      // "Completed" here means "attempted at least once" — used only
+      // to advance the recommended sequence to the Progress Check.
+      // Tests remain freely retakeable regardless (see
+      // /tests/[level]/[testId], which never gates a retake on this).
+      completed: Boolean(getTestAttempt(levelSlug, test.id)),
+    });
+  }
+  if (progressCheck) {
+    const done = getProgressCheckRecord(levelSlug);
+    items.push({
+      id: "progress-check",
+      type: "progressCheck",
+      title: progressCheck.title,
+      href: `/tests/${levelSlug}/progress-check`,
+      completed: Boolean(done),
+    });
+  }
+
+  const completedCount = items.filter((i) => i.completed).length;
+  const nextItem = items.find((i) => !i.completed) ?? null;
+
+  return { items, completedCount, totalCount: items.length, nextItem };
+}
+
+export interface NextStep {
   label: string;
   href: string;
 }

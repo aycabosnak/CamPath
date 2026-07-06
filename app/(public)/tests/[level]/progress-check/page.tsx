@@ -22,6 +22,7 @@ import { getTestLevelBySlug } from "@/constants/testLevels";
 import { isAnswerCorrect, type PlacementAnswerMap } from "@/services/placementTestService";
 import { recordProgressCheck, getProgressCheckRecord } from "@/services/progressService";
 import type { ProgressCheckContent } from "@/lib/mock-data/progressChecks";
+import type { Skill } from "@/components/types";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -72,7 +73,23 @@ export default function ProgressCheckPage() {
     const milestoneLabel = meta?.isBridge
       ? `Bridge to B2 completed`
       : `Completed ${meta?.title ?? content!.title}`;
-    recordProgressCheck(params.level, correctCount, total, milestoneLabel, Boolean(meta?.isBridge));
+
+    // Real, measured mastery per skill — grouped from this Progress
+    // Check's own questions, not a heuristic. Feeds the same
+    // masteryOverrides Practice Weakest Skill already writes to.
+    const bySkill = new Map<Skill, { correct: number; total: number }>();
+    for (const q of content!.questions) {
+      const entry = bySkill.get(q.skill) ?? { correct: 0, total: 0 };
+      entry.total += 1;
+      if (isAnswerCorrect(q, answers[q.id])) entry.correct += 1;
+      bySkill.set(q.skill, entry);
+    }
+    const skillBreakdown: Partial<Record<Skill, number>> = {};
+    bySkill.forEach((v, skill) => {
+      skillBreakdown[skill] = Math.round((v.correct / v.total) * 100);
+    });
+
+    recordProgressCheck(params.level, correctCount, total, milestoneLabel, Boolean(meta?.isBridge), skillBreakdown);
     trackEvent("test_completed", { level: params.level, testId: "progress-check", correctCount, total });
     setComplete(true);
   }

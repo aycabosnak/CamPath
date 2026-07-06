@@ -1,23 +1,29 @@
 /**
  * services/myJourneyService.ts
  *
- * Behind this file's single exported function, My Journey doesn't
- * know or care whether its data comes from localStorage (today) or
- * from GET /api/users/me/summary (Database & API Design doc, 4.4)
- * later. The page only ever calls `getMyJourneySummary()`.
+ * Architecture unification (Production Readiness Audit follow-up):
+ * this file previously only knew about the legacy Study Path
+ * (unit-1/2/3, Stage-based). It now treats the Level Curriculum
+ * system (Tests-level-based: a1-elementary, a2-pre-intermediate, ...)
+ * as the PRIMARY source for Overall Progress, Completed Learning
+ * Items, and Recommended Next Step. Study Path is still computed and
+ * still returned (studyPathPreview) — it is not removed — but it no
+ * longer drives the dashboard's headline numbers.
  *
- * This version merges two sources: the Placement Test result
- * (baseline stage/CEFR/mastery) and services/progressService.ts
- * (what the learner has actually done since — completed lessons,
- * study time, practice-driven mastery changes). Every derived number
- * (progress %, completed units, readiness, recommended next step) is
- * computed here, once, so no page re-derives this logic itself.
+ * "Current level" is derived once, here, by walking forward from the
+ * Placement Test's recommended level through TEST_LEVELS, past any
+ * level whose Milestone already exists. This is the single piece of
+ * logic that makes this file scale to A2 through C1 without further
+ * changes: once a level's content exists and its Progress Check is
+ * completed, this function automatically advances to the next one.
  */
 import { UNITS_PER_STAGE } from "@/lib/mock-data/myJourneyData";
 import { UNIT_LESSONS } from "@/lib/mock-data/unitLessons";
 import { STAGE_NAME_TO_SLUG } from "@/constants/cefr";
+import { TEST_LEVELS, getTestLevelBySlug, getTestLevelSlugForStage } from "@/constants/testLevels";
 import { deriveReadinessStatus, type PlacementResult } from "@/services/placementTestService";
-import { getProgressState, type ProgressState } from "@/services/progressService";
+import { getLevelProgress, type LevelProgressItem } from "@/services/curriculumService";
+import { getProgressState, getMilestones, type ProgressState, type MilestoneRecord } from "@/services/progressService";
 import type { StageName, CefrLevel, Skill, ReadinessStatus, StudyPathNodeState } from "@/components/types";
 import type { StudyPathNodeData } from "@/components/study-path/StudyPath";
 
@@ -29,25 +35,31 @@ export interface MyJourneySummary {
   overallProgress: { percentage: number; unitLabel: string };
   studyTime: { hours: number; minutes: number; trendLabel?: string };
   studyConsistency: { daysActive: number; daysInPeriod: number };
-  /** `averageMastery`/`weakestSkill` exist so the UI can explain WHY
-   *  this readiness level was reached, not just state it. */
   examReadiness: {
     status: ReadinessStatus;
     examLabel: string;
     averageMastery: number;
     weakestSkill: Skill;
   } | null;
+  /** Displayed as "Completed Learning Items" — current-level Level
+   *  Curriculum items (lessons + tests + progress check), not a
+   *  merge with Study Path's unrelated count. See the architecture
+   *  unification note above for why these are kept separate. */
   completedUnits: { completed: number; total: number };
   masteryBySkill: Array<{ skill: Skill; percentage: number }>;
+  /** Legacy Study Path preview — still computed, still shown in its
+   *  own labeled section, no longer the source of the numbers above. */
   studyPathPreview: StudyPathNodeData[];
-  /** `unitSlug` is null once every unit with real content is
-   *  completed — callers must not link to a unit that doesn't exist. */
-  recommendedNextStep: { label: string; description: string; unitSlug: string | null };
+  recommendedNextStep: { label: string; description: string; href: string | null };
   weakestSkill: Skill;
   fromPlacementTest: { stage: StageName; cefr: CefrLevel } | null;
+  /** Now flows through this service instead of being read directly
+   *  by the page component (Production Readiness Audit, point 7). */
+  milestones: MilestoneRecord[];
 }
 
 const SKILL_ORDER: Skill[] = ["grammar", "vocabulary", "listening", "reading", "useOfEnglish", "writing"];
+const SEQUENTIAL_LEVELS = TEST_LEVELS.filter((l) => l.slug !== "grammar-shorts");
 
 function readPlacementResult(): PlacementResult | null {
   if (typeof window === "undefined") return null;
@@ -56,20 +68,48 @@ function readPlacementResult(): PlacementResult | null {
 }
 
 /**
- * Builds the Study Path preview AND figures out which unit (if any)
- * is the "recommended / current" one — in one pass, so the two
- * things can never disagree with each other.
+ * Walks forward from the Placement Test's recommended level through
+ * consecutive completed levels (Milestone exists) until it finds one
+ * that isn't fully done yet. This is what makes "If A1 Progress Check
+ * is completed, recommend A2 start" work automatically, and keeps
+ * working the same way once A2's own Progress Check exists too.
+ */
+function getCurrentLevelSlug(stage: StageName, milestones: MilestoneRecord[]): string {
+  const completedSlugs = new Set(milestones.map((m) => m.id));
+  const startSlug = getTestLevelSlugForStage(stage);
+  let idx = SEQUENTIAL_LEVELS.findIndex((l) => l.slug === startSlug);
+  if (idx === -1) idx = 0;
+  while (idx < SEQUENTIAL_LEVELS.length - 1 && completedSlugs.has(SEQUENTIAL_LEVELS[idx].slug)) {
+    idx += 1;
+  }
+  return SEQUENTIAL_LEVELS[idx].slug;
+}
+
+function describeNextItem(type: LevelProgressItem["type"]): string {
+  switch (type) {
+    case "lesson":
+      return "Continue your current level — nothing is locked, so you're free to explore any time.";
+    case "test":
+      return "Put your lessons into practice with a mixed test.";
+    case "progressCheck":
+      return "An honest checkpoint on what you've learned — not a pass/fail gate.";
+  }
+}
+
+/**
+ * Legacy Study Path preview — unchanged logic, kept exactly as it
+ * was before the unification. Still computed and returned so the
+ * existing "Study Path" section in My Journey keeps working.
  */
 function buildStudyPathPreview(
   stage: StageName,
   progress: ProgressState
-): { nodes: StudyPathNodeData[]; nextActionable: { unitSlug: string; title: string } | null } {
+): StudyPathNodeData[] {
   const slug = STAGE_NAME_TO_SLUG[stage];
   const titles = UNITS_PER_STAGE[slug] ?? [];
+  let recommendedAssigned = false;
 
-  let nextActionable: { unitSlug: string; title: string } | null = null;
-
-  const nodes = titles.map((genericTitle, i) => {
+  return titles.map((genericTitle, i) => {
     const order = i + 1;
     const unitSlug = `unit-${order}`;
     const realLesson = UNIT_LESSONS[unitSlug];
@@ -78,37 +118,21 @@ function buildStudyPathPreview(
 
     let state: StudyPathNodeState;
     let subtitle: string;
-
     if (completed) {
       state = "completed";
       subtitle = "✓ Completed";
-    } else if (isReal && !nextActionable) {
-      // First not-yet-completed unit that actually has content —
-      // this becomes BOTH this node's "recommended" state AND the
-      // dashboard's Recommended Next Step, from the same check.
+    } else if (isReal && !recommendedAssigned) {
       state = "recommended";
       subtitle = "▶ Continue";
-      nextActionable = { unitSlug, title: realLesson.title };
+      recommendedAssigned = true;
     } else {
-      // Deliberately "Not Started", never "Locked" — nothing in
-      // CamPath is technically locked (approved architecture
-      // decision). A unit with no content yet is simply not
-      // actionable, which is a content gap, not a permission gate.
       state = "notStarted";
       subtitle = "Not Started";
     }
 
     const displayTitle = isReal ? realLesson.title : genericTitle;
-    return {
-      id: unitSlug,
-      order,
-      state,
-      title: `Unit ${order} · ${displayTitle}`,
-      subtitle,
-    };
+    return { id: unitSlug, order, state, title: `Unit ${order} · ${displayTitle}`, subtitle };
   });
-
-  return { nodes, nextActionable };
 }
 
 function findWeakestSkill(masteryBySkill: Array<{ skill: Skill; percentage: number }>): Skill {
@@ -117,32 +141,20 @@ function findWeakestSkill(masteryBySkill: Array<{ skill: Skill; percentage: numb
   ).skill;
 }
 
-/**
- * Returns `null` when there is nothing to show yet — the page renders
- * the approved empty state ("Your journey starts with a placement
- * test.") in that case, per the Experience Blueprint's My Journey
- * empty-state rule (Section 1.2).
- */
 export async function getMyJourneySummary(): Promise<MyJourneySummary | null> {
   const placement = readPlacementResult();
   if (!placement) return null;
 
   const progress = getProgressState();
+  const milestones = getMilestones();
 
-  // Practice-driven mastery overrides sit on top of the placement
-  // baseline — completing a practice session changes what's shown
-  // here without ever touching the original placement result.
+  // Practice-driven AND Progress-Check-driven overrides both live in
+  // the same masteryOverrides field — this file needs no special
+  // case for either source, it just reads the merged result.
   const masteryBySkill = SKILL_ORDER.map((skill) => ({
     skill,
     percentage: progress.masteryOverrides[skill] ?? placement.skill_breakdown[skill],
   }));
-
-  const { nodes: studyPathPreview, nextActionable } = buildStudyPathPreview(placement.stage, progress);
-
-  const totalUnits = studyPathPreview.length;
-  const completedCount = studyPathPreview.filter((n) => n.state === "completed").length;
-  const progressPercentage = totalUnits ? Math.round((completedCount / totalUnits) * 100) : 0;
-
   const overallAverageMastery =
     masteryBySkill.reduce((sum, m) => sum + m.percentage, 0) / masteryBySkill.length;
   const weakestSkill = findWeakestSkill(masteryBySkill);
@@ -156,38 +168,72 @@ export async function getMyJourneySummary(): Promise<MyJourneySummary | null> {
       }
     : null;
 
+  // --- Level Curriculum: the primary source for progress + next step ---
+  const currentLevelSlug = getCurrentLevelSlug(placement.stage, milestones);
+  const currentLevelMeta = getTestLevelBySlug(currentLevelSlug);
+  const levelProgress = await getLevelProgress(currentLevelSlug);
+
+  const progressPercentage = levelProgress.totalCount
+    ? Math.round((levelProgress.completedCount / levelProgress.totalCount) * 100)
+    : 0;
+
+  const currentLevelLabel = currentLevelMeta?.title ?? currentLevelSlug;
+
+  const overallProgress = {
+    percentage: progressPercentage,
+    unitLabel: levelProgress.totalCount
+      ? `${currentLevelLabel} · ${levelProgress.completedCount}/${levelProgress.totalCount} items`
+      : `${currentLevelLabel} · Coming soon`,
+  };
+
+  let recommendedNextStep: MyJourneySummary["recommendedNextStep"];
+  if (levelProgress.nextItem) {
+    recommendedNextStep = {
+      label: levelProgress.nextItem.title,
+      description: describeNextItem(levelProgress.nextItem.type),
+      href: levelProgress.nextItem.href,
+    };
+  } else if (levelProgress.totalCount > 0) {
+    // This level is fully done — recommend advancing to the next one.
+    const idx = SEQUENTIAL_LEVELS.findIndex((l) => l.slug === currentLevelSlug);
+    const next = SEQUENTIAL_LEVELS[idx + 1];
+    recommendedNextStep = next
+      ? {
+          label: `Start ${next.title}`,
+          description: `You've completed ${currentLevelLabel}. Ready for the next level whenever you are.`,
+          href: `/tests/${next.slug}`,
+        }
+      : {
+          label: "All available levels completed",
+          description: "You've worked through every level currently available.",
+          href: null,
+        };
+  } else {
+    recommendedNextStep = {
+      label: `${currentLevelLabel} is coming soon`,
+      description: "This level's lessons haven't been published yet — check back soon.",
+      href: `/tests/${currentLevelSlug}`,
+    };
+  }
+
+  const studyPathPreview = buildStudyPathPreview(placement.stage, progress);
+
   return {
     stage: placement.stage,
     cefr: placement.cefr,
-    overallProgress: {
-      percentage: progressPercentage,
-      unitLabel:
-        completedCount > 0
-          ? `${placement.stage} · ${completedCount}/${totalUnits} units`
-          : `${placement.stage} · Getting started`,
-    },
+    overallProgress,
     studyTime: (() => {
       const total = progress.studyTimeMinutes;
       return { hours: Math.floor(total / 60), minutes: total % 60 };
     })(),
     studyConsistency: { daysActive: Math.min(progress.studyDates.length, 30), daysInPeriod: 30 },
     examReadiness,
-    completedUnits: { completed: completedCount, total: totalUnits },
+    completedUnits: { completed: levelProgress.completedCount, total: levelProgress.totalCount },
     masteryBySkill,
     studyPathPreview,
-    recommendedNextStep: nextActionable
-      ? {
-          label: nextActionable.title,
-          description:
-            "Based on your progress, this is the best place to continue — nothing is locked, so you're free to explore the full path any time.",
-          unitSlug: nextActionable.unitSlug,
-        }
-      : {
-          label: "All available lessons completed",
-          description: "You've completed every lesson available in this preview — more units are coming soon.",
-          unitSlug: null,
-        },
+    recommendedNextStep,
     weakestSkill,
     fromPlacementTest: { stage: placement.stage, cefr: placement.cefr },
+    milestones,
   };
 }

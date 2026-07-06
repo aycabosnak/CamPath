@@ -13,7 +13,6 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { getMyJourneySummary, type MyJourneySummary } from "@/services/myJourneyService";
-import { getMilestones } from "@/services/progressService";
 import { MyJourneyMetricCard, type MyJourneyMetric } from "@/components/dashboard/MyJourneyMetricCard";
 import { MasteryBarList } from "@/components/ui/MasteryBar";
 import { StudyPath } from "@/components/study-path/StudyPath";
@@ -25,13 +24,11 @@ import { trackEvent } from "@/services/analyticsService";
 export default function MyJourneyPage() {
   const router = useRouter();
   const [summary, setSummary] = useState<MyJourneySummary | null | undefined>(undefined);
-  const [milestones, setMilestones] = useState<ReturnType<typeof getMilestones>>([]);
   const studyPathRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     getMyJourneySummary().then((data) => {
       setSummary(data);
-      setMilestones(getMilestones());
       trackEvent("my_journey_viewed", { hasPlacementResult: Boolean(data) });
     });
   }, []);
@@ -125,20 +122,20 @@ export default function MyJourneyPage() {
         </Card>
       )}
 
-      {/* --- Recommended next step --- */}
+      {/* --- Recommended next step (now driven by the Level Curriculum,
+           not the legacy Study Path — see myJourneyService) --- */}
       <Card className="mb-6">
         <p className="text-h3 mb-2">Recommended Next Step</p>
-        <p className="card-eyebrow mb-1">First Recommended Lesson</p>
         <p className="text-body mb-4">{summary.recommendedNextStep.label}</p>
         <p className="text-body text-ink-soft mb-6">{summary.recommendedNextStep.description}</p>
         <div className="flex flex-wrap gap-3">
-          {summary.recommendedNextStep.unitSlug ? (
-            <Link href={`/learn/${summary.recommendedNextStep.unitSlug}`}>
-              <Button variant="primary">Continue Learning</Button>
+          {summary.recommendedNextStep.href ? (
+            <Link href={summary.recommendedNextStep.href}>
+              <Button variant="primary">Continue</Button>
             </Link>
           ) : (
             <Button variant="primary" disabled>
-              All Lessons Completed
+              All Levels Completed
             </Button>
           )}
           <Button variant="secondary" onClick={scrollToStudyPath}>
@@ -164,14 +161,16 @@ export default function MyJourneyPage() {
         </Card>
       </div>
 
-      {/* --- Milestones — fires only from a completed Progress/Bridge
-           Check (see progressService.recordProgressCheck). Calm,
-           factual list — no badge graphics, no celebration. */}
-      {milestones.length > 0 && (
+      {/* --- Milestones — now flows through myJourneyService instead of
+           being read directly from progressService in the page
+           component (Production Readiness Audit, point 7). Fires only
+           from a completed Progress/Bridge Check. Calm, factual list —
+           no badge graphics, no celebration. --- */}
+      {summary.milestones.length > 0 && (
         <Card className="mt-6">
           <p className="text-h3 mb-4">Milestones</p>
           <div className="flex flex-col gap-3">
-            {milestones.map((m) => (
+            {summary.milestones.map((m) => (
               <div key={m.id} className="flex items-center justify-between">
                 <p className={m.isBridge ? "text-small text-ink-soft" : "text-body"}>{m.label}</p>
                 <p className="text-caption normal-case text-ink-soft">
