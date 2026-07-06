@@ -268,6 +268,102 @@ const B1_PROGRESS_CHECK_QUESTIONS: PlacementQuestion[] = [
   },
 ];
 
+const B1PLUS_PROGRESS_CHECK_QUESTIONS: PlacementQuestion[] = [
+  {
+    id: "b1pluspc_grammar_1",
+    skill: "grammar",
+    task_type: "multiple_choice",
+    cefr_weight: "B1",
+    prompt: "Choose the correct sentence.",
+    options: [
+      "They have been travelling since three months.",
+      "They have been travelling for three months.",
+      "They have travelling been for three months.",
+      "They has been travelling for three months.",
+    ],
+    correct_answer: "They have been travelling for three months.",
+  },
+  {
+    id: "b1pluspc_grammar_2",
+    skill: "grammar",
+    task_type: "multiple_choice",
+    cefr_weight: "B1",
+    prompt: "Choose the correct question.",
+    options: [
+      "How long has she been studying medicine?",
+      "How long she has been studying medicine?",
+      "How long has she being studying medicine?",
+      "How long have she been studying medicine?",
+    ],
+    correct_answer: "How long has she been studying medicine?",
+  },
+  {
+    id: "b1pluspc_vocab_1",
+    skill: "vocabulary",
+    task_type: "multiple_choice",
+    cefr_weight: "B1",
+    prompt: "Choose the correct word: 'The factory was fined for causing serious ___ to the river.'",
+    options: ["pollution", "recycling", "upgrade", "device"],
+    correct_answer: "pollution",
+  },
+  {
+    id: "b1pluspc_vocab_2",
+    skill: "vocabulary",
+    task_type: "multiple_choice",
+    cefr_weight: "B1",
+    prompt: "Choose the correct word: 'Smartphones are just one example of a modern ___.'",
+    options: ["device", "pollution", "renewable", "recycling"],
+    correct_answer: "device",
+  },
+  {
+    id: "b1pluspc_reading_1",
+    skill: "reading",
+    task_type: "multiple_choice",
+    cefr_weight: "B1",
+    prompt:
+      "\"Some universities now allow students to take exams online from home. Supporters highlight the flexibility and reduced stress, while critics raise concerns about how fairly the process can be monitored.\" — What do supporters of online exams highlight?",
+    options: ["Increased costs", "Flexibility and reduced stress", "Stricter monitoring", "Longer exam times"],
+    correct_answer: "Flexibility and reduced stress",
+  },
+  {
+    id: "b1pluspc_reading_2",
+    skill: "reading",
+    task_type: "multiple_choice",
+    cefr_weight: "B1",
+    prompt: "In the same text, what concern do critics raise?",
+    options: [
+      "Exams are too easy",
+      "How fairly the process can be monitored",
+      "Students prefer paper exams",
+      "Universities lose money",
+    ],
+    correct_answer: "How fairly the process can be monitored",
+  },
+  {
+    id: "b1pluspc_writing_1",
+    skill: "writing",
+    task_type: "multiple_choice",
+    cefr_weight: "B1",
+    prompt: "Which phrase introduces a contrasting viewpoint?",
+    options: ["On the other hand,", "Firstly,", "For example,", "Similarly,"],
+    correct_answer: "On the other hand,",
+  },
+  {
+    id: "b1pluspc_writing_2",
+    skill: "writing",
+    task_type: "multiple_choice",
+    cefr_weight: "B1",
+    prompt: "Which sentence is a suitable essay conclusion?",
+    options: [
+      "Overall, I believe the drawbacks are outweighed by the benefits.",
+      "On the one hand, this matters.",
+      "For example, this happens often.",
+      "On the other hand, people disagree.",
+    ],
+    correct_answer: "Overall, I believe the drawbacks are outweighed by the benefits.",
+  },
+];
+
 const PROGRESS_CHECKS: Record<string, ProgressCheckContent> = {
   "a1-elementary": {
     level: "a1-elementary",
@@ -283,6 +379,11 @@ const PROGRESS_CHECKS: Record<string, ProgressCheckContent> = {
     level: "b1-intermediate",
     title: "B1 Intermediate — Progress Check",
     questions: B1_PROGRESS_CHECK_QUESTIONS,
+  },
+  "b1-plus-upper-intermediate": {
+    level: "b1-plus-upper-intermediate",
+    title: "Bridge to B2 — Bridge Check",
+    questions: B1PLUS_PROGRESS_CHECK_QUESTIONS,
   },
 };
 
