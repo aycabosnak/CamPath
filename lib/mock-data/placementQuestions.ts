@@ -10,12 +10,13 @@
  * only `services/placementTestService.ts` needs to change — the
  * take-test page already treats question delivery as an async call.
  *
- * `cefr_weight` is a rough difficulty tag used only by the mock
- * scoring heuristic in placementTestService.ts. The real placement
- * algorithm (adaptive, IRT-style or similar) is a backend concern and
- * is intentionally NOT modeled here.
+ * `cefr_weight` is a rough content-difficulty tag. The current mock
+ * scorer does not weight items by this field: all 12 items contribute
+ * equally. A calibrated adaptive or IRT-style model remains a future
+ * backend concern and is intentionally NOT modeled here.
  */
 import type { Skill, CefrLevel } from "@/components/types";
+import { getPlacementListeningQuestions } from "@/lib/mock-data/listeningPractice";
 
 export type PlacementTaskType =
   | "multiple_choice"
@@ -30,6 +31,10 @@ interface BasePlacementQuestion {
   task_type: PlacementTaskType;
   cefr_weight: CefrLevel;
   prompt: string;
+  /** Public path to a playable clip. Absent = this item is not audio-backed yet. */
+  audio_src?: string;
+  /** Shown after the attempt in question review — not during answering. */
+  transcript?: string;
 }
 
 export interface MultipleChoiceQuestion extends BasePlacementQuestion {
@@ -68,18 +73,25 @@ export const PLACEMENT_QUESTIONS: PlacementQuestion[] = [
     id: "pt_grammar_1",
     skill: "grammar",
     task_type: "multiple_choice",
-    cefr_weight: "A2",
-    prompt: "She ___ to the office every day.",
-    options: ["walk", "walks", "walking", "is walk"],
-    correct_answer: "walks",
+    cefr_weight: "A1",
+    prompt:
+      "Daniel has the same job every week. Which sentence describes his regular situation?",
+    options: [
+      "Daniel works in a hospital.",
+      "Daniel is working in a hospital right now.",
+      "Daniel worked in a hospital until last year.",
+      "Daniel will work in a hospital next year.",
+    ],
+    correct_answer: "Daniel works in a hospital.",
   },
   {
     id: "pt_grammar_2",
     skill: "grammar",
     task_type: "gap_fill",
     cefr_weight: "B2",
-    prompt: "By the time we arrived, the film ___ (already / start).",
-    correct_answer: "had already started",
+    prompt:
+      "Complete with exactly three words, using the words in brackets: If the warning ___ (not / arrive) in time, the team would have continued.",
+    correct_answer: "had not arrived",
   },
 
   // ---------------- Vocabulary ----------------
@@ -88,44 +100,34 @@ export const PLACEMENT_QUESTIONS: PlacementQuestion[] = [
     skill: "vocabulary",
     task_type: "multiple_choice",
     cefr_weight: "A2",
-    prompt: "Choose the word closest in meaning to 'huge'.",
-    options: ["tiny", "enormous", "narrow", "quiet"],
-    correct_answer: "enormous",
+    prompt:
+      "Maya left her dictionary at home, so she asked whether she could ___ mine until tomorrow.",
+    options: ["borrow", "lend", "owe", "hire"],
+    correct_answer: "borrow",
   },
   {
     id: "pt_vocab_2",
     skill: "vocabulary",
     task_type: "matching",
-    cefr_weight: "B1",
+    cefr_weight: "B2",
     prompt: "Match each word to its correct definition.",
-    left_items: ["reluctant", "considerate", "ambiguous"],
-    right_options: ["unwilling", "thoughtful of others", "unclear in meaning"],
+    left_items: ["tentative", "compelling", "redundant"],
+    right_options: [
+      "not certain or final",
+      "strongly convincing",
+      "unnecessary because it adds nothing",
+    ],
     correct_answer: {
-      reluctant: "unwilling",
-      considerate: "thoughtful of others",
-      ambiguous: "unclear in meaning",
+      tentative: "not certain or final",
+      compelling: "strongly convincing",
+      redundant: "unnecessary because it adds nothing",
     },
   },
 
   // ---------------- Listening ----------------
-  {
-    id: "pt_listening_1",
-    skill: "listening",
-    task_type: "audio_multiple_choice",
-    cefr_weight: "A2",
-    prompt: "Listen to the short clip. What time does the speaker say the train leaves?",
-    options: ["6:15", "6:50", "7:15", "7:50"],
-    correct_answer: "7:15",
-  },
-  {
-    id: "pt_listening_2",
-    skill: "listening",
-    task_type: "audio_multiple_choice",
-    cefr_weight: "B1",
-    prompt: "Listen to the conversation. What does the woman decide to do?",
-    options: ["Cancel the trip", "Postpone the meeting", "Book an earlier flight", "Ask for a refund"],
-    correct_answer: "Book an earlier flight",
-  },
+  // Unique Placement clips (purpose: "placement"). Never reuse the
+  // Practice bank. Playable when listeningPractice marks audioReady.
+  ...getPlacementListeningQuestions(),
 
   // ---------------- Reading ----------------
   {
@@ -134,25 +136,28 @@ export const PLACEMENT_QUESTIONS: PlacementQuestion[] = [
     task_type: "multiple_choice",
     cefr_weight: "A2",
     prompt:
-      "\"The museum is closed on Mondays but open every other day from 9am to 5pm.\" — On which day can you NOT visit?",
-    options: ["Sunday", "Monday", "Wednesday", "Friday"],
-    correct_answer: "Monday",
+      "\"Community centre notice: The main hall is closed on Tuesday morning for repairs. Classes before 1pm will take place in Room 4. The café and reception remain open as usual.\" — A learner has a class at 11am on Tuesday. Where should they go?",
+    options: ["The main hall", "Room 4", "The café", "Reception"],
+    correct_answer: "Room 4",
   },
   {
     id: "pt_reading_2",
     skill: "reading",
     task_type: "sentence_ordering",
-    cefr_weight: "B1",
-    prompt: "Put the sentences in the correct order to form a short paragraph.",
+    cefr_weight: "C1",
+    prompt:
+      "Put the sentences in the most coherent order to form a short paragraph.",
     shuffled_items: [
-      "As a result, sales increased by 20%.",
-      "The company launched a new marketing campaign in March.",
-      "It targeted younger customers through social media.",
+      "Only after bus services were expanded did car use begin to fall.",
+      "These results suggest that the charge worked best as part of a wider package.",
+      "At first, the council expected the charge to reduce traffic immediately.",
+      "Early data, however, showed little change in weekday journeys.",
     ],
     correct_answer: [
-      "The company launched a new marketing campaign in March.",
-      "It targeted younger customers through social media.",
-      "As a result, sales increased by 20%.",
+      "At first, the council expected the charge to reduce traffic immediately.",
+      "Early data, however, showed little change in weekday journeys.",
+      "Only after bus services were expanded did car use begin to fall.",
+      "These results suggest that the charge worked best as part of a wider package.",
     ],
   },
 
@@ -162,17 +167,19 @@ export const PLACEMENT_QUESTIONS: PlacementQuestion[] = [
     skill: "useOfEnglish",
     task_type: "gap_fill",
     cefr_weight: "B1",
-    prompt: "I'm really looking forward ___ seeing you next week.",
-    correct_answer: "to",
+    prompt:
+      "Complete with exactly one word: The new safety rules come ___ effect on 1 September.",
+    correct_answer: "into",
   },
   {
     id: "pt_use_of_english_2",
     skill: "useOfEnglish",
     task_type: "multiple_choice",
-    cefr_weight: "B2",
-    prompt: "Choose the correct word formation: 'The manager was impressed by her ___.' (create)",
-    options: ["creation", "creativity", "creatively", "creative"],
-    correct_answer: "creativity",
+    cefr_weight: "C1",
+    prompt:
+      "Choose the correct word form: 'Researchers questioned the ___ of the conclusion because the sample was very small.' (valid)",
+    options: ["validity", "validation", "valid", "validly"],
+    correct_answer: "validity",
   },
 
   // ---------------- Writing ----------------
@@ -181,22 +188,30 @@ export const PLACEMENT_QUESTIONS: PlacementQuestion[] = [
     skill: "writing",
     task_type: "multiple_choice",
     cefr_weight: "A2",
-    prompt: "Which greeting is appropriate for a formal email?",
-    options: ["Hey!", "Dear Sir or Madam,", "Yo,", "Hiya,"],
-    correct_answer: "Dear Sir or Madam,",
+    prompt:
+      "You are writing to a colleague you do not know well. Which request is clear and appropriately polite?",
+    options: [
+      "Send me the meeting notes by Friday.",
+      "Could you please send me the meeting notes by Friday?",
+      "Hey, notes. Friday.",
+      "I demand that you send the notes.",
+    ],
+    correct_answer: "Could you please send me the meeting notes by Friday?",
   },
   {
     id: "pt_writing_2",
     skill: "writing",
     task_type: "multiple_choice",
-    cefr_weight: "B1",
-    prompt: "Which sentence best links two contrasting ideas?",
+    cefr_weight: "C1",
+    prompt:
+      "The evidence comes from one small survey. Which sentence gives the most appropriately cautious conclusion for a formal report?",
     options: [
-      "It was raining. I went for a walk.",
-      "It was raining, so I went for a walk.",
-      "Although it was raining, I went for a walk.",
-      "It was raining and I went for a walk.",
+      "The results prove that remote work always increases productivity.",
+      "The results suggest that remote work may improve productivity in some contexts.",
+      "No one can deny that remote work is more productive.",
+      "Remote work definitely improves productivity for every employee.",
     ],
-    correct_answer: "Although it was raining, I went for a walk.",
+    correct_answer:
+      "The results suggest that remote work may improve productivity in some contexts.",
   },
 ];

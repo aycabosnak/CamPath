@@ -83,7 +83,7 @@ A technical note worth documenting explicitly: `unit-1/2/3` (static routes, unde
 | `unitLessonService.ts` | Legacy Study Path lesson accessor | Reads `lib/mock-data/unitLessons.ts` |
 | `readinessCalculator.ts` | **Unused today.** Built ahead of the not-yet-implemented Mock Exam feature (converts a future `MockExamSession.overall_result` enum into the UI's `ReadinessStatus`). Left in place intentionally — see `PROJECT_STATUS.md`. |
 
-**Known, accepted duplication:** `RESULTS_STORAGE_KEY = "campath_level_test_result"` is declared independently in both `myJourneyService.ts` and `testsService.ts`, rather than imported from one place. Harmless today (same string, same read-only usage) but worth collapsing into one export if a third consumer appears.
+Placement result persistence uses `PLACEMENT_RESULT_STORAGE_KEY` from `constants/storageKeys.ts`. The stored string remains `"campath_level_test_result"`; only the declaration was centralized.
 
 ---
 

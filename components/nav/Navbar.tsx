@@ -1,37 +1,32 @@
 "use client";
 
-/**
- * components/nav/Navbar.tsx
- *
- * Minimal navigation for CamPath's core learner flow.
- *
- * "Tests" was added in the Tests Architecture sprint (Step 2), now
- * that /tests is fully implemented — per the rule that nav items are
- * only added once their destination route actually works.
- *
- * "Lessons" is still intentionally NOT included — /learn is still an
- * empty scaffold stub. It'll be added the moment that page ships.
- *
- * "Practice" points at /practice/weakest-skill rather than the
- * /practice hub, because the hub itself is still an empty scaffold
- * placeholder — linking to it would recreate the exact "user feels
- * lost" problem this navbar exists to prevent.
- *
- * No dropdowns, no mobile hamburger drawer — a plain flex-wrap row
- * stays legible at every width without introducing a new interaction
- * pattern. Login is visually separated (its own small pill) since
- * it's an account action, not a content destination like the rest.
- */
+/** Primary learner navigation. Placement remains a prominent action,
+ * while Learn / Tests / Practice describe distinct product jobs. */
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/components/lib/cn";
 
 const NAV_LINKS = [
   { label: "Home", href: "/", match: (path: string) => path === "/" },
-  { label: "Placement Test", href: "/level-test", match: (path: string) => path.startsWith("/level-test") },
-  { label: "Tests", href: "/tests", match: (path: string) => path.startsWith("/tests") },
+  {
+    label: "Learn",
+    href: "/learn",
+    match: (path: string) =>
+      path.startsWith("/learn") ||
+      (path.startsWith("/tests/") &&
+        (path.includes("/lessons/") || path.split("/").filter(Boolean).length === 2)),
+  },
+  {
+    label: "Tests",
+    href: "/tests",
+    match: (path: string) =>
+      path === "/tests" ||
+      (path.startsWith("/tests/") &&
+        !path.includes("/lessons/") &&
+        path.split("/").filter(Boolean).length >= 3),
+  },
+  { label: "Practice", href: "/practice", match: (path: string) => path.startsWith("/practice") },
   { label: "My Journey", href: "/my-journey", match: (path: string) => path.startsWith("/my-journey") },
-  { label: "Practice", href: "/practice/weakest-skill", match: (path: string) => path.startsWith("/practice") },
 ];
 
 export function Navbar() {
@@ -40,18 +35,14 @@ export function Navbar() {
   return (
     <nav
       aria-label="Main"
-      className="flex flex-wrap items-center justify-between gap-4"
-      style={{
-        borderBottom: "1px solid var(--color-line)",
-        padding: "16px 24px",
-      }}
+      className="site-nav"
     >
-      <Link href="/" className="text-h3" style={{ fontFamily: "var(--font-display)" }}>
-        CamPath
-      </Link>
+      <div className="site-nav-inner">
+        <Link href="/" className="site-brand" aria-label="CamPath home">
+          CamPath
+        </Link>
 
-      <div className="flex flex-wrap items-center gap-6">
-        <ul className="flex flex-wrap items-center gap-6" style={{ listStyle: "none", margin: 0, padding: 0 }}>
+        <ul className="site-nav-links">
           {NAV_LINKS.map((link) => {
             const active = link.match(pathname);
             return (
@@ -59,12 +50,10 @@ export function Navbar() {
                 <Link
                   href={link.href}
                   aria-current={active ? "page" : undefined}
-                  className={cn("text-small", active ? "text-pine font-semibold" : "text-ink-soft")}
-                  style={{
-                    display: "inline-block",
-                    paddingBottom: "4px",
-                    borderBottom: active ? "2px solid var(--color-pine)" : "2px solid transparent",
-                  }}
+                  className={cn(
+                    "site-nav-link text-small",
+                    active ? "text-pine font-semibold" : "text-ink-soft"
+                  )}
                 >
                   {link.label}
                 </Link>
@@ -73,8 +62,15 @@ export function Navbar() {
           })}
         </ul>
 
-        <Link href="/login" className="btn btn-secondary btn-sm">
-          Login
+        <Link
+          href="/level-test"
+          className={cn(
+            "btn btn-sm",
+            pathname.startsWith("/level-test") ? "btn-secondary" : "btn-primary"
+          )}
+          aria-current={pathname.startsWith("/level-test") ? "page" : undefined}
+        >
+          Placement Test
         </Link>
       </div>
     </nav>

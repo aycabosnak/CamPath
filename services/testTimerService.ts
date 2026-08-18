@@ -25,6 +25,9 @@ export interface TimedTestSession {
   deadline: number; // epoch ms
   index: number;
   answers: PlacementAnswerMap;
+  /** Placement Listening plays used, keyed by question id. Optional so
+   *  sessions saved before this field still resume cleanly. */
+  listeningPlays?: Record<string, number>;
 }
 
 export function readSession(): TimedTestSession | null {
@@ -52,6 +55,7 @@ export function createNewSession(): TimedTestSession {
     deadline: Date.now() + TEST_DURATION_MS,
     index: 0,
     answers: {},
+    listeningPlays: {},
   };
   writeSession(session);
   return session;

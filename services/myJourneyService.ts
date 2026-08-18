@@ -3,12 +3,12 @@
  *
  * Architecture unification (Production Readiness Audit follow-up):
  * this file previously only knew about the legacy Study Path
- * (unit-1/2/3, Stage-based). It now treats the Level Curriculum
+ * (unit-1/2/3, Stage-based). It treats the Level Curriculum
  * system (Tests-level-based: a1-elementary, a2-pre-intermediate, ...)
  * as the PRIMARY source for Overall Progress, Completed Learning
- * Items, and Recommended Next Step. Study Path is still computed and
- * still returned (studyPathPreview) — it is not removed — but it no
- * longer drives the dashboard's headline numbers.
+ * Items, and Recommended Next Step. Legacy `/learn/unit-*` completions
+ * remain in progress state for compatibility and are not migrated
+ * or displayed here.
  *
  * "Current level" is derived once, here, by walking forward from the
  * Placement Test's recommended level through TEST_LEVELS, past any
@@ -17,17 +17,12 @@
  * changes: once a level's content exists and its Progress Check is
  * completed, this function automatically advances to the next one.
  */
-import { UNITS_PER_STAGE } from "@/lib/mock-data/myJourneyData";
-import { UNIT_LESSONS } from "@/lib/mock-data/unitLessons";
-import { STAGE_NAME_TO_SLUG } from "@/constants/cefr";
 import { TEST_LEVELS, getTestLevelBySlug, getTestLevelSlugForStage } from "@/constants/testLevels";
+import { PLACEMENT_RESULT_STORAGE_KEY } from "@/constants/storageKeys";
 import { deriveReadinessStatus, type PlacementResult } from "@/services/placementTestService";
 import { getLevelProgress, type LevelProgressItem } from "@/services/curriculumService";
-import { getProgressState, getMilestones, type ProgressState, type MilestoneRecord } from "@/services/progressService";
-import type { StageName, CefrLevel, Skill, ReadinessStatus, StudyPathNodeState } from "@/components/types";
-import type { StudyPathNodeData } from "@/components/study-path/StudyPath";
-
-const RESULTS_STORAGE_KEY = "campath_level_test_result";
+import { getProgressState, getMilestones, type MilestoneRecord } from "@/services/progressService";
+import type { StageName, CefrLevel, Skill, ReadinessStatus } from "@/components/types";
 
 export interface MyJourneySummary {
   stage: StageName;
@@ -47,11 +42,11 @@ export interface MyJourneySummary {
    *  unification note above for why these are kept separate. */
   completedUnits: { completed: number; total: number };
   masteryBySkill: Array<{ skill: Skill; percentage: number }>;
-  /** Legacy Study Path preview — still computed, still shown in its
-   *  own labeled section, no longer the source of the numbers above. */
-  studyPathPreview: StudyPathNodeData[];
   recommendedNextStep: { label: string; description: string; href: string | null };
   weakestSkill: Skill;
+  /** Tests-level slug My Journey currently treats as "in progress"
+   *  — used by Weakest Skill Practice to prefer that level's questions. */
+  currentLevelSlug: string;
   fromPlacementTest: { stage: StageName; cefr: CefrLevel } | null;
   /** Now flows through this service instead of being read directly
    *  by the page component (Production Readiness Audit, point 7). */
@@ -63,7 +58,7 @@ const SEQUENTIAL_LEVELS = TEST_LEVELS.filter((l) => l.slug !== "grammar-shorts")
 
 function readPlacementResult(): PlacementResult | null {
   if (typeof window === "undefined") return null;
-  const raw = window.localStorage.getItem(RESULTS_STORAGE_KEY);
+  const raw = window.localStorage.getItem(PLACEMENT_RESULT_STORAGE_KEY);
   return raw ? (JSON.parse(raw) as PlacementResult) : null;
 }
 
@@ -94,45 +89,6 @@ function describeNextItem(type: LevelProgressItem["type"]): string {
     case "progressCheck":
       return "An honest checkpoint on what you've learned — not a pass/fail gate.";
   }
-}
-
-/**
- * Legacy Study Path preview — unchanged logic, kept exactly as it
- * was before the unification. Still computed and returned so the
- * existing "Study Path" section in My Journey keeps working.
- */
-function buildStudyPathPreview(
-  stage: StageName,
-  progress: ProgressState
-): StudyPathNodeData[] {
-  const slug = STAGE_NAME_TO_SLUG[stage];
-  const titles = UNITS_PER_STAGE[slug] ?? [];
-  let recommendedAssigned = false;
-
-  return titles.map((genericTitle, i) => {
-    const order = i + 1;
-    const unitSlug = `unit-${order}`;
-    const realLesson = UNIT_LESSONS[unitSlug];
-    const isReal = Boolean(realLesson);
-    const completed = Boolean(progress.completions[unitSlug]);
-
-    let state: StudyPathNodeState;
-    let subtitle: string;
-    if (completed) {
-      state = "completed";
-      subtitle = "✓ Completed";
-    } else if (isReal && !recommendedAssigned) {
-      state = "recommended";
-      subtitle = "▶ Continue";
-      recommendedAssigned = true;
-    } else {
-      state = "notStarted";
-      subtitle = "Not Started";
-    }
-
-    const displayTitle = isReal ? realLesson.title : genericTitle;
-    return { id: unitSlug, order, state, title: `Unit ${order} · ${displayTitle}`, subtitle };
-  });
 }
 
 function findWeakestSkill(masteryBySkill: Array<{ skill: Skill; percentage: number }>): Skill {
@@ -216,8 +172,6 @@ export async function getMyJourneySummary(): Promise<MyJourneySummary | null> {
     };
   }
 
-  const studyPathPreview = buildStudyPathPreview(placement.stage, progress);
-
   return {
     stage: placement.stage,
     cefr: placement.cefr,
@@ -230,9 +184,9 @@ export async function getMyJourneySummary(): Promise<MyJourneySummary | null> {
     examReadiness,
     completedUnits: { completed: levelProgress.completedCount, total: levelProgress.totalCount },
     masteryBySkill,
-    studyPathPreview,
     recommendedNextStep,
     weakestSkill,
+    currentLevelSlug,
     fromPlacementTest: { stage: placement.stage, cefr: placement.cefr },
     milestones,
   };

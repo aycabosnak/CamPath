@@ -46,7 +46,7 @@ export const TEST_LEVELS: TestLevelMeta[] = [
     shortLabel: "A1",
     isBridge: false,
     bridge: "Maps to: Foundation",
-    description: "The basics — everyday phrases, simple present tense, and core vocabulary.",
+    description: "Everyday phrases, verb 'to be', family vocabulary, short notices, and simple forms.",
   },
   {
     slug: "a2-pre-intermediate",
@@ -56,7 +56,7 @@ export const TEST_LEVELS: TestLevelMeta[] = [
     shortLabel: "A2",
     isBridge: false,
     bridge: "Maps to: Explorer",
-    description: "Talking about the past, making comparisons, and describing daily routines.",
+    description: "Past simple, daily routines, short narratives, and informal messages.",
   },
   {
     slug: "b1-intermediate",
@@ -66,7 +66,7 @@ export const TEST_LEVELS: TestLevelMeta[] = [
     shortLabel: "B1",
     isBridge: false,
     bridge: "Maps to: Communicator",
-    description: "Expressing opinions, real future possibilities, and everyday narrative tenses.",
+    description: "First conditionals, future plans, gist and detail reading, and giving opinions.",
   },
   {
     slug: "b1-plus-upper-intermediate",
@@ -76,17 +76,19 @@ export const TEST_LEVELS: TestLevelMeta[] = [
     shortLabel: "B1+",
     isBridge: true,
     bridge: "Bridges toward: Independent",
-    description: "Consolidating B1 grammar while building toward more complex, abstract language.",
+    description:
+      "Present perfect continuous, environment and technology vocabulary, inference reading, and for-and-against writing.",
   },
   {
     slug: "b2-pre-advanced",
-    title: "B2 Pre-Advanced",
-    pageTitle: "B2 Pre-Advanced",
+    title: "B2 Upper-Intermediate",
+    pageTitle: "B2 Upper-Intermediate",
     cefr: "B2",
     shortLabel: "B2",
     isBridge: false,
     bridge: "Maps to: Independent",
-    description: "Passive voice, reported speech, and a wider range of linking devices.",
+    description:
+      "Tense choice by meaning, modals of deduction, hypothetical conditionals, formal reporting, and argument reading.",
   },
   {
     slug: "c1-advanced",
@@ -96,7 +98,8 @@ export const TEST_LEVELS: TestLevelMeta[] = [
     shortLabel: "C1",
     isBridge: false,
     bridge: "Maps to: Advanced",
-    description: "Nuanced argumentation, idiomatic language, and academic register.",
+    description:
+      "Emphasis and inversion, hedging, advanced collocation, register, and critical reading of argument.",
   },
   {
     slug: "grammar-shorts",
@@ -106,7 +109,7 @@ export const TEST_LEVELS: TestLevelMeta[] = [
     shortLabel: "GS",
     isBridge: false,
     bridge: null,
-    description: "Quick, focused grammar-only drills — for any level, whenever you need a refresher.",
+    description: "Coming soon — focused grammar-only drills for any level, when you need a refresher.",
   },
 ];
 

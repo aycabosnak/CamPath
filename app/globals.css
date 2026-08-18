@@ -40,9 +40,9 @@
   --color-line: #DCE0D9;
 
   /* Typography */
-  --font-display: 'Newsreader', Georgia, serif;
-  --font-body: 'Source Sans 3', -apple-system, sans-serif;
-  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  --font-display: var(--font-newsreader), Georgia, serif;
+  --font-body: var(--font-source-sans), -apple-system, sans-serif;
+  --font-mono: var(--font-ibm-plex-mono), ui-monospace, monospace;
 
   /* Spacing (4px base) */
   --space-1: 4px;  --space-2: 8px;  --space-3: 12px; --space-4: 16px;
@@ -341,6 +341,18 @@
     box-shadow: 0 0 0 3px var(--color-gold-soft), 0 0 0 4.5px var(--color-gold);
   }
 
+  /* ---------- Audio player (Listening) ---------- */
+  .audio-player {
+    padding: var(--space-4);
+  }
+  .audio-player-seek {
+    display: block;
+    width: 100%;
+    height: 8px;
+    accent-color: var(--color-pine);
+    cursor: pointer;
+  }
+
   /* ---------- Badge / Chip ----------
      All four badge variants (CEFR, Stage, Skill, Status) reuse the same
      shape and sizing — only the color pairing changes, and every
@@ -377,5 +389,259 @@
   .badge-brick {
     background: var(--color-brick-soft);
     color: var(--color-brick);
+  }
+
+  /* ---------- Product shell and discovery layouts ---------- */
+  .site-nav {
+    border-bottom: 1px solid var(--color-line);
+    background: color-mix(in srgb, var(--color-paper) 94%, white);
+  }
+  .site-nav-inner {
+    max-width: 1024px;
+    margin: 0 auto;
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+  .site-brand {
+    color: var(--color-ink);
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .site-nav-links {
+    list-style: none;
+    margin: 0 0 0 auto;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+  .site-nav-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding-bottom: 4px;
+    border-bottom: 2px solid transparent;
+  }
+  .site-nav-link[aria-current="page"] {
+    border-bottom-color: var(--color-pine);
+  }
+
+  .home-hero {
+    padding: 104px 0 88px;
+    background: var(--color-paper-raised);
+    border-bottom: 1px solid var(--color-line);
+  }
+  .home-levels {
+    background: var(--color-paper-raised);
+    border-top: 1px solid var(--color-line);
+    border-bottom: 1px solid var(--color-line);
+  }
+  .product-pillar-grid,
+  .level-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .placement-summary,
+  .level-progress-layout {
+    grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
+  }
+  .learning-area-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .assessment-grid,
+  .journey-support-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .level-card {
+    min-height: 290px;
+  }
+  .level-recommendation,
+  .level-progress-card {
+    border-color: color-mix(in srgb, var(--color-pine) 38%, var(--color-line));
+    background: color-mix(in srgb, var(--color-paper-raised) 92%, var(--color-pine-soft));
+  }
+  .availability-card-unavailable {
+    opacity: 0.66;
+  }
+  .availability-card-unavailable:hover {
+    border-color: var(--color-line);
+  }
+  .skill-action {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 10px 12px;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-btn);
+    background: var(--color-paper-raised);
+  }
+  .skill-action:hover {
+    border-color: var(--color-pine);
+  }
+  .level-strip {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+  }
+  .level-strip-item {
+    min-height: 88px;
+    padding: 16px 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    background: var(--color-paper-raised);
+    border-right: 1px solid var(--color-line);
+  }
+  .level-strip-item:last-child {
+    border-right: 0;
+  }
+  .level-strip-item:hover {
+    background: var(--color-pine-soft);
+  }
+  .scroll-mt-8 {
+    scroll-margin-top: 32px;
+  }
+  .placement-timer {
+    position: fixed;
+    top: 88px;
+    right: 24px;
+    z-index: 10;
+    text-align: right;
+  }
+  .audio-player-time {
+    margin-left: auto;
+  }
+
+  .site-footer {
+    border-top: 1px solid var(--color-line);
+    margin-top: 96px;
+    background: var(--color-paper-raised);
+  }
+  .footer-grid {
+    grid-template-columns: minmax(240px, 1.5fr) 1fr 1fr;
+  }
+  .footer-link-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .footer-link-list a:hover {
+    color: var(--color-pine);
+  }
+  .footer-legal {
+    border-top: 1px solid var(--color-line);
+    padding-top: 24px;
+    margin-top: 48px;
+  }
+
+  @media (max-width: 820px) {
+    .site-nav-inner {
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .site-nav-links {
+      order: 3;
+      width: 100%;
+      margin: 0;
+      gap: 12px 20px;
+      flex-wrap: wrap;
+      overflow-x: visible;
+      padding: 2px 0;
+    }
+    .home-hero {
+      padding: 72px 0 64px;
+    }
+    .product-pillar-grid,
+    .level-grid,
+    .learning-area-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .placement-summary,
+    .level-progress-layout {
+      grid-template-columns: 1fr;
+    }
+    .level-strip {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .level-strip-item:nth-child(3) {
+      border-right: 0;
+    }
+    .level-strip-item:nth-child(-n + 3) {
+      border-bottom: 1px solid var(--color-line);
+    }
+    .footer-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 560px) {
+    .text-display-xl {
+      font-size: 40px;
+      line-height: 48px;
+    }
+    .text-display-l {
+      font-size: 34px;
+      line-height: 42px;
+    }
+    .product-pillar-grid,
+    .level-grid,
+    .learning-area-grid,
+    .assessment-grid,
+    .journey-support-grid,
+    .footer-grid {
+      grid-template-columns: 1fr;
+    }
+    .level-card {
+      min-height: 0;
+    }
+    .site-nav-links {
+      gap: 8px 16px;
+    }
+    .site-nav .btn-sm {
+      min-height: 44px;
+      height: 44px;
+    }
+    .level-strip {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .level-strip-item:nth-child(3) {
+      border-right: 1px solid var(--color-line);
+    }
+    .level-strip-item:nth-child(2n) {
+      border-right: 0;
+    }
+    .level-strip-item:nth-child(-n + 4) {
+      border-bottom: 1px solid var(--color-line);
+    }
+    .placement-timer {
+      position: static;
+      text-align: left;
+      margin-bottom: 16px;
+    }
+    .audio-player-time {
+      margin-left: 0;
+      width: 100%;
+    }
+    .test-taking-action {
+      width: 100%;
+    }
+    .mastery-row {
+      grid-template-columns: 1fr auto;
+      row-gap: 8px;
+    }
+    .mastery-track {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
   }
 }

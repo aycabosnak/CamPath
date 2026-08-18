@@ -23,6 +23,7 @@ export type AnalyticsEventName =
   | "lesson_started"
   | "lesson_completed"
   | "practice_started"
+  | "practice_completed"
   | "test_started"
   | "test_completed";
 

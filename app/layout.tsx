@@ -1,4 +1,25 @@
 import "./globals.css";
+import { IBM_Plex_Mono, Newsreader, Source_Sans_3 } from "next/font/google";
+
+const displayFont = Newsreader({
+  subsets: ["latin"],
+  variable: "--font-newsreader",
+  display: "swap",
+  adjustFontFallback: false,
+});
+
+const bodyFont = Source_Sans_3({
+  subsets: ["latin"],
+  variable: "--font-source-sans",
+  display: "swap",
+});
+
+const dataFont = IBM_Plex_Mono({
+  subsets: ["latin"],
+  weight: ["400", "600"],
+  variable: "--font-ibm-plex-mono",
+  display: "swap",
+});
 
 /**
  * Root layout — shared by every route group.
@@ -17,7 +38,9 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className={`${displayFont.variable} ${bodyFont.variable} ${dataFont.variable}`}>
+        {children}
+      </body>
     </html>
   );
 }

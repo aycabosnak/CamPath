@@ -35,8 +35,8 @@ export function ProgressBar({
   return (
     <div className={cn("w-full", className)}>
       {(label || showValue) && (
-        <div className="flex justify-between text-small text-ink-soft mb-2">
-          {label && <span>{label}</span>}
+        <div className="flex justify-between gap-2 flex-wrap text-small text-ink-soft mb-2">
+          {label && <span className="min-w-0">{label}</span>}
           {showValue && <span className="text-data text-small">{clamped}%</span>}
         </div>
       )}

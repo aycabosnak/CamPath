@@ -10,11 +10,11 @@
 |---|---|---|
 | A1 Elementary | `a1-elementary` | **Complete reference template** — 4 lessons, 1 Mixed Test, 1 Progress Check, educationally audited |
 | A2 Pre-Intermediate | `a2-pre-intermediate` | **Complete** — same structure as A1, educationally audited and aligned |
-| B1 Intermediate | `b1-intermediate` | Partial — 3 legacy Study Path lessons + 1 Mixed Test exist, but predate the Level Curriculum system and have not been through the alignment audit |
+| B1 Intermediate | `b1-intermediate` | **Complete** — 4 lessons (Grammar/Vocabulary/Reading/Writing), 1 Mixed Test, 1 Progress Check |
 | B1+ (Bridge) | `b1-plus-upper-intermediate` | **Complete** — same 4-lesson/Mixed Test/Bridge Check structure, proactively audited for passage reuse before release |
-| B2 Pre-Advanced | `b2-pre-advanced` | Metadata + Coming Soon placeholders only |
-| C1 Advanced | `c1-advanced` | Metadata + Coming Soon placeholders only |
-| Grammar Shorts | `grammar-shorts` | Metadata only, no content — see Section 4 for what this is *for* |
+| B2 Upper-Intermediate | `b2-pre-advanced` | **Complete** — 7 lessons (4 Grammar, Vocabulary, Reading, Writing), 1 Mixed Test, 1 Progress Check |
+| C1 Advanced | `c1-advanced` | **Complete** — 6 lessons (Grammar, Vocabulary, Reading, Writing), 1 Mixed Test, 1 Progress Check |
+| Grammar Shorts | `grammar-shorts` | Coming soon — metadata only, no content — see Section 4 for what this is *for* |
 
 ---
 
@@ -55,7 +55,7 @@ Both exist to answer "what should I practice right now," but from opposite direc
 |---|---|---|
 | Who decides the topic | The learner (they already know what they want to revisit) | The system (based on measured mastery data) |
 | Entry point | "I know exactly what I want" | "I don't know what to work on" |
-| Status today | Metadata only, no content yet | Implemented — reads `masteryBySkill`, offers the two lowest |
+| Status today | Coming soon — metadata only, no content yet | Implemented — real purpose-owned practice sessions, plus Placement-based weak-skill recommendations |
 
 These were deliberately **not** merged into one "Quick Practice" concept — doing so would collapse a content-driven lookup tool and a data-driven recommendation tool into one feature that does neither job as clearly.
 

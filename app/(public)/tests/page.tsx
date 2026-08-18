@@ -1,26 +1,21 @@
 "use client";
 
-/**
- * app/(public)/tests/page.tsx
- *
- * Tests Architecture, Step 2. Shows the 7 learner-friendly levels
- * (Option C — separate from the internal CamPath Stage system; see
- * constants/testLevels.ts for the bridge mapping). If the learner has
- * a Placement Test result, their matching level is marked
- * "Recommended for you" — read-only, nothing here writes back to the
- * Placement Test data.
- */
+/** Assessment discovery. Teaching lives in Learn; this page describes
+ * Mixed Tests and Progress Checks without presenting lessons as tests. */
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { getTestLevels, type TestLevelWithCount } from "@/services/testsService";
+import {
+  getLearningLevels,
+  type LearningLevelOverview,
+} from "@/services/learningDiscoveryService";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 
 export default function TestsPage() {
-  const [levels, setLevels] = useState<TestLevelWithCount[] | null>(null);
+  const [levels, setLevels] = useState<LearningLevelOverview[] | null>(null);
 
   useEffect(() => {
-    getTestLevels().then(setLevels);
+    getLearningLevels().then(setLevels);
   }, []);
 
   if (!levels) {
@@ -31,16 +26,15 @@ export default function TestsPage() {
     );
   }
 
-  const hasPlacementResult = levels.some((l) => l.isRecommended);
+  const hasPlacementResult = levels.some((level) => level.isRecommended);
 
   return (
-    <main className="max-w-3xl mx-auto px-6 py-16">
+    <main className="max-w-4xl mx-auto px-6 py-16">
       <p className="text-caption mb-2">Tests</p>
-      <h1 className="text-display-l mb-4">Find your level.</h1>
-      <p className="text-body-l text-ink-soft mb-6">
-        Structured lessons and complete, mixed Cambridge-style tests —
-        Grammar, Vocabulary, Reading, and Writing together, the way a
-        real exam works.
+      <h1 className="text-display-l mb-4">Test what you have learned.</h1>
+      <p className="text-body-l text-ink-soft mb-6 max-w-2xl">
+        Choose a level for a Mixed Test or Progress Check. Tests assess
+        your knowledge; lessons and teaching are in Learn.
       </p>
 
       {!hasPlacementResult && (
@@ -55,31 +49,30 @@ export default function TestsPage() {
         </Card>
       )}
 
-      <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))" }}>
-        {levels.map((level) => (
-          <Card key={level.slug}>
+      <div className="grid gap-4 level-grid">
+        {levels.map((level) => {
+          const availableTests = level.tests.filter((test) => test.status === "available");
+          return (
+          <Card key={level.meta.slug} className="flex flex-col">
             <div className="flex items-center gap-2 mb-2 flex-wrap">
-              <span className="badge badge-neutral">{level.shortLabel}</span>
+              <span className="badge badge-neutral">{level.meta.shortLabel}</span>
               {level.isRecommended && (
                 <span className="badge badge-pine">Recommended for you</span>
               )}
             </div>
-            <p className="text-h3 mb-2">{level.title}</p>
-            <p className="text-small text-ink-soft mb-3">{level.description}</p>
-            {/* Same gating rule as the level detail page: unexplained
-                Stage jargon only appears once the learner has real
-                placement context (QA follow-up fix). */}
-            {level.bridge && hasPlacementResult && (
-              <p className="text-caption normal-case mb-3">{level.bridge}</p>
-            )}
+            <p className="text-h3 mb-2">{level.meta.title}</p>
             <p className="text-small text-ink-soft mb-4">
-              {level.availableCount} of {level.totalCount} tests available
+              {availableTests.length
+                ? `${availableTests.length} Mixed Test available`
+                : "Mixed Test coming soon"}
+              {" · "}
+              {level.hasProgressCheck ? "Progress Check available" : "Progress Check coming soon"}
             </p>
-            <Link href={`/tests/${level.slug}`}>
-              <Button variant="secondary">View Tests</Button>
+            <Link href={`/tests/${level.meta.slug}#test-yourself`} className="mt-auto">
+              <Button variant="secondary">View assessments</Button>
             </Link>
           </Card>
-        ))}
+        )})}
       </div>
     </main>
   );

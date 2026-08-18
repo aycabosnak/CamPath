@@ -23,8 +23,7 @@ import { StageBadge, CefrBadge, SkillBadge } from "@/components/ui/Badge";
 import type { PlacementResult, QuestionReviewItem } from "@/services/placementTestService";
 import type { Skill } from "@/components/types";
 import { trackEvent } from "@/services/analyticsService";
-
-const RESULTS_STORAGE_KEY = "campath_level_test_result";
+import { PLACEMENT_RESULT_STORAGE_KEY } from "@/constants/storageKeys";
 
 const SKILL_ORDER: Skill[] = [
   "grammar",
@@ -65,7 +64,7 @@ function QuestionReviewCard({ item }: { item: QuestionReviewItem }) {
         </span>
       </div>
 
-      <p className="text-body mb-4">{item.questionText}</p>
+      <p className="text-body mb-4 break-words min-w-0">{item.questionText}</p>
 
       <div className="flex flex-col gap-1 mb-4">
         <p className="text-small">
@@ -82,6 +81,13 @@ function QuestionReviewCard({ item }: { item: QuestionReviewItem }) {
         <p className="card-eyebrow mb-1">Why</p>
         <p className="text-small text-ink-soft">{item.explanation}</p>
       </div>
+
+      {item.transcript && (
+        <div style={{ borderTop: "1px solid var(--color-line)", paddingTop: "12px", marginTop: "12px" }}>
+          <p className="card-eyebrow mb-1">Transcript</p>
+          <p className="text-small text-ink-soft">{item.transcript}</p>
+        </div>
+      )}
     </div>
   );
 }
@@ -94,7 +100,7 @@ export default function LevelTestResultsPage() {
   const reviewRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const raw = localStorage.getItem(RESULTS_STORAGE_KEY);
+    const raw = localStorage.getItem(PLACEMENT_RESULT_STORAGE_KEY);
     const parsed = raw ? (JSON.parse(raw) as PlacementResult) : null;
     setResult(parsed);
     if (parsed) {
@@ -182,7 +188,7 @@ export default function LevelTestResultsPage() {
       {/* --- Question Review --- */}
       <div ref={reviewRef} />
       <Card className="mb-10">
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
           <p className="text-h3">Question Review</p>
           <Button variant="tertiary" size="sm" onClick={() => setReviewOpen((v) => !v)}>
             {reviewOpen ? "Hide" : "Show"}
@@ -198,7 +204,7 @@ export default function LevelTestResultsPage() {
         {reviewOpen && (
           <>
             {incorrectCount > 0 && (
-              <div className="flex gap-2 mb-4" role="group" aria-label="Filter questions">
+              <div className="flex flex-wrap gap-2 mb-4" role="group" aria-label="Filter questions">
                 <Button
                   variant={filter === "all" ? "secondary" : "tertiary"}
                   size="sm"

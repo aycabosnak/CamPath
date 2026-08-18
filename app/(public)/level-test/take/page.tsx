@@ -30,17 +30,19 @@ import {
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { Button } from "@/components/ui/Button";
 import { QuestionInput, isQuestionAnswered } from "@/components/practice/QuestionInput";
+import { PLACEMENT_RESULT_STORAGE_KEY } from "@/constants/storageKeys";
 import { trackEvent } from "@/services/analyticsService";
 
-const RESULTS_STORAGE_KEY = "campath_level_test_result";
 const FIVE_MIN_MS = 5 * 60 * 1000;
 const ONE_MIN_MS = 60 * 1000;
+const PLACEMENT_LISTENING_MAX_PLAYS = 2;
 
 export default function LevelTestTakePage() {
   const router = useRouter();
   const [questions, setQuestions] = useState<PlacementQuestion[] | null>(null);
   const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState<PlacementAnswerMap>({});
+  const [listeningPlays, setListeningPlays] = useState<Record<string, number>>({});
   const [remainingMs, setRemainingMs] = useState<number | null>(null);
   const [timeExpired, setTimeExpired] = useState(false);
   const [announcement, setAnnouncement] = useState("");
@@ -58,11 +60,13 @@ export default function LevelTestTakePage() {
         // Time already ran out while the learner was away.
         setTimeExpired(true);
         setAnswers(session.answers);
+        setListeningPlays(session.listeningPlays ?? {});
         sessionRef.current = session;
         return;
       }
       setIndex(session.index);
       setAnswers(session.answers);
+      setListeningPlays(session.listeningPlays ?? {});
     } else {
       session = createNewSession();
       trackEvent("level_test_started");
@@ -98,9 +102,18 @@ export default function LevelTestTakePage() {
     return () => clearInterval(interval);
   }, [timeExpired]);
 
-  function persist(nextIndex: number, nextAnswers: PlacementAnswerMap) {
+  function persist(
+    nextIndex: number,
+    nextAnswers: PlacementAnswerMap,
+    nextPlays: Record<string, number>
+  ) {
     if (!sessionRef.current) return;
-    const updated: TimedTestSession = { ...sessionRef.current, index: nextIndex, answers: nextAnswers };
+    const updated: TimedTestSession = {
+      ...sessionRef.current,
+      index: nextIndex,
+      answers: nextAnswers,
+      listeningPlays: nextPlays,
+    };
     sessionRef.current = updated;
     writeSession(updated);
   }
@@ -116,7 +129,7 @@ export default function LevelTestTakePage() {
   function finishTest(completedOnTime: boolean) {
     const result = computeResults(questions!, answers, completedOnTime);
     trackEvent("level_test_completed", { stage: result.stage, cefr: result.cefr, completedOnTime });
-    localStorage.setItem(RESULTS_STORAGE_KEY, JSON.stringify(result));
+    localStorage.setItem(PLACEMENT_RESULT_STORAGE_KEY, JSON.stringify(result));
     clearSession();
     router.push("/level-test/results");
   }
@@ -145,17 +158,25 @@ export default function LevelTestTakePage() {
   function setAnswer(value: unknown) {
     const nextAnswers = { ...answers, [question.id]: value };
     setAnswers(nextAnswers);
-    persist(index, nextAnswers);
+    persist(index, nextAnswers, listeningPlays);
   }
 
   function goNext() {
     if (index < total - 1) {
       const nextIndex = index + 1;
       setIndex(nextIndex);
-      persist(nextIndex, answers);
+      persist(nextIndex, answers, listeningPlays);
     } else {
       finishTest(true);
     }
+  }
+
+  function handleListeningPlayAttempt() {
+    const used = listeningPlays[question.id] ?? 0;
+    if (used >= PLACEMENT_LISTENING_MAX_PLAYS) return;
+    const nextPlays = { ...listeningPlays, [question.id]: used + 1 };
+    setListeningPlays(nextPlays);
+    persist(index, answers, nextPlays);
   }
 
   const warningLevel =
@@ -175,8 +196,8 @@ export default function LevelTestTakePage() {
       {remainingMs !== null && (
         <div
           role="timer"
+          className="placement-timer"
           aria-label={`${formatMmSs(remainingMs)} remaining`}
-          style={{ position: "fixed", top: 88, right: 24, textAlign: "right" }}
         >
           <p className="text-data" aria-hidden="true" style={{ fontSize: "20px", color: timerColor }}>
             {formatMmSs(remainingMs)}
@@ -202,10 +223,19 @@ export default function LevelTestTakePage() {
           question={question}
           value={answers[question.id]}
           onChange={setAnswer}
+          audioPlayLimit={
+            question.task_type === "audio_multiple_choice"
+              ? {
+                  maxPlays: PLACEMENT_LISTENING_MAX_PLAYS,
+                  playsUsed: listeningPlays[question.id] ?? 0,
+                  onPlayAttempt: handleListeningPlayAttempt,
+                }
+              : undefined
+          }
         />
       </div>
 
-      <Button variant="primary" size="lg" disabled={!hasAnswer} onClick={goNext}>
+      <Button variant="primary" size="lg" className="test-taking-action" disabled={!hasAnswer} onClick={goNext}>
         {index < total - 1 ? "Next" : "Finish"}
       </Button>
     </main>

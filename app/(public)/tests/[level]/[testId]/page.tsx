@@ -27,6 +27,9 @@ import { Card } from "@/components/ui/Card";
 import { SkillBadge } from "@/components/ui/Badge";
 import { QuestionInput, isQuestionAnswered } from "@/components/practice/QuestionInput";
 import { trackEvent } from "@/services/analyticsService";
+import { buildAssessmentReview } from "@/services/assessmentReviewService";
+import { MIXED_TEST_EXPLANATIONS } from "@/lib/mock-data/assessmentExplanations";
+import { AssessmentReview } from "@/components/assessment/AssessmentReview";
 
 type Step = "questions" | "listening" | "complete";
 
@@ -102,6 +105,11 @@ export default function TestTakingPage() {
 
   if (step === "complete") {
     const correctCount = flatQuestions.filter((q) => isAnswerCorrect(q, answers[q.id])).length;
+    const review = buildAssessmentReview(
+      flatQuestions,
+      answers,
+      MIXED_TEST_EXPLANATIONS
+    );
     return (
       <main className="max-w-2xl mx-auto px-6 py-16">
         <p className="text-caption mb-2">{test.title}</p>
@@ -110,6 +118,7 @@ export default function TestTakingPage() {
           <p className="card-eyebrow mb-1">Score</p>
           <p className="text-data" style={{ fontSize: "28px" }}>{correctCount} / {total}</p>
         </Card>
+        <AssessmentReview items={review} />
         <div className="flex flex-wrap gap-3">
           {hasProgressCheck && (
             <Link href={`/tests/${params.level}/progress-check`}>
@@ -153,7 +162,7 @@ export default function TestTakingPage() {
         <QuestionInput question={question} value={answers[question.id]} onChange={setAnswer} />
       </div>
 
-      <Button variant="primary" size="lg" disabled={!hasAnswer} onClick={goNext}>
+      <Button variant="primary" size="lg" className="test-taking-action" disabled={!hasAnswer} onClick={goNext}>
         {index < total - 1 ? "Next" : "Finish"}
       </Button>
     </main>

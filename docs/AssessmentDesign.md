@@ -34,7 +34,7 @@ This rule now applies to every future level (A2's remaining gaps if any, B1+, B2
 ## Placement Test
 
 **Purpose:** Find a first-time learner's starting CEFR level and CamPath Stage before they've studied anything.
-**Difficulty:** Spans roughly A2–B2, 12 questions, mixed task types (multiple choice, gap fill, matching, sentence ordering, one audio-placeholder item).
+**Difficulty:** 12 questions. Non-listening items span foundation through advanced evidence; Listening currently discriminates through B1. Mixed task types (multiple choice, gap fill, matching, sentence ordering, and two unique Listening items with independent two-play limits).
 **Question philosophy:** Broad coverage across all six skills, not depth in any one — the goal is triage, not diagnosis.
 **Assessment validity — an honest limitation:** This is a **heuristic, threshold-based scoring model** (`services/placementTestService.computeResults`), not a validated psychometric instrument. A real placement algorithm would need a much larger, calibrated item bank (see `PROJECT_STATUS.md` — this was flagged as a known gap during the Production Readiness Audit and has not been rebuilt since).
 **What it measures:** A reasonable first-guess starting point.

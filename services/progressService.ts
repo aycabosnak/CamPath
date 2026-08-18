@@ -224,9 +224,10 @@ export function getCurriculumLessonCompletion(lessonId: string): LessonCompletio
 /**
  * `skillBreakdown`, when provided, writes directly into the SAME
  * masteryOverrides field Practice Weakest Skill already uses — no
- * second mastery concept was introduced. Unlike Practice's "bump by
- * 40" heuristic, a Progress Check is a real, deliberate assessment,
- * so it SETS the measured percentage rather than nudging toward it.
+ * second mastery concept was introduced. Unlike Practice (which
+ * blends session accuracy toward the current value), a Progress
+ * Check is a real, deliberate assessment, so it SETS the measured
+ * percentage rather than moving toward it.
  */
 /**
  * Records that a Mixed Test was attempted — sequencing signal only.
@@ -308,14 +309,35 @@ export function getMilestones(): MilestoneRecord[] {
 }
 
 /**
- * Prototype heuristic for "completing a practice session" — see
- * previous sprint's note: once real Practice exercises exist, this
- * should be driven by actual attempt results, not a fixed bump.
+ * Records a real practice session. Unlike Progress Check (which SETS
+ * measured mastery from its own questions), a short drill only MOVES
+ * mastery toward the session accuracy — a 3–5 question set should not
+ * overwrite Placement or Progress Check data. Performance can lower
+ * mastery as well as raise it; there is no guaranteed bump.
  */
-export function recordPracticeSession(skill: Skill, currentPercentage: number, bump = 40): ProgressState {
+const PRACTICE_BLEND = 0.35;
+
+export function recordPracticeSession(
+  skill: Skill,
+  currentPercentage: number,
+  sessionPercentage: number,
+  minutesSpent = 0
+): ProgressState {
   let state = readState();
-  const newValue = Math.min(100, currentPercentage + bump);
-  state = { ...state, masteryOverrides: { ...state.masteryOverrides, [skill]: newValue } };
+  // Prefer the stored override when one exists so a second session
+  // cannot blend from a stale Placement/UI percentage after the first
+  // write. The page still passes currentPercentage for the first-ever
+  // practice of a skill (no override yet).
+  const baseline = state.masteryOverrides[skill] ?? currentPercentage;
+  const blended = Math.round(
+    baseline + (sessionPercentage - baseline) * PRACTICE_BLEND
+  );
+  const newValue = Math.max(0, Math.min(100, blended));
+  state = {
+    ...state,
+    masteryOverrides: { ...state.masteryOverrides, [skill]: newValue },
+    studyTimeMinutes: state.studyTimeMinutes + Math.max(0, minutesSpent),
+  };
   state = markStudyDayActive(state);
   writeState(state);
   return state;

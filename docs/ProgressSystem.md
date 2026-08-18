@@ -50,7 +50,7 @@ This single function is what makes the whole system scale to B1 through C1 with 
 
 **Owned by:** `progressService.masteryOverrides` (a single `Partial<Record<Skill, number>>`)
 **Written by two different sources, deliberately using the same field:**
-- **Practice Weakest Skill** — a heuristic "bump toward mastery" (`recordPracticeSession`), simulating a short practice session
+- **Practice Weakest Skill** — a heuristic "bump toward mastery" (`recordPracticeSession`) after a scored practice session
 - **Progress Check** — a real, measured per-skill breakdown computed from the check's own questions (`recordProgressCheck`'s `skillBreakdown` parameter), which **sets** rather than bumps the value
 
 `myJourneyService` reads this one field without caring which source wrote it most recently — no merge logic needed, because there's only one field to read.
@@ -67,7 +67,7 @@ Stores `{ completedAt, correctCount, totalCount }` per level. Retaking overwrite
 ## 8. Practice Weakest Skill
 
 **Page:** `app/(public)/practice/weakest-skill/page.tsx`
-Reads `masteryBySkill` from `myJourneyService`, finds the two lowest, and — since no real Practice exercise content exists yet — "Start Practice" simulates completing a session via `recordPracticeSession`. This is an explicitly named placeholder heuristic, not a permanent design (see `PROJECT_STATUS.md`).
+Reads `masteryBySkill` from `myJourneyService`, finds the two lowest skills, and starts a real scored practice session (`QuestionInput` + purpose-owned banks, including A1–B1 Listening). Completing the session still writes a heuristic mastery bump via `recordPracticeSession`. Weak-skill entry requires a Placement result; direct level/skill Practice does not.
 
 ---
 
@@ -77,7 +77,7 @@ Reads `masteryBySkill` from `myJourneyService`, finds the two lowest, and — si
 
 **The problem this created:** a Production Readiness Audit found My Journey's headline metrics were reading *only* from Study Path — meaning a learner doing 100% of their real work in the new A1/A2 curriculum would see a dashboard that never reflected it.
 
-**The fix (architecture unification):** `myJourneyService` now treats the Level Curriculum as primary for Overall Progress, Completed Learning Items, and Recommended Next Step. Study Path is **not removed** — it's still computed (`buildStudyPathPreview`) and still shown in its own labeled "Study Path" card — it simply no longer drives the dashboard's headline numbers.
+**The fix (architecture unification):** `myJourneyService` treats the Level Curriculum as primary for Overall Progress, Completed Learning Items, and Recommended Next Step. The unused Study Path *preview computation* was removed because My Journey no longer displayed it. Legacy `/learn/unit-*` routes and the `completions` namespace were **not** removed or migrated — they remain for compatibility and do not drive dashboard numbers.
 
 **Current state:** two parallel data namespaces inside `progressService`'s single `ProgressState`:
 ```ts

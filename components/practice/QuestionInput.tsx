@@ -11,20 +11,26 @@
  * not a rewrite.
  *
  * Works with anything shaped like PlacementQuestion (multiple_choice,
- * audio_multiple_choice, gap_fill, matching, sentence_ordering) — the
- * same question shape is reused for Test content in
- * lib/mock-data/tests.ts, per the "avoid duplicated logic" rule.
+ * audio_multiple_choice, gap_fill, matching, sentence_ordering).
+ * If a question has `audio_src`, the shared AudioPlayer is rendered
+ * here so Practice, Placement, Mixed Tests, and Progress Checks all
+ * get the same player without a second listening engine.
  */
-import type { PlacementQuestion } from "@/lib/mock-data/placementQuestions";
+import { useEffect } from "react";
+import type {
+  PlacementQuestion,
+  SentenceOrderingQuestion,
+} from "@/lib/mock-data/placementQuestions";
 import { Button } from "@/components/ui/Button";
 import { TextField } from "@/components/ui/Form";
+import { AudioPlayer } from "@/components/audio/AudioPlayer";
 import { cn } from "@/components/lib/cn";
 
 /**
  * Whether a question has enough of an answer to enable "Next"/"Check".
  * Handled per task type because "answered" means something different
- * for each: sentence ordering always has an implicit order (even if
- * unchanged), matching needs every left item paired.
+ * for each: sentence ordering persists its visible initial order,
+ * while matching needs every left item paired.
  */
 export function isQuestionAnswered(question: PlacementQuestion, value: unknown): boolean {
   switch (question.task_type) {
@@ -38,10 +44,77 @@ export function isQuestionAnswered(question: PlacementQuestion, value: unknown):
       return question.left_items.every((left) => Boolean(given[left]));
     }
     case "sentence_ordering":
-      return true; // an order always exists, even the unshuffled default
+      return (
+        Array.isArray(value) &&
+        value.length === question.shuffled_items.length
+      );
     default:
       return false;
   }
+}
+
+export interface AudioPlayLimit {
+  maxPlays: number;
+  playsUsed: number;
+  onPlayAttempt: () => void;
+}
+
+function SentenceOrderingInput({
+  question,
+  value,
+  onChange,
+}: {
+  question: SentenceOrderingQuestion;
+  value: unknown;
+  onChange: (value: unknown) => void;
+}) {
+  const order = Array.isArray(value)
+    ? (value as string[])
+    : question.shuffled_items;
+
+  useEffect(() => {
+    if (!Array.isArray(value)) {
+      onChange([...question.shuffled_items]);
+    }
+  }, [onChange, question.shuffled_items, value]);
+
+  function move(i: number, direction: -1 | 1) {
+    const next = [...order];
+    const target = i + direction;
+    if (target < 0 || target >= next.length) return;
+    [next[i], next[target]] = [next[target], next[i]];
+    onChange(next);
+  }
+
+  return (
+    <ol className="flex flex-col gap-2" aria-label="Reorder these sentences">
+      {order.map((item, i) => (
+        <li key={item} className="card flex items-center justify-between gap-3 min-w-0">
+          <span className="text-small min-w-0">{item}</span>
+          <div className="flex gap-1 flex-shrink-0">
+            <Button
+              variant="secondary"
+              size="sm"
+              aria-label="Move up"
+              disabled={i === 0}
+              onClick={() => move(i, -1)}
+            >
+              ↑
+            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
+              aria-label="Move down"
+              disabled={i === order.length - 1}
+              onClick={() => move(i, 1)}
+            >
+              ↓
+            </Button>
+          </div>
+        </li>
+      ))}
+    </ol>
+  );
 }
 
 /**
@@ -54,24 +127,38 @@ export function QuestionInput({
   question,
   value,
   onChange,
+  audioPlayLimit,
 }: {
   question: PlacementQuestion;
   value: unknown;
   onChange: (value: unknown) => void;
+  /** Optional playback cap. Placement Listening sets this; Practice does not. */
+  audioPlayLimit?: AudioPlayLimit;
 }) {
   switch (question.task_type) {
     case "multiple_choice":
     case "audio_multiple_choice":
       return (
         <div>
-          {question.task_type === "audio_multiple_choice" && (
+          {question.audio_src ? (
+            <div className="mb-4">
+              <AudioPlayer
+                key={question.id}
+                src={question.audio_src}
+                label="Listening clip"
+                maxPlays={audioPlayLimit?.maxPlays}
+                playsUsed={audioPlayLimit?.playsUsed}
+                onPlayAttempt={audioPlayLimit?.onPlayAttempt}
+              />
+            </div>
+          ) : question.task_type === "audio_multiple_choice" ? (
             <div className="card mb-4">
               <p className="text-small text-ink-soft">
-                🎧 Listening question — audio playback isn't available in this preview.
+                Listening question — audio playback isn&apos;t available for this item yet.
                 Read the question and choose the most likely answer.
               </p>
             </div>
-          )}
+          ) : null}
           <div className="flex flex-col gap-2" role="radiogroup" aria-label={question.prompt}>
             {question.options.map((option) => {
               const selected = value === option;
@@ -83,7 +170,7 @@ export function QuestionInput({
                   aria-checked={selected}
                   onClick={() => onChange(option)}
                   className={cn(
-                    "card text-left w-full cursor-pointer",
+                    "card text-left w-full min-w-0 cursor-pointer break-words",
                     selected && "border-pine bg-pine-soft"
                   )}
                 >
@@ -110,10 +197,10 @@ export function QuestionInput({
       return (
         <div className="flex flex-col gap-4">
           {question.left_items.map((left) => (
-            <div key={left} className="flex items-center gap-3">
-              <span className="text-small font-semibold w-32">{left}</span>
+            <div key={left} className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3 min-w-0">
+              <span className="text-small font-semibold min-w-0 sm:w-32 sm:shrink-0">{left}</span>
               <select
-                className="field"
+                className="field w-full min-w-0"
                 value={current[left] ?? ""}
                 onChange={(e) => onChange({ ...current, [left]: e.target.value })}
                 aria-label={`Match for ${left}`}
@@ -133,47 +220,14 @@ export function QuestionInput({
       );
     }
 
-    case "sentence_ordering": {
-      const order = (value as string[] | undefined) ?? question.shuffled_items;
-
-      function move(i: number, direction: -1 | 1) {
-        const next = [...order];
-        const target = i + direction;
-        if (target < 0 || target >= next.length) return;
-        [next[i], next[target]] = [next[target], next[i]];
-        onChange(next);
-      }
-
+    case "sentence_ordering":
       return (
-        <ol className="flex flex-col gap-2" aria-label="Reorder these sentences">
-          {order.map((item, i) => (
-            <li key={item} className="card flex items-center justify-between gap-3">
-              <span className="text-small">{item}</span>
-              <div className="flex gap-1 flex-shrink-0">
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  aria-label="Move up"
-                  disabled={i === 0}
-                  onClick={() => move(i, -1)}
-                >
-                  ↑
-                </Button>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  aria-label="Move down"
-                  disabled={i === order.length - 1}
-                  onClick={() => move(i, 1)}
-                >
-                  ↓
-                </Button>
-              </div>
-            </li>
-          ))}
-        </ol>
+        <SentenceOrderingInput
+          question={question}
+          value={value}
+          onChange={onChange}
+        />
       );
-    }
 
     default:
       return null;

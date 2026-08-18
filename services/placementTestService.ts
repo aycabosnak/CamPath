@@ -32,6 +32,7 @@ export interface QuestionReviewItem {
   correctAnswerText: string;
   isCorrect: boolean;
   explanation: string;
+  transcript?: string;
 }
 
 export interface StudyPlanGroup {
@@ -108,24 +109,29 @@ export function isAnswerCorrect(question: PlacementQuestion, answer: unknown): b
  * Mistakes" philosophy of being concrete, not abstract.
  */
 const QUESTION_EXPLANATIONS: Record<string, string> = {
-  pt_grammar_1: "Use -s with he/she/it in the present simple: 'walks', not 'walk'.",
+  pt_grammar_1:
+    "A stable job or regular situation takes the present simple. With 'Daniel', the verb ends in -s: 'Daniel works...'.",
   pt_grammar_2:
-    "The past perfect (had + past participle) describes an action completed before another past action — the film had already started before they arrived.",
-  pt_vocab_1: "'Enormous' means extremely large — the closest match to 'huge'.",
+    "This unreal past condition uses 'if + past perfect': 'If the warning had not arrived...'. The prompt requires the three-word form 'had not arrived'.",
+  pt_vocab_1:
+    "'Borrow' means take and use something that belongs to another person for a limited time; 'lend' describes what the owner does.",
   pt_vocab_2:
-    "reluctant = unwilling · considerate = thoughtful of others · ambiguous = unclear in meaning.",
-  pt_listening_1: "The speaker says the train leaves at 7:15, not 6:15 or 7:50.",
+    "tentative = not certain or final · compelling = strongly convincing · redundant = unnecessary because it adds nothing.",
+  pt_listening_1: "The meeting was moved to half past three, which means 3:30.",
   pt_listening_2:
-    "In the conversation, the woman decides to book an earlier flight rather than cancelling or postponing.",
-  pt_reading_1: "The text states the museum is closed on Mondays, so that's the day you can't visit.",
+    "The speaker says the train was cancelled because of a signalling problem, so they took a coach instead.",
+  pt_reading_1:
+    "The class is on Tuesday before 1pm, and the notice says all such classes move from the closed main hall to Room 4.",
   pt_reading_2:
-    "The cause (the campaign launch and its tactic) has to come before the effect (the sales increase) — campaign → tactic → outcome.",
-  pt_use_of_english_1: "'Look forward to' is a fixed pattern followed by 'to' + noun/gerund.",
+    "'At first' establishes the expectation, 'however' introduces the contrasting early evidence, and 'only after' gives the later change. 'These results' then draws a conclusion from that sequence.",
+  pt_use_of_english_1:
+    "'Come into effect' is the fixed expression meaning that a rule or policy starts to apply. The one required word is 'into'.",
   pt_use_of_english_2:
-    "The noun form describing a quality is 'creativity' — the adjective/adverb forms don't fit after 'her'.",
-  pt_writing_1: "Formal emails use conventional greetings like 'Dear Sir or Madam', not casual ones.",
+    "'Validity' is the noun meaning the quality of being logically or factually sound; the structure 'questioned the ___ of' requires that noun.",
+  pt_writing_1:
+    "'Could you please...?' makes the request clear while keeping an appropriately polite tone for a colleague you do not know well.",
   pt_writing_2:
-    "'Although' introduces a contrast between two clauses within a single sentence — exactly what's needed here.",
+    "'Suggest' and 'may' appropriately limit the claim because one small survey cannot prove a universal result.",
 };
 
 /** Static suggestion bank — MVP heuristic, not a real curriculum
@@ -187,6 +193,7 @@ function buildQuestionReview(
     correctAnswerText: formatCorrectAnswer(q),
     isCorrect: isAnswerCorrect(q, answers[q.id]),
     explanation: QUESTION_EXPLANATIONS[q.id] ?? "This tests a key pattern for this skill at this level.",
+    transcript: q.transcript,
   }));
 }
 

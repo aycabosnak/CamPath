@@ -7,11 +7,10 @@
  * reads the same localStorage key My Journey already reads, and never
  * writes to it or touches placementTestService.ts.
  */
+import { PLACEMENT_RESULT_STORAGE_KEY } from "@/constants/storageKeys";
 import { TEST_LEVELS, getTestLevelBySlug, getTestLevelSlugForStage, type TestLevelMeta } from "@/constants/testLevels";
 import { getTestsForLevel, getTestContent as getTestContentData, type TestSummary, type TestContent } from "@/lib/mock-data/tests";
 import type { PlacementResult } from "@/services/placementTestService";
-
-const RESULTS_STORAGE_KEY = "campath_level_test_result";
 
 export interface TestLevelWithCount extends TestLevelMeta {
   availableCount: number;
@@ -21,7 +20,7 @@ export interface TestLevelWithCount extends TestLevelMeta {
 
 function readPlacementResult(): PlacementResult | null {
   if (typeof window === "undefined") return null;
-  const raw = window.localStorage.getItem(RESULTS_STORAGE_KEY);
+  const raw = window.localStorage.getItem(PLACEMENT_RESULT_STORAGE_KEY);
   return raw ? (JSON.parse(raw) as PlacementResult) : null;
 }
 

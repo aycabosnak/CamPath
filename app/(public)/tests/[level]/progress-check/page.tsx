@@ -29,6 +29,9 @@ import { Card } from "@/components/ui/Card";
 import { SkillBadge } from "@/components/ui/Badge";
 import { QuestionInput, isQuestionAnswered } from "@/components/practice/QuestionInput";
 import { trackEvent } from "@/services/analyticsService";
+import { buildAssessmentReview } from "@/services/assessmentReviewService";
+import { PROGRESS_CHECK_EXPLANATIONS } from "@/lib/mock-data/assessmentExplanations";
+import { AssessmentReview } from "@/components/assessment/AssessmentReview";
 
 export default function ProgressCheckPage() {
   const params = useParams<{ level: string }>();
@@ -97,6 +100,11 @@ export default function ProgressCheckPage() {
   if (complete) {
     const record = getProgressCheckRecord(params.level);
     const milestoneLabel = meta?.isBridge ? "Bridge to B2 completed" : `${meta?.title ?? content.title} completed`;
+    const review = buildAssessmentReview(
+      content.questions,
+      answers,
+      PROGRESS_CHECK_EXPLANATIONS
+    );
     return (
       <main className="max-w-2xl mx-auto px-6 py-16">
         <div
@@ -118,6 +126,7 @@ export default function ProgressCheckPage() {
         <p className="text-small text-ink-soft mb-8">
           This is an honest checkpoint, not a pass/fail gate — nothing is locked either way.
         </p>
+        <AssessmentReview items={review} />
         <Link href={`/tests/${params.level}`}>
           <Button variant="primary" size="lg">Back to Level</Button>
         </Link>
@@ -154,7 +163,7 @@ export default function ProgressCheckPage() {
         <QuestionInput question={question} value={answers[question.id]} onChange={setAnswer} />
       </div>
 
-      <Button variant="primary" size="lg" disabled={!hasAnswer} onClick={goNext}>
+      <Button variant="primary" size="lg" className="test-taking-action" disabled={!hasAnswer} onClick={goNext}>
         {index < total - 1 ? "Next" : "Finish"}
       </Button>
     </main>
