@@ -22,6 +22,8 @@
 - **A2 Pre-Intermediate:** Same structure. Passed a full educational quality audit, including a full assessment-alignment correction (Vocabulary/Reading sections were rewritten after failing the "traces back to a taught lesson" check).
 - **B1 Intermediate:** Ported from the legacy Study Path into the Level Curriculum system, expanded to 3 questions per lesson, added a Reading lesson (didn't exist before), and had its Mixed Test rewritten section-by-section for alignment. Progress Check added.
 - **B1+ Bridge to B2:** Same 4-lesson structure (Present Perfect Continuous, Environment & Technology, Reading for Inference, For-and-Against Essays), 1 Mixed Test, 1 Bridge Check. Built proactively following the passage-reuse rule from day one — audited before release, not after.
+- **B2 Pre-Advanced:** Same structure — The Passive Voice, Work & Careers, Understanding the Writer's Attitude, Linking Devices (Contrast & Addition); 1 Mixed Test, 1 Progress Check. Every assessment item traced to a lesson objective; all three Reading texts (lesson cinema review, Mixed Test hotel review, Progress Check banking app) are different scenarios with different structure.
+- **C1 Advanced:** Same structure — Inversion for Emphasis, Idiomatic Expressions, Following an Argument (Claim & Concession), Academic Register & Hedging; 1 Mixed Test, 1 Progress Check. Same audit as B2. Progress Check reading uses an unmarked concession ("This is undoubtedly true") — harder framing of the taught skill, not new content.
 
 ## Known Limitations
 
@@ -29,7 +31,8 @@
 - **No real authentication.** /login is an honest placeholder page. All learner data lives in localStorage, tied to one browser on one device.
 - **No real backend.** Every service is written to be replaceable by a real API later, but none exists yet.
 - **Legacy Study Path still exists, unmigrated.** 3 lessons (unit-1/2/3), tied to CamPath Stage, not the Level Curriculum. Still shown in My Journey, still functional, but not expanded and not reconciled into one system.
-- **B2, C1 have no lesson content** — metadata (names, CEFR bridge text) only, Coming Soon everywhere.
+- **Each level has one lesson per skill** (4 lessons A1–C1). Depth per level is still thin compared with a real course; breadth now covers A1 to C1.
+- **No C2 level.** A Master-stage Placement result still falls back to C1 Advanced.
 - **Listening and Speaking have no lesson format at all**, at any level — reserved as labeled Coming Soon sections, not designed yet.
 - **Mock Exams are not implemented** — Coming Soon placeholders only.
 - **Grammar Shorts has no content** — metadata only.
@@ -61,12 +64,12 @@
 
 ## Current Production Readiness
 
-**Ready for:** a demo, a design-partner pilot, or a portfolio review of the core learner journey — Home to Placement Test to Results to My Journey to a fully aligned A1 or A2 level to Milestone. This path has been reviewed for UX, accessibility basics, and educational validity, and works end to end on a single device.
+**Ready for:** a demo, a design-partner pilot, or a portfolio review of the core learner journey — Home to Placement Test to Results to My Journey to any fully aligned level (A1–C1) to Milestone. This path has been reviewed for UX, accessibility basics, and educational validity, and works end to end on a single device.
 
 **Not ready for:** paid, multi-device, multi-user production. There is no account system, no backend, and no data survives a cleared browser or a new device.
 
 ## Recommended Next Steps, in Order
 
-1. Build B2 and C1 content using the now-validated A1/A2/B1/B1+ template.
-2. Make a real resourcing decision on Listening/Speaking before building any more levels without them — every level shipped without these two skills increases the eventual retrofitting cost.
-3. Only after curriculum breadth is in place: begin real backend/auth migration, using the service-layer boundaries already designed for exactly this swap.
+1. ~~Build B2 and C1 content~~ — done (2026-11).
+2. Make a real resourcing decision on Listening/Speaking — every level now ships without these two skills, so this is the biggest remaining curriculum gap.
+3. Curriculum breadth (A1–C1) is now in place: begin real backend/auth migration, using the service-layer boundaries already designed for exactly this swap.

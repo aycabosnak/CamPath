@@ -5,6 +5,10 @@
  * lib/mock-data/unitLessons.ts (which powers the CamPath-Stage-based
  * Study Path unit-1/2/3 pages and is NOT touched by this sprint).
  *
+ * B2 Pre-Advanced and C1 Advanced added (2026-11) on the same
+ * 4-lesson template, audited against the Governing Rule and the
+ * Reading Passage Rule before release (see docs/AssessmentDesign.md).
+ *
  * UX review follow-up: every lesson now has 3 guided questions
  * (was 1) — enough to give an honest signal of understanding without
  * turning a short lesson into a long one. All new questions reinforce
@@ -689,6 +693,412 @@ export const CURRICULUM_LESSONS: Record<string, CurriculumLesson[]> = {
         },
       ],
       completionMessage: "You can now structure a basic for-and-against essay with a clear conclusion.",
+    },
+  ],
+  // ---------------------------------------------------------------
+  // B2 Pre-Advanced — built on the A1 → B1+ template, audited for
+  // assessment alignment and passage reuse before release.
+  // ---------------------------------------------------------------
+  "b2-pre-advanced": [
+    {
+      id: "b2-grammar-1",
+      level: "b2-pre-advanced",
+      skill: "grammar",
+      title: "The Passive Voice",
+      introLabel: "Explanation",
+      introText:
+        "We use the passive (a form of 'be' + past participle) when the action is more important than who does it, or when we don't know who does it. Only 'be' changes with the tense — the past participle stays the same. Add 'by' + the doer only when that information matters.",
+      examples: [
+        "Present simple: Coffee is grown in Brazil.",
+        "Past simple: The bridge was built in 1890.",
+        "Present perfect: The museum has been renovated.",
+        "Future: The results will be announced next week.",
+        "With 'by': The novel was written by a teenager.",
+      ],
+      questions: [
+        {
+          prompt: "Choose the correct passive sentence.",
+          options: [
+            "The emails are send every morning.",
+            "The emails are sent every morning.",
+            "The emails is sent every morning.",
+            "The emails sent every morning.",
+          ],
+          correctAnswer: "The emails are sent every morning.",
+          reviewFeedback: "Review this concept — present simple passive is am/is/are + past participle ('sent', not 'send').",
+          successFeedback: "Well done — that's correct.",
+        },
+        {
+          prompt: "Choose the correct passive sentence.",
+          options: [
+            "The thief was arrested last night.",
+            "The thief was arrest last night.",
+            "The thief were arrested last night.",
+            "The thief has arrested last night.",
+          ],
+          correctAnswer: "The thief was arrested last night.",
+          reviewFeedback: "Review this concept — past simple passive is was/were + past participle, and 'thief' is singular, so 'was'.",
+          successFeedback: "Well done — that's correct.",
+        },
+        {
+          prompt: "Choose the correct passive sentence.",
+          options: [
+            "Your order has been dispatched.",
+            "Your order has dispatched.",
+            "Your order have been dispatched.",
+            "Your order has been dispatch.",
+          ],
+          correctAnswer: "Your order has been dispatched.",
+          reviewFeedback: "Review this concept — present perfect passive is has/have + been + past participle.",
+          successFeedback: "Well done — that's correct.",
+        },
+      ],
+      completionMessage: "You can now describe processes and events by focusing on the action, not the person who did it.",
+    },
+    {
+      id: "b2-vocabulary-1",
+      level: "b2-pre-advanced",
+      skill: "vocabulary",
+      title: "Work & Careers",
+      introLabel: "Useful Vocabulary",
+      introList: [
+        "promotion — a move to a higher position at work",
+        "deadline — the latest time by which something must be finished",
+        "colleague — a person you work with",
+        "resign — to leave your job by choice",
+        "salary — the fixed amount of money you are paid for your job",
+        "flexible hours — being able to choose when you start and finish work",
+      ],
+      examples: [
+        "She was offered a promotion after only two years.",
+        "We have to meet the deadline by Friday.",
+        "Many people want a job with flexible hours.",
+      ],
+      questions: [
+        {
+          prompt: "Choose the correct word: 'I can't come out tonight — I have a ___ tomorrow morning and the report isn't finished.'",
+          options: ["deadline", "salary", "promotion", "colleague"],
+          correctAnswer: "deadline",
+          reviewFeedback: "Review this concept — a 'deadline' is the time by which work must be finished.",
+          successFeedback: "Well done — that's correct.",
+        },
+        {
+          prompt: "Choose the correct word: 'My ___ covered my shifts while I was ill.'",
+          options: ["colleague", "deadline", "salary", "promotion"],
+          correctAnswer: "colleague",
+          reviewFeedback: "Review this concept — a 'colleague' is someone you work with.",
+          successFeedback: "Well done — that's correct.",
+        },
+        {
+          prompt: "Choose the correct word: 'The job pays a good ___, but the commute is very long.'",
+          options: ["salary", "deadline", "colleague", "resign"],
+          correctAnswer: "salary",
+          reviewFeedback: "Review this concept — 'salary' is the fixed amount of money a job pays.",
+          successFeedback: "Well done — that's correct.",
+        },
+      ],
+      completionMessage: "You can now talk about jobs, workplaces and career changes using accurate vocabulary.",
+    },
+    {
+      id: "b2-reading-1",
+      level: "b2-pre-advanced",
+      skill: "reading",
+      title: "Understanding the Writer's Attitude",
+      introLabel: "Reading Text",
+      introText:
+        "At B2, you need to understand not only what a writer says, but how they feel about it. Look for opinion words (excellent, disappointing), words that signal a change of view (surprisingly, however, sadly) and the overall balance of positive and negative points.",
+      passage:
+        "When the town's old cinema reopened last month after a long renovation, I expected to be disappointed. Surprisingly, the comfortable seats and excellent sound won me over almost immediately. My only real criticism is the ticket price, which seems hard to justify for a small local venue.",
+      questions: [
+        {
+          prompt: "What did the writer expect before visiting the cinema?",
+          options: [
+            "To be disappointed",
+            "To be impressed",
+            "To pay very little",
+            "To find it closed",
+          ],
+          correctAnswer: "To be disappointed",
+          reviewFeedback: "Review this concept — the writer says 'I expected to be disappointed' before describing the visit.",
+          successFeedback: "Well done — that's correct.",
+        },
+        {
+          prompt: "Which word shows that the writer's view changed?",
+          options: ["Surprisingly", "reopened", "local", "immediately"],
+          correctAnswer: "Surprisingly",
+          reviewFeedback: "Review this concept — 'Surprisingly' signals that the experience was different from what the writer expected.",
+          successFeedback: "Well done — that's correct.",
+        },
+        {
+          prompt: "What is the writer's overall attitude to the cinema?",
+          options: [
+            "Mostly positive, with one reservation",
+            "Completely negative",
+            "Completely neutral",
+            "Positive about the price only",
+          ],
+          correctAnswer: "Mostly positive, with one reservation",
+          reviewFeedback: "Review this concept — the writer praises the seats and sound, and criticises only the ticket price.",
+          successFeedback: "Well done — that's correct.",
+        },
+      ],
+      completionMessage: "You can now identify how a writer feels about a topic, not just the facts they mention.",
+    },
+    {
+      id: "b2-writing-1",
+      level: "b2-pre-advanced",
+      skill: "writing",
+      title: "Linking Devices: Contrast & Addition",
+      introLabel: "Explanation",
+      introText:
+        "Good B2 writing connects ideas clearly. 'Although' is followed by a full clause (subject + verb). 'Despite' is followed by a noun or verb-ing — never a full clause. 'However' starts a new sentence to show contrast, and 'Moreover' starts a new sentence to add a further point. Both are followed by a comma.",
+      examples: [
+        "Although it was raining, we went for a walk.",
+        "Despite the rain, we went for a walk.",
+        "The plan is cheap. However, it will take a long time.",
+        "The plan is cheap. Moreover, it is easy to organise.",
+      ],
+      questions: [
+        {
+          prompt: "Choose the correct sentence.",
+          options: [
+            "Despite he was tired, he finished the race.",
+            "Although he was tired, he finished the race.",
+            "Although being tired, he finished the race.",
+            "Despite of tired, he finished the race.",
+          ],
+          correctAnswer: "Although he was tired, he finished the race.",
+          reviewFeedback: "Review this concept — 'Although' is followed by a full clause (he was tired); 'Despite' is not.",
+          successFeedback: "Well done — that's correct.",
+        },
+        {
+          prompt: "Choose the correct sentence.",
+          options: [
+            "Despite the traffic, we arrived on time.",
+            "Despite the traffic was heavy, we arrived on time.",
+            "Although the traffic, we arrived on time.",
+            "Despite of the traffic, we arrived on time.",
+          ],
+          correctAnswer: "Despite the traffic, we arrived on time.",
+          reviewFeedback: "Review this concept — 'Despite' is followed by a noun (the traffic), with no 'of' and no full clause.",
+          successFeedback: "Well done — that's correct.",
+        },
+        {
+          prompt: "Complete the text: 'Public transport reduces traffic. ___, it is cheaper than driving.'",
+          options: ["Moreover,", "However,", "Although,", "Despite,"],
+          correctAnswer: "Moreover,",
+          reviewFeedback: "Review this concept — the second sentence adds another advantage, so it needs 'Moreover', not a contrast word.",
+          successFeedback: "Well done — that's correct.",
+        },
+      ],
+      completionMessage: "You can now link ideas in your writing to show contrast and add supporting points.",
+    },
+  ],
+
+  // ---------------------------------------------------------------
+  // C1 Advanced — same template; final level before C2 (not built).
+  // ---------------------------------------------------------------
+  "c1-advanced": [
+    {
+      id: "c1-grammar-1",
+      level: "c1-advanced",
+      skill: "grammar",
+      title: "Inversion for Emphasis",
+      introLabel: "Explanation",
+      introText:
+        "In formal English, we can start a sentence with a negative or limiting expression — Never, Rarely, Seldom, Not only — for emphasis. When we do, the auxiliary verb comes before the subject, as in a question. If there is no auxiliary, use do / does / did.",
+      examples: [
+        "Never have I seen such a beautiful view.",
+        "Rarely do we get the chance to travel abroad.",
+        "Seldom has the city looked so empty.",
+        "Not only did she win the race, but she also broke the record.",
+      ],
+      questions: [
+        {
+          prompt: "Choose the correct sentence.",
+          options: [
+            "Never I have tasted such delicious food.",
+            "Never have I tasted such delicious food.",
+            "Never I tasted such delicious food.",
+            "Never did I have tasted such delicious food.",
+          ],
+          correctAnswer: "Never have I tasted such delicious food.",
+          reviewFeedback: "Review this concept — after 'Never' at the start, the auxiliary comes before the subject: 'have I'.",
+          successFeedback: "Well done — that's correct.",
+        },
+        {
+          prompt: "Choose the correct sentence.",
+          options: [
+            "Rarely she complains about her job.",
+            "Rarely does she complain about her job.",
+            "Rarely does she complains about her job.",
+            "Rarely she does complain about her job.",
+          ],
+          correctAnswer: "Rarely does she complain about her job.",
+          reviewFeedback: "Review this concept — with no auxiliary, add 'does' before the subject, and the main verb returns to its base form ('complain').",
+          successFeedback: "Well done — that's correct.",
+        },
+        {
+          prompt: "Choose the correct sentence.",
+          options: [
+            "Not only he speaks French, but he also speaks Arabic.",
+            "Not only does he speak French, but he also speaks Arabic.",
+            "Not only does he speaks French, but he also speaks Arabic.",
+            "Not only speaks he French, but he also speaks Arabic.",
+          ],
+          correctAnswer: "Not only does he speak French, but he also speaks Arabic.",
+          reviewFeedback: "Review this concept — 'Not only' needs inversion in the first clause only: 'does he speak'. The second clause stays normal.",
+          successFeedback: "Well done — that's correct.",
+        },
+      ],
+      completionMessage: "You can now add emphasis to formal speech and writing by inverting the subject and verb.",
+    },
+    {
+      id: "c1-vocabulary-1",
+      level: "c1-advanced",
+      skill: "vocabulary",
+      title: "Idiomatic Expressions",
+      introLabel: "Useful Vocabulary",
+      introList: [
+        "a blessing in disguise — something that seems bad at first but turns out to be good",
+        "on the fence — unable to decide between two options",
+        "cut corners — do something badly or cheaply to save time or money",
+        "the tip of the iceberg — a small, visible part of a much bigger problem",
+        "get the ball rolling — start an activity or process",
+      ],
+      examples: [
+        "Missing the train was a blessing in disguise — I met my future business partner at the station.",
+        "I'm still on the fence about moving abroad.",
+        "Let's get the ball rolling with a quick introduction from everyone.",
+      ],
+      questions: [
+        {
+          prompt: "Choose the correct expression: 'The builders ___ to finish early, and now the roof leaks.'",
+          options: ["cut corners", "got the ball rolling", "were on the fence", "were a blessing in disguise"],
+          correctAnswer: "cut corners",
+          reviewFeedback: "Review this concept — 'cut corners' means doing something badly to save time or money, which explains the leaking roof.",
+          successFeedback: "Well done — that's correct.",
+        },
+        {
+          prompt: "Choose the correct expression: 'The complaints we've received are just ___ — many more customers are probably unhappy.'",
+          options: ["the tip of the iceberg", "a blessing in disguise", "on the fence", "cutting corners"],
+          correctAnswer: "the tip of the iceberg",
+          reviewFeedback: "Review this concept — 'the tip of the iceberg' is the small visible part of a much bigger problem.",
+          successFeedback: "Well done — that's correct.",
+        },
+        {
+          prompt: "What does 'I'm on the fence about it' mean?",
+          options: [
+            "I can't decide yet.",
+            "I strongly disagree.",
+            "I have already started it.",
+            "I did it badly.",
+          ],
+          correctAnswer: "I can't decide yet.",
+          reviewFeedback: "Review this concept — being 'on the fence' means being unable to choose between two options.",
+          successFeedback: "Well done — that's correct.",
+        },
+      ],
+      completionMessage: "You can now understand and use common idioms to sound more natural and precise.",
+    },
+    {
+      id: "c1-reading-1",
+      level: "c1-advanced",
+      skill: "reading",
+      title: "Following an Argument: Claim & Concession",
+      introLabel: "Reading Text",
+      introText:
+        "C1 texts often accept a point from the other side (a concession) before making their own case (the claim). Concessions are often signalled by 'Admittedly', 'Granted' or 'It is true that', followed by 'yet', 'but' or 'however'. The writer's real position usually comes after the turn.",
+      passage:
+        "Admittedly, standardised tests offer a quick way to compare schools. Yet reducing a school's worth to a single score ignores what matters most: whether pupils leave curious, confident and able to think for themselves. Test results should inform our judgements about schools, not replace them.",
+      questions: [
+        {
+          prompt: "What is the writer's main claim?",
+          options: [
+            "Test results should inform judgements about schools, not replace them.",
+            "Standardised tests should be abolished completely.",
+            "Test scores are the best way to judge a school.",
+            "Schools should stop teaching pupils to think for themselves.",
+          ],
+          correctAnswer: "Test results should inform judgements about schools, not replace them.",
+          reviewFeedback: "Review this concept — the writer's position comes after the turn ('Yet...') and is summed up in the final sentence.",
+          successFeedback: "Well done — that's correct.",
+        },
+        {
+          prompt: "Which point does the writer concede?",
+          options: [
+            "Tests offer a quick way to compare schools.",
+            "Pupils leave school curious and confident.",
+            "Test results should replace judgements.",
+            "Schools have no worth.",
+          ],
+          correctAnswer: "Tests offer a quick way to compare schools.",
+          reviewFeedback: "Review this concept — the concession is the point introduced by 'Admittedly', which the writer accepts before disagreeing.",
+          successFeedback: "Well done — that's correct.",
+        },
+        {
+          prompt: "What is the function of the word 'Yet' in the text?",
+          options: [
+            "It turns from the concession to the writer's own argument.",
+            "It adds another advantage of tests.",
+            "It introduces an example.",
+            "It ends the text with a summary.",
+          ],
+          correctAnswer: "It turns from the concession to the writer's own argument.",
+          reviewFeedback: "Review this concept — 'Yet' marks the turn from the accepted point to the writer's real position.",
+          successFeedback: "Well done — that's correct.",
+        },
+      ],
+      completionMessage: "You can now separate a writer's main claim from the points they concede to the other side.",
+    },
+    {
+      id: "c1-writing-1",
+      level: "c1-advanced",
+      skill: "writing",
+      title: "Academic Register & Hedging",
+      introLabel: "Explanation",
+      introText:
+        "Academic writing avoids sounding too certain or too personal. Instead of 'I think' or 'Everyone knows', use hedging language such as 'It could be argued that', 'This suggests that', 'tends to' or 'appears to'. Avoid contractions (don't, can't) and informal words (a lot of, stuff, really).",
+      examples: [
+        "Informal: I think social media is really bad for teenagers.",
+        "Academic: It could be argued that social media has a negative effect on teenagers.",
+        "Informal: Prices always go up in summer.",
+        "Academic: Prices tend to rise in summer.",
+      ],
+      questions: [
+        {
+          prompt: "Which sentence is most appropriate for an academic essay?",
+          options: [
+            "It could be argued that online learning benefits adult students.",
+            "I think online learning is really good for adults.",
+            "Everyone knows online learning is great for adults.",
+            "Online learning's awesome for grown-ups.",
+          ],
+          correctAnswer: "It could be argued that online learning benefits adult students.",
+          reviewFeedback: "Review this concept — academic writing uses hedging ('It could be argued that') and avoids 'I think', 'really' and contractions.",
+          successFeedback: "Well done — that's correct.",
+        },
+        {
+          prompt: "Choose the best hedged version of: 'Young people always prefer texting to calling.'",
+          options: [
+            "Young people tend to prefer texting to calling.",
+            "Young people always, always prefer texting to calling.",
+            "Obviously, young people prefer texting to calling.",
+            "Young people definitely prefer texting to calling.",
+          ],
+          correctAnswer: "Young people tend to prefer texting to calling.",
+          reviewFeedback: "Review this concept — 'tend to' softens an over-general claim; 'always', 'obviously' and 'definitely' make it more certain, not less.",
+          successFeedback: "Well done — that's correct.",
+        },
+        {
+          prompt: "Which phrase is the most academic way to introduce a conclusion drawn from data?",
+          options: ["This suggests that", "So basically", "I reckon", "It's obvious that"],
+          correctAnswer: "This suggests that",
+          reviewFeedback: "Review this concept — 'This suggests that' presents a conclusion cautiously and formally.",
+          successFeedback: "Well done — that's correct.",
+        },
+      ],
+      completionMessage: "You can now write in a formal academic register and present claims with appropriate caution.",
     },
   ],
 };

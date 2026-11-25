@@ -1,11 +1,10 @@
 /**
  * lib/mock-data/tests.ts
  *
- * MVP scope (approved): exactly ONE real, mixed test exists —
- * B1 Intermediate's "Test 1". Every other test, across every level,
- * is a "coming_soon" entry with no content. This keeps the question
- * bank small on purpose (per instructions) while still letting the
- * Tests feature demonstrate its real shape end to end.
+ * One real Mixed Test ("Test 1: Mixed Practice") exists for every
+ * curriculum level from A1 to C1. Every other test (Review Test,
+ * Mock Test, Grammar Shorts) is still a "coming_soon" entry with no
+ * content — Mock Exams wait on the Listening/Speaking decision.
  *
  * Questions reuse the exact PlacementQuestion shape from
  * placementQuestions.ts — no new question schema was introduced.
@@ -442,6 +441,256 @@ const B1PLUS_TEST_1_SECTIONS: TestSection[] = [
   },
 ];
 
+/**
+ * B2 Mixed Test — every item traces to a B2 lesson objective
+ * (passive voice; Work & Careers words; writer's attitude; although /
+ * despite / however / moreover). Reading uses a new scenario (a hotel
+ * review, mainly negative) — not the lesson's cinema text, and not its
+ * "expected X, surprisingly Y" structure.
+ */
+const B2_TEST_1_SECTIONS: TestSection[] = [
+  {
+    skill: "grammar",
+    questions: [
+      {
+        id: "b2t1_grammar_1",
+        skill: "grammar",
+        task_type: "multiple_choice",
+        cefr_weight: "B2",
+        prompt: "Choose the correct passive sentence.",
+        options: [
+          "The windows are cleaned once a month.",
+          "The windows are clean once a month.",
+          "The windows is cleaned once a month.",
+          "The windows cleaning once a month.",
+        ],
+        correct_answer: "The windows are cleaned once a month.",
+      },
+      {
+        id: "b2t1_grammar_2",
+        skill: "grammar",
+        task_type: "gap_fill",
+        cefr_weight: "B2",
+        prompt: "This castle ___ (build) in the 12th century. (Use the past simple passive.)",
+        correct_answer: "was built",
+      },
+    ],
+  },
+  {
+    skill: "vocabulary",
+    questions: [
+      {
+        id: "b2t1_vocab_1",
+        skill: "vocabulary",
+        task_type: "multiple_choice",
+        cefr_weight: "B2",
+        prompt: "Choose the correct word: 'The ___ for applications is 30 June — nothing will be accepted after that.'",
+        options: ["deadline", "salary", "colleague", "promotion"],
+        correct_answer: "deadline",
+      },
+      {
+        id: "b2t1_vocab_2",
+        skill: "vocabulary",
+        task_type: "multiple_choice",
+        cefr_weight: "B2",
+        prompt: "Choose the correct words: 'Parents of young children often look for jobs with ___, so they can do the school run.'",
+        options: ["flexible hours", "a deadline", "a colleague", "a promotion"],
+        correct_answer: "flexible hours",
+      },
+    ],
+  },
+  {
+    skill: "reading",
+    questions: [
+      {
+        id: "b2t1_reading_1",
+        skill: "reading",
+        task_type: "multiple_choice",
+        cefr_weight: "B2",
+        prompt:
+          "\"The hotel's website promised a peaceful escape, and the lakeside location was certainly beautiful. Sadly, thin walls and a noisy bar downstairs meant we barely slept. I doubt we'll be back.\" — What is the writer's overall attitude to the hotel?",
+        options: [
+          "Mainly disappointed, although they liked the location",
+          "Completely satisfied",
+          "Excited to return soon",
+          "Only interested in the bar",
+        ],
+        correct_answer: "Mainly disappointed, although they liked the location",
+      },
+      {
+        id: "b2t1_reading_2",
+        skill: "reading",
+        task_type: "multiple_choice",
+        cefr_weight: "B2",
+        prompt: "In the same text, which word signals that the writer's view turns negative?",
+        options: ["Sadly", "certainly", "beautiful", "peaceful"],
+        correct_answer: "Sadly",
+      },
+    ],
+  },
+  {
+    skill: "writing",
+    questions: [
+      {
+        id: "b2t1_writing_1",
+        skill: "writing",
+        task_type: "multiple_choice",
+        cefr_weight: "B2",
+        prompt: "Choose the correct sentence.",
+        options: [
+          "Although the tickets were expensive, the concert sold out.",
+          "Despite the tickets were expensive, the concert sold out.",
+          "Although the expensive tickets, the concert sold out.",
+          "Despite of the expensive tickets, the concert sold out.",
+        ],
+        correct_answer: "Although the tickets were expensive, the concert sold out.",
+      },
+      {
+        id: "b2t1_writing_2",
+        skill: "writing",
+        task_type: "multiple_choice",
+        cefr_weight: "B2",
+        prompt: "Complete the text: 'The new phone has a great camera. ___, its battery life is poor.'",
+        options: ["However,", "Moreover,", "Although,", "Despite,"],
+        correct_answer: "However,",
+      },
+    ],
+  },
+];
+
+/**
+ * C1 Mixed Test — traces to C1 objectives (inversion after Never /
+ * Rarely / Seldom / Not only; the five taught idioms; claim vs
+ * concession; hedging & academic register). Reading uses a new topic
+ * (tourism and short-term rentals) and a different concession marker
+ * ("Granted") than the lesson's ("Admittedly").
+ */
+const C1_TEST_1_SECTIONS: TestSection[] = [
+  {
+    skill: "grammar",
+    questions: [
+      {
+        id: "c1t1_grammar_1",
+        skill: "grammar",
+        task_type: "multiple_choice",
+        cefr_weight: "C1",
+        prompt: "Choose the correct sentence.",
+        options: [
+          "Seldom do we see such talent in a young player.",
+          "Seldom we see such talent in a young player.",
+          "Seldom do we saw such talent in a young player.",
+          "Seldom we do see such talent in a young player.",
+        ],
+        correct_answer: "Seldom do we see such talent in a young player.",
+      },
+      {
+        id: "c1t1_grammar_2",
+        skill: "grammar",
+        task_type: "multiple_choice",
+        cefr_weight: "C1",
+        prompt: "Choose the correct sentence.",
+        options: [
+          "Not only is the hotel cheap, but it is also close to the beach.",
+          "Not only the hotel is cheap, but it is also close to the beach.",
+          "Not only is the hotel cheap, but is it also close to the beach.",
+          "Not only does the hotel is cheap, but it is also close to the beach.",
+        ],
+        correct_answer: "Not only is the hotel cheap, but it is also close to the beach.",
+      },
+    ],
+  },
+  {
+    skill: "vocabulary",
+    questions: [
+      {
+        id: "c1t1_vocab_1",
+        skill: "vocabulary",
+        task_type: "multiple_choice",
+        cefr_weight: "C1",
+        prompt: "Choose the correct expression: 'Right, it's nine o'clock — shall I ___ by presenting this month's figures?'",
+        options: ["get the ball rolling", "cut corners", "sit on the fence", "be the tip of the iceberg"],
+        correct_answer: "get the ball rolling",
+      },
+      {
+        id: "c1t1_vocab_2",
+        skill: "vocabulary",
+        task_type: "multiple_choice",
+        cefr_weight: "C1",
+        prompt: "Choose the correct expression: 'The leaked emails are only ___ — the investigation is likely to reveal far more.'",
+        options: ["the tip of the iceberg", "a blessing in disguise", "on the fence", "getting the ball rolling"],
+        correct_answer: "the tip of the iceberg",
+      },
+    ],
+  },
+  {
+    skill: "reading",
+    questions: [
+      {
+        id: "c1t1_reading_1",
+        skill: "reading",
+        task_type: "multiple_choice",
+        cefr_weight: "C1",
+        prompt:
+          "\"Granted, tourism brings much-needed money into historic cities. But when residents are priced out of their own neighbourhoods by holiday rentals, the cost has clearly become too high. Cities must limit short-term rentals before their character is lost for good.\" — What is the writer's main claim?",
+        options: [
+          "Cities must limit short-term rentals.",
+          "Tourism brings money into historic cities.",
+          "Residents should move out of historic cities.",
+          "Holiday rentals should be made cheaper.",
+        ],
+        correct_answer: "Cities must limit short-term rentals.",
+      },
+      {
+        id: "c1t1_reading_2",
+        skill: "reading",
+        task_type: "multiple_choice",
+        cefr_weight: "C1",
+        prompt: "In the same text, which point does the writer concede?",
+        options: [
+          "Tourism brings much-needed money.",
+          "Residents are being priced out.",
+          "Cities are losing their character.",
+          "The cost has become too high.",
+        ],
+        correct_answer: "Tourism brings much-needed money.",
+      },
+    ],
+  },
+  {
+    skill: "writing",
+    questions: [
+      {
+        id: "c1t1_writing_1",
+        skill: "writing",
+        task_type: "multiple_choice",
+        cefr_weight: "C1",
+        prompt: "Which sentence is most appropriate for an academic essay?",
+        options: [
+          "The data appears to show a link between sleep and exam performance.",
+          "I reckon sleep's really important for exams.",
+          "Everyone knows you do better in exams if you sleep a lot.",
+          "Sleep is basically the key to exams, obviously.",
+        ],
+        correct_answer: "The data appears to show a link between sleep and exam performance.",
+      },
+      {
+        id: "c1t1_writing_2",
+        skill: "writing",
+        task_type: "multiple_choice",
+        cefr_weight: "C1",
+        prompt: "Choose the best hedged version of: 'Remote workers are more productive than office workers.'",
+        options: [
+          "It could be argued that remote workers tend to be more productive.",
+          "Remote workers are always more productive, without doubt.",
+          "Obviously, remote workers are more productive.",
+          "Remote workers are definitely more productive.",
+        ],
+        correct_answer: "It could be argued that remote workers tend to be more productive.",
+      },
+    ],
+  },
+];
+
 const TESTS_BY_LEVEL: Record<string, TestContent[]> = {
   "a1-elementary": [
     {
@@ -484,10 +733,24 @@ const TESTS_BY_LEVEL: Record<string, TestContent[]> = {
     { id: "review-test", title: "Review Test", status: "coming_soon", sections: [], hasListeningPlaceholder: false },
   ],
   "b2-pre-advanced": [
-    { id: "test-1", title: "Test 1", status: "coming_soon", sections: [], hasListeningPlaceholder: false },
+    {
+      id: "test-1",
+      title: "Test 1: Mixed Practice",
+      status: "available",
+      sections: B2_TEST_1_SECTIONS,
+      hasListeningPlaceholder: true,
+    },
+    { id: "mock-test", title: "Mock Test", status: "coming_soon", sections: [], hasListeningPlaceholder: false },
   ],
   "c1-advanced": [
-    { id: "test-1", title: "Test 1", status: "coming_soon", sections: [], hasListeningPlaceholder: false },
+    {
+      id: "test-1",
+      title: "Test 1: Mixed Practice",
+      status: "available",
+      sections: C1_TEST_1_SECTIONS,
+      hasListeningPlaceholder: true,
+    },
+    { id: "mock-test", title: "Mock Test", status: "coming_soon", sections: [], hasListeningPlaceholder: false },
   ],
   "grammar-shorts": [
     { id: "shorts-1", title: "Grammar Shorts #1", status: "coming_soon", sections: [], hasListeningPlaceholder: false },

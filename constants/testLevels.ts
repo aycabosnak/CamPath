@@ -86,7 +86,7 @@ export const TEST_LEVELS: TestLevelMeta[] = [
     shortLabel: "B2",
     isBridge: false,
     bridge: "Maps to: Independent",
-    description: "Passive voice, reported speech, and a wider range of linking devices.",
+    description: "The passive voice, work and career vocabulary, reading for attitude, and linking devices.",
   },
   {
     slug: "c1-advanced",

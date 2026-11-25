@@ -12,8 +12,8 @@
 | A2 Pre-Intermediate | `a2-pre-intermediate` | **Complete** — same structure as A1, educationally audited and aligned |
 | B1 Intermediate | `b1-intermediate` | Partial — 3 legacy Study Path lessons + 1 Mixed Test exist, but predate the Level Curriculum system and have not been through the alignment audit |
 | B1+ (Bridge) | `b1-plus-upper-intermediate` | **Complete** — same 4-lesson/Mixed Test/Bridge Check structure, proactively audited for passage reuse before release |
-| B2 Pre-Advanced | `b2-pre-advanced` | Metadata + Coming Soon placeholders only |
-| C1 Advanced | `c1-advanced` | Metadata + Coming Soon placeholders only |
+| B2 Pre-Advanced | `b2-pre-advanced` | **Complete** — Passive Voice, Work & Careers, Understanding the Writer's Attitude, Linking Devices (Contrast & Addition); 1 Mixed Test, 1 Progress Check; audited for alignment and passage reuse before release |
+| C1 Advanced | `c1-advanced` | **Complete** — Inversion for Emphasis, Idiomatic Expressions, Claim & Concession, Academic Register & Hedging; 1 Mixed Test, 1 Progress Check; audited for alignment and passage reuse before release |
 | Grammar Shorts | `grammar-shorts` | Metadata only, no content — see Section 4 for what this is *for* |
 
 ---

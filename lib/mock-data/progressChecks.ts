@@ -364,6 +364,210 @@ const B1PLUS_PROGRESS_CHECK_QUESTIONS: PlacementQuestion[] = [
   },
 ];
 
+/**
+ * B2 Progress Check — distinct from the Mixed Test; slightly harder
+ * framing of the same taught content (present perfect / future
+ * passive, vocabulary from context, an IMPLIED attitude that needs
+ * one inference step, and despite/moreover in context). Reading
+ * passage is a new scenario (a banking app) and wording.
+ */
+const B2_PROGRESS_CHECK_QUESTIONS: PlacementQuestion[] = [
+  {
+    id: "b2pc_grammar_1",
+    skill: "grammar",
+    task_type: "multiple_choice",
+    cefr_weight: "B2",
+    prompt: "Choose the correct passive sentence.",
+    options: [
+      "The road has been closed because of the flood.",
+      "The road has closed because of the flood by someone.",
+      "The road have been closed because of the flood.",
+      "The road has been close because of the flood.",
+    ],
+    correct_answer: "The road has been closed because of the flood.",
+  },
+  {
+    id: "b2pc_grammar_2",
+    skill: "grammar",
+    task_type: "gap_fill",
+    cefr_weight: "B2",
+    prompt: "The new hospital ___ (open) by the mayor next spring. (Use the future passive.)",
+    correct_answer: "will be opened",
+  },
+  {
+    id: "b2pc_vocab_1",
+    skill: "vocabulary",
+    task_type: "multiple_choice",
+    cefr_weight: "B2",
+    prompt: "Choose the correct word: 'After ten years at the company, she finally got a ___ to senior manager.'",
+    options: ["promotion", "deadline", "colleague", "salary"],
+    correct_answer: "promotion",
+  },
+  {
+    id: "b2pc_vocab_2",
+    skill: "vocabulary",
+    task_type: "multiple_choice",
+    cefr_weight: "B2",
+    prompt: "Choose the correct word: 'He decided to ___ from his job so that he could start his own business.'",
+    options: ["resign", "colleague", "deadline", "salary"],
+    correct_answer: "resign",
+  },
+  {
+    id: "b2pc_reading_1",
+    skill: "reading",
+    task_type: "multiple_choice",
+    cefr_weight: "B2",
+    prompt:
+      "\"Everyone describes the bank's new app as 'easy to use'. After forty minutes trying to reset my password, I would describe it rather differently.\" — What is the writer's attitude to the app?",
+    options: [
+      "Critical — they do not find it easy to use",
+      "Enthusiastic — they agree it is easy to use",
+      "Neutral — they have not used it",
+      "Grateful — it saved them time",
+    ],
+    correct_answer: "Critical — they do not find it easy to use",
+  },
+  {
+    id: "b2pc_reading_2",
+    skill: "reading",
+    task_type: "multiple_choice",
+    cefr_weight: "B2",
+    prompt: "In the same text, how does the writer show their opinion?",
+    options: [
+      "By contrasting what others say with their own experience",
+      "By listing the app's best features",
+      "By recommending a different bank",
+      "By saying they have never used the app",
+    ],
+    correct_answer: "By contrasting what others say with their own experience",
+  },
+  {
+    id: "b2pc_writing_1",
+    skill: "writing",
+    task_type: "multiple_choice",
+    cefr_weight: "B2",
+    prompt: "Complete the sentence: '___ the heavy rain, the match went ahead as planned.'",
+    options: ["Despite", "Although", "However,", "Moreover,"],
+    correct_answer: "Despite",
+  },
+  {
+    id: "b2pc_writing_2",
+    skill: "writing",
+    task_type: "multiple_choice",
+    cefr_weight: "B2",
+    prompt: "Complete the text: 'The flat is close to the station. ___, it has a large garden.'",
+    options: ["Moreover,", "However,", "Although", "Despite"],
+    correct_answer: "Moreover,",
+  },
+];
+
+/**
+ * C1 Progress Check — harder framing of C1 content: inversion as a
+ * gap fill, idioms that must be chosen from a situation, and a
+ * concession that is NOT flagged by a taught marker word (the learner
+ * must recognise "This is undoubtedly true" as the writer accepting a
+ * point). Reading topic (school phone bans) is new.
+ */
+const C1_PROGRESS_CHECK_QUESTIONS: PlacementQuestion[] = [
+  {
+    id: "c1pc_grammar_1",
+    skill: "grammar",
+    task_type: "gap_fill",
+    cefr_weight: "C1",
+    prompt: "Never ___ I heard such a convincing speech. (Write one word.)",
+    correct_answer: "have",
+  },
+  {
+    id: "c1pc_grammar_2",
+    skill: "grammar",
+    task_type: "multiple_choice",
+    cefr_weight: "C1",
+    prompt: "Choose the correct sentence.",
+    options: [
+      "Not only did the company lose money, but it also lost its best staff.",
+      "Not only the company lost money, but it also lost its best staff.",
+      "Not only did the company lost money, but it also lost its best staff.",
+      "Not only lost the company money, but it also lost its best staff.",
+    ],
+    correct_answer: "Not only did the company lose money, but it also lost its best staff.",
+  },
+  {
+    id: "c1pc_vocab_1",
+    skill: "vocabulary",
+    task_type: "multiple_choice",
+    cefr_weight: "C1",
+    prompt: "Choose the correct expression: 'Losing that job turned out to be ___ — it pushed me to start my own company.'",
+    options: ["a blessing in disguise", "the tip of the iceberg", "on the fence", "cutting corners"],
+    correct_answer: "a blessing in disguise",
+  },
+  {
+    id: "c1pc_vocab_2",
+    skill: "vocabulary",
+    task_type: "multiple_choice",
+    cefr_weight: "C1",
+    prompt: "Choose the correct expression: 'Half the committee supports the plan and half opposes it; the chair is still ___.'",
+    options: ["on the fence", "a blessing in disguise", "cutting corners", "getting the ball rolling"],
+    correct_answer: "on the fence",
+  },
+  {
+    id: "c1pc_reading_1",
+    skill: "reading",
+    task_type: "multiple_choice",
+    cefr_weight: "C1",
+    prompt:
+      "\"Critics of school phone bans often point out that teenagers will simply use their phones after school instead. This is undoubtedly true. It does not follow, however, that the ban is pointless: the aim was never to remove phones from teenagers' lives, only from the hours in which they are meant to be learning.\" — What is the writer's position?",
+    options: [
+      "They support school phone bans.",
+      "They think phone bans are pointless.",
+      "They want phones banned outside school too.",
+      "They have no clear opinion.",
+    ],
+    correct_answer: "They support school phone bans.",
+  },
+  {
+    id: "c1pc_reading_2",
+    skill: "reading",
+    task_type: "multiple_choice",
+    cefr_weight: "C1",
+    prompt: "In the same text, which point does the writer accept from the critics?",
+    options: [
+      "Teenagers will use their phones after school.",
+      "The ban is pointless.",
+      "Phones should be removed from teenagers' lives.",
+      "Teenagers learn better with phones.",
+    ],
+    correct_answer: "Teenagers will use their phones after school.",
+  },
+  {
+    id: "c1pc_writing_1",
+    skill: "writing",
+    task_type: "multiple_choice",
+    cefr_weight: "C1",
+    prompt: "Which sentence would be LEAST appropriate in an academic essay?",
+    options: [
+      "Loads of people reckon cities are way too crowded.",
+      "It could be argued that cities are becoming overcrowded.",
+      "This suggests that urban populations are rising.",
+      "Cities appear to be growing faster than their infrastructure.",
+    ],
+    correct_answer: "Loads of people reckon cities are way too crowded.",
+  },
+  {
+    id: "c1pc_writing_2",
+    skill: "writing",
+    task_type: "multiple_choice",
+    cefr_weight: "C1",
+    prompt: "A survey found that 70% of students study better in the morning. Which conclusion is best for an academic report?",
+    options: [
+      "This suggests that many students tend to study more effectively in the morning.",
+      "This proves that all students must study in the morning.",
+      "So basically everyone should study in the morning.",
+      "I think morning is obviously the best time to study.",
+    ],
+    correct_answer: "This suggests that many students tend to study more effectively in the morning.",
+  },
+];
+
 const PROGRESS_CHECKS: Record<string, ProgressCheckContent> = {
   "a1-elementary": {
     level: "a1-elementary",
@@ -384,6 +588,16 @@ const PROGRESS_CHECKS: Record<string, ProgressCheckContent> = {
     level: "b1-plus-upper-intermediate",
     title: "Bridge to B2 — Bridge Check",
     questions: B1PLUS_PROGRESS_CHECK_QUESTIONS,
+  },
+  "b2-pre-advanced": {
+    level: "b2-pre-advanced",
+    title: "B2 Pre-Advanced — Progress Check",
+    questions: B2_PROGRESS_CHECK_QUESTIONS,
+  },
+  "c1-advanced": {
+    level: "c1-advanced",
+    title: "C1 Advanced — Progress Check",
+    questions: C1_PROGRESS_CHECK_QUESTIONS,
   },
 };
 
