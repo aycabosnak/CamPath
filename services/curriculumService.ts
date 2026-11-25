@@ -26,10 +26,13 @@ export async function getProgressCheck(levelSlug: string): Promise<ProgressCheck
 }
 
 /** Groups a level's lessons by skill, in the approved learning
- *  sequence order (Grammar -> Vocabulary -> Reading -> Writing) —
+ *  sequence order (Grammar -> Vocabulary -> Reading -> Listening ->
+ *  Writing -> Speaking) —
  *  used by the level page to render each section in the right order
  *  regardless of the order lessons happen to be authored in. */
-const SEQUENCE_ORDER: Skill[] = ["grammar", "vocabulary", "reading", "writing", "useOfEnglish"];
+// Receptive skills before the productive skill that uses them:
+// Reading → Listening → Writing → Speaking.
+const SEQUENCE_ORDER: Skill[] = ["grammar", "vocabulary", "reading", "listening", "writing", "speaking", "useOfEnglish"];
 
 export async function getLessonsGroupedBySkill(
   levelSlug: string

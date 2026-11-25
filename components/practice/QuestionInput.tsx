@@ -19,6 +19,7 @@ import type { PlacementQuestion } from "@/lib/mock-data/placementQuestions";
 import { Button } from "@/components/ui/Button";
 import { TextField } from "@/components/ui/Form";
 import { cn } from "@/components/lib/cn";
+import { ListenPlayer } from "@/components/audio/ListenPlayer";
 
 /**
  * Whether a question has enough of an answer to enable "Next"/"Check".
@@ -64,7 +65,10 @@ export function QuestionInput({
     case "audio_multiple_choice":
       return (
         <div>
-          {question.task_type === "audio_multiple_choice" && (
+          {question.task_type === "audio_multiple_choice" && question.audio_script && (
+            <ListenPlayer lines={question.audio_script} />
+          )}
+          {question.task_type === "audio_multiple_choice" && !question.audio_script && (
             <div className="card mb-4">
               <p className="text-small text-ink-soft">
                 🎧 Listening question — audio playback isn't available in this preview.

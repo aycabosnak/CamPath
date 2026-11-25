@@ -18,6 +18,8 @@
 
 ---
 
+Every level from A1 to C1 also has one **Listening** lesson and one **Speaking** (Listen & Repeat) lesson — see `lib/mock-data/audioLessons.ts` and TechnicalDecisions.md.
+
 ## 2. Learning Philosophy
 
 Content is built one **complete level** at a time, not one skill at a time across all levels — A1 was finished end-to-end (lessons → test → progress check → milestone) before A2 began, specifically so structural problems (see the A1 UX review and the A2 educational alignment audit) get caught and fixed once, in the template, rather than once per level.
@@ -29,7 +31,7 @@ Every lesson has exactly one explicit learning objective, stated in its `complet
 ## 3. Lesson Flow — and Why This Order
 
 ```
-Lesson (Grammar → Vocabulary → Reading → Writing)
+Lesson (Grammar → Vocabulary → Reading → Listening → Writing → Speaking)
    ↓
 Guided Practice (3+ questions, inside each lesson)
    ↓

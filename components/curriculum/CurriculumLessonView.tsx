@@ -32,6 +32,8 @@ import { cn } from "@/components/lib/cn";
 import { trackEvent } from "@/services/analyticsService";
 
 import { formatDate } from "@/lib/formatDate";
+import { ListenPlayer } from "@/components/audio/ListenPlayer";
+import { SpeakingPractice } from "@/components/audio/SpeakingPractice";
 
 export function CurriculumLessonView({ levelSlug, lessonId }: { levelSlug: string; lessonId: string }) {
   const [lesson, setLesson] = useState<CurriculumLesson | null | undefined>(undefined);
@@ -77,20 +79,21 @@ export function CurriculumLessonView({ levelSlug, lessonId }: { levelSlug: strin
 
   const totalQuestions = lesson.questions.length;
   const question = lesson.questions[qIndex];
-  const isCorrect = selected === question.correctAnswer;
+  const isCorrect = question ? selected === question.correctAnswer : false;
 
   function checkAnswer() {
     if (!isCorrect) setAllCorrect(false);
     setChecked(true);
   }
 
-  async function handleComplete() {
+  async function handleComplete(allCorrectOverride?: boolean) {
+    const finalAllCorrect = allCorrectOverride ?? allCorrect;
     const minutesSpent = Math.max(1, Math.round((Date.now() - startTimeRef.current) / 60000));
-    const result = completeCurriculumLesson(lessonId, minutesSpent, allCorrect);
+    const result = completeCurriculumLesson(lessonId, minutesSpent, finalAllCorrect);
     trackEvent("lesson_completed", {
       unit: lessonId,
       title: lesson!.title,
-      allCorrect,
+      allCorrect: finalAllCorrect,
       alreadyCompleted: result.alreadyCompleted,
     });
     setExistingRecord(result.record);
@@ -130,8 +133,16 @@ export function CurriculumLessonView({ levelSlug, lessonId }: { levelSlug: strin
               <p className="text-body">{formatDate(existingRecord.completedAt)}</p>
             </div>
             <div>
-              <p className="card-eyebrow mb-1">Guided Practice</p>
-              <p className="text-body">{existingRecord.correctFirstTry ? "✅ All correct" : "🔍 Reviewed"}</p>
+              <p className="card-eyebrow mb-1">{lesson.speakingPrompts ? "Speaking Practice" : "Guided Practice"}</p>
+              <p className="text-body">
+                {lesson.speakingPrompts
+                  ? existingRecord.correctFirstTry
+                    ? "✅ Clear on first try"
+                    : "🎙️ Practised"
+                  : existingRecord.correctFirstTry
+                    ? "✅ All correct"
+                    : "🔍 Reviewed"}
+              </p>
             </div>
           </div>
         </Card>
@@ -164,6 +175,11 @@ export function CurriculumLessonView({ levelSlug, lessonId }: { levelSlug: strin
           <p className="text-body" style={{ fontStyle: "italic" }}>{lesson.passage}</p>
         </Card>
       )}
+      {lesson.audioScript && (
+        // Transcript unlocks once the current answer is checked — before
+        // that it would turn the listening task into a reading task.
+        <ListenPlayer lines={lesson.audioScript} allowTranscript={checked} label="Listening Clip" />
+      )}
       {lesson.examples && (
         <Card className="mb-8">
           <p className="card-eyebrow mb-3">Examples</p>
@@ -175,6 +191,10 @@ export function CurriculumLessonView({ levelSlug, lessonId }: { levelSlug: strin
         </Card>
       )}
 
+      {lesson.speakingPrompts ? (
+        <SpeakingPractice prompts={lesson.speakingPrompts} onComplete={(allGood) => handleComplete(allGood)} />
+      ) : (
+        <>
       <ProgressBar
         value={Math.round((qIndex / totalQuestions) * 100)}
         label={`Guided Practice — Question ${qIndex + 1} of ${totalQuestions}`}
@@ -213,9 +233,11 @@ export function CurriculumLessonView({ levelSlug, lessonId }: { levelSlug: strin
           Check Answer
         </Button>
       ) : (
-        <Button variant="primary" size="lg" onClick={goNextQuestion}>
+        <Button variant="primary" size="lg" onClick={() => goNextQuestion()}>
           {qIndex < totalQuestions - 1 ? "Next Question" : "Complete Lesson"}
         </Button>
+      )}
+        </>
       )}
     </main>
   );

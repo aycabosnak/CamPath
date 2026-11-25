@@ -16,6 +16,7 @@
  * is intentionally NOT modeled here.
  */
 import type { Skill, CefrLevel } from "@/components/types";
+import type { AudioLine } from "@/services/speechService";
 
 export type PlacementTaskType =
   | "multiple_choice"
@@ -36,6 +37,9 @@ export interface MultipleChoiceQuestion extends BasePlacementQuestion {
   task_type: "multiple_choice" | "audio_multiple_choice";
   options: string[];
   correct_answer: string;
+  /** audio_multiple_choice only: the script spoken by the browser
+   *  (services/speechService). Never shown before answering. */
+  audio_script?: AudioLine[];
 }
 
 export interface GapFillQuestion extends BasePlacementQuestion {
@@ -116,6 +120,9 @@ export const PLACEMENT_QUESTIONS: PlacementQuestion[] = [
     prompt: "Listen to the short clip. What time does the speaker say the train leaves?",
     options: ["6:15", "6:50", "7:15", "7:50"],
     correct_answer: "7:15",
+    audio_script: [
+      { text: "Attention, please. The next train to Oxford leaves at a quarter past seven from platform four. Please have your tickets ready." },
+    ],
   },
   {
     id: "pt_listening_2",
@@ -125,6 +132,11 @@ export const PLACEMENT_QUESTIONS: PlacementQuestion[] = [
     prompt: "Listen to the conversation. What does the woman decide to do?",
     options: ["Cancel the trip", "Postpone the meeting", "Book an earlier flight", "Ask for a refund"],
     correct_answer: "Book an earlier flight",
+    audio_script: [
+      { speaker: "Woman", text: "The meeting in Berlin has been moved to Monday morning, so my Monday evening flight is too late." },
+      { speaker: "Man", text: "Could you postpone the meeting? Or cancel the trip?" },
+      { speaker: "Woman", text: "No, it's too important. I'll book an earlier flight, on Sunday night." },
+    ],
   },
 
   // ---------------- Reading ----------------

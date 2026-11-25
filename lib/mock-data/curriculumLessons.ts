@@ -17,6 +17,9 @@
  */
 import type { UnitQuestion } from "@/lib/mock-data/unitLessons";
 import type { Skill } from "@/components/types";
+import type { AudioLine } from "@/services/speechService";
+import type { SpeakingPrompt } from "@/components/audio/SpeakingPractice";
+import { AUDIO_LESSONS } from "@/lib/mock-data/audioLessons";
 
 export interface CurriculumLesson {
   id: string;
@@ -28,6 +31,12 @@ export interface CurriculumLesson {
   introList?: string[];
   passage?: string;
   examples?: string[];
+  /** Listening lessons: spoken with browser TTS, transcript hidden
+   *  until an answer is checked. */
+  audioScript?: AudioLine[];
+  /** Speaking lessons: Listen & Repeat prompts. Speaking lessons have
+   *  no multiple-choice `questions` (empty array). */
+  speakingPrompts?: SpeakingPrompt[];
   questions: UnitQuestion[];
   completionMessage: string;
 }
@@ -1104,7 +1113,9 @@ export const CURRICULUM_LESSONS: Record<string, CurriculumLesson[]> = {
 };
 
 export function getCurriculumLessonsForLevel(levelSlug: string): CurriculumLesson[] {
-  return CURRICULUM_LESSONS[levelSlug] ?? [];
+  // Listening/Speaking lessons live in audioLessons.ts; merged here so
+  // every caller sees one list per level.
+  return [...(CURRICULUM_LESSONS[levelSlug] ?? []), ...(AUDIO_LESSONS[levelSlug] ?? [])];
 }
 
 export function getCurriculumLesson(levelSlug: string, lessonId: string): CurriculumLesson | null {

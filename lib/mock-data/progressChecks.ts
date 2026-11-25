@@ -568,36 +568,201 @@ const C1_PROGRESS_CHECK_QUESTIONS: PlacementQuestion[] = [
   },
 ];
 
+/** Listening items — new scripts, same sub-skill as each level's Listening lesson. */
+const A1_PC_LISTENING: PlacementQuestion[] = [
+  {
+    id: "a1pc_listening_1",
+    skill: "listening",
+    task_type: "audio_multiple_choice",
+    cefr_weight: "A1",
+    prompt: "Listen. How old is Mehmet?",
+    options: ["Nine", "Nineteen", "Ninety", "Twenty-nine"],
+    correct_answer: "Nineteen",
+    audio_script: [
+      { text: "My name is Mehmet. I'm nineteen. I'm from Turkey. I have two brothers, but I don't have any sisters." },
+    ],
+  },
+  {
+    id: "a1pc_listening_2",
+    skill: "listening",
+    task_type: "audio_multiple_choice",
+    cefr_weight: "A1",
+    prompt: "How many sisters does Mehmet have?",
+    options: ["None", "One", "Two", "Three"],
+    correct_answer: "None",
+    audio_script: [
+      { text: "My name is Mehmet. I'm nineteen. I'm from Turkey. I have two brothers, but I don't have any sisters." },
+    ],
+  },
+];
+
+const A2_PC_LISTENING: PlacementQuestion[] = [
+  {
+    id: "a2pc_listening_1",
+    skill: "listening",
+    task_type: "audio_multiple_choice",
+    cefr_weight: "A2",
+    prompt: "Listen carefully \u2014 the events are not told in order. What did the speaker do first this morning?",
+    options: ["Fed the cat", "Made a sandwich", "Went to work", "Went to bed"],
+    correct_answer: "Fed the cat",
+    audio_script: [
+      { text: "Before I went to work this morning, I made a sandwich. But first, I fed the cat \u2014 she always wakes me up! After work, I went straight to bed." },
+    ],
+  },
+  {
+    id: "a2pc_listening_2",
+    skill: "listening",
+    task_type: "audio_multiple_choice",
+    cefr_weight: "A2",
+    prompt: "What did the speaker do after work?",
+    options: ["Went straight to bed", "Made a sandwich", "Fed the cat", "Met a friend"],
+    correct_answer: "Went straight to bed",
+    audio_script: [
+      { text: "Before I went to work this morning, I made a sandwich. But first, I fed the cat \u2014 she always wakes me up! After work, I went straight to bed." },
+    ],
+  },
+];
+
+const B1_PC_LISTENING: PlacementQuestion[] = [
+  {
+    id: "b1pc_listening_1",
+    skill: "listening",
+    task_type: "audio_multiple_choice",
+    cefr_weight: "B1",
+    prompt: "Listen to the message. Why can't Nadia come to football practice?",
+    options: ["She's starting a new job.", "She's ill.", "She's going on holiday.", "She doesn't like football."],
+    correct_answer: "She's starting a new job.",
+    audio_script: [
+      { speaker: "Nadia", text: "Hi Sam, it's Nadia. I'm going to start my new job on Monday, so I can't come to football practice this week. I intend to come back the week after. If the coach asks, can you tell him?" },
+    ],
+  },
+  {
+    id: "b1pc_listening_2",
+    skill: "listening",
+    task_type: "audio_multiple_choice",
+    cefr_weight: "B1",
+    prompt: "What does Nadia intend to do?",
+    options: ["Come back the week after", "Leave the team", "Talk to the coach herself", "Change her job"],
+    correct_answer: "Come back the week after",
+    audio_script: [
+      { speaker: "Nadia", text: "Hi Sam, it's Nadia. I'm going to start my new job on Monday, so I can't come to football practice this week. I intend to come back the week after. If the coach asks, can you tell him?" },
+    ],
+  },
+];
+
+const B1PLUS_PC_LISTENING: PlacementQuestion[] = [
+  {
+    id: "b1pluspc_listening_1",
+    skill: "listening",
+    task_type: "audio_multiple_choice",
+    cefr_weight: "B1",
+    prompt: "Listen to the conversation. What is Ana's overall opinion of the gym?",
+    options: ["Positive, even though it's expensive", "Negative, because it's expensive", "She hasn't tried it yet", "She thinks it's cheap"],
+    correct_answer: "Positive, even though it's expensive",
+    audio_script: [
+      { speaker: "Ana", text: "The new gym in our building is expensive, but honestly, I've been going every day." },
+      { speaker: "Kemal", text: "Every day? I went once and half the machines were broken. Never again." },
+    ],
+  },
+  {
+    id: "b1pluspc_listening_2",
+    skill: "listening",
+    task_type: "audio_multiple_choice",
+    cefr_weight: "B1",
+    prompt: "What does Kemal mean by 'Never again'?",
+    options: ["He won't go back to the gym.", "He'll go again tomorrow.", "He wants to fix the machines.", "He agrees with Ana."],
+    correct_answer: "He won't go back to the gym.",
+    audio_script: [
+      { speaker: "Ana", text: "The new gym in our building is expensive, but honestly, I've been going every day." },
+      { speaker: "Kemal", text: "Every day? I went once and half the machines were broken. Never again." },
+    ],
+  },
+];
+
+const B2_PC_LISTENING: PlacementQuestion[] = [
+  {
+    id: "b2pc_listening_1",
+    skill: "listening",
+    task_type: "audio_multiple_choice",
+    cefr_weight: "B2",
+    prompt: "Listen to the message. Why is Jess calling?",
+    options: ["To say she'll be late for dinner", "To invite someone to a meeting", "To cancel dinner completely", "To ask for help with work"],
+    correct_answer: "To say she'll be late for dinner",
+    audio_script: [
+      { speaker: "Jess", text: "Hi, it's Jess. So, that 'quick' meeting I mentioned? It's now in its third hour. Anyway, I'll be late for dinner \u2014 start without me." },
+    ],
+  },
+  {
+    id: "b2pc_listening_2",
+    skill: "listening",
+    task_type: "audio_multiple_choice",
+    cefr_weight: "B2",
+    prompt: "How does Jess feel about the meeting?",
+    options: ["Frustrated \u2014 it's much longer than promised", "Pleased \u2014 it's going well", "Nervous \u2014 she has to present", "Relaxed \u2014 it's very short"],
+    correct_answer: "Frustrated \u2014 it's much longer than promised",
+    audio_script: [
+      { speaker: "Jess", text: "Hi, it's Jess. So, that 'quick' meeting I mentioned? It's now in its third hour. Anyway, I'll be late for dinner \u2014 start without me." },
+    ],
+  },
+];
+
+const C1_PC_LISTENING: PlacementQuestion[] = [
+  {
+    id: "c1pc_listening_1",
+    skill: "listening",
+    task_type: "audio_multiple_choice",
+    cefr_weight: "C1",
+    prompt: "Listen to the talk. What is the speaker's position?",
+    options: ["Library funding should not be cut.", "Libraries are outdated.", "Libraries should only lend books.", "Everyone can afford the internet."],
+    correct_answer: "Library funding should not be cut.",
+    audio_script: [
+      { speaker: "Speaker", text: "Critics say libraries are outdated now that everything is online. They have a point \u2014 far fewer people borrow books than twenty years ago. But that misses what libraries now offer: free internet, a quiet place to work, and help for people who can't afford either. Cutting their funding would hit those people hardest." },
+    ],
+  },
+  {
+    id: "c1pc_listening_2",
+    skill: "listening",
+    task_type: "audio_multiple_choice",
+    cefr_weight: "C1",
+    prompt: "Which point does the speaker accept from the critics?",
+    options: ["Far fewer people borrow books than before.", "Libraries offer free internet.", "Cutting funding helps people.", "Libraries are quiet places."],
+    correct_answer: "Far fewer people borrow books than before.",
+    audio_script: [
+      { speaker: "Speaker", text: "Critics say libraries are outdated now that everything is online. They have a point \u2014 far fewer people borrow books than twenty years ago. But that misses what libraries now offer: free internet, a quiet place to work, and help for people who can't afford either. Cutting their funding would hit those people hardest." },
+    ],
+  },
+];
+
 const PROGRESS_CHECKS: Record<string, ProgressCheckContent> = {
   "a1-elementary": {
     level: "a1-elementary",
     title: "A1 Elementary — Progress Check",
-    questions: A1_PROGRESS_CHECK_QUESTIONS,
+    questions: [...A1_PROGRESS_CHECK_QUESTIONS, ...A1_PC_LISTENING],
   },
   "a2-pre-intermediate": {
     level: "a2-pre-intermediate",
     title: "A2 Pre-Intermediate — Progress Check",
-    questions: A2_PROGRESS_CHECK_QUESTIONS,
+    questions: [...A2_PROGRESS_CHECK_QUESTIONS, ...A2_PC_LISTENING],
   },
   "b1-intermediate": {
     level: "b1-intermediate",
     title: "B1 Intermediate — Progress Check",
-    questions: B1_PROGRESS_CHECK_QUESTIONS,
+    questions: [...B1_PROGRESS_CHECK_QUESTIONS, ...B1_PC_LISTENING],
   },
   "b1-plus-upper-intermediate": {
     level: "b1-plus-upper-intermediate",
     title: "Bridge to B2 — Bridge Check",
-    questions: B1PLUS_PROGRESS_CHECK_QUESTIONS,
+    questions: [...B1PLUS_PROGRESS_CHECK_QUESTIONS, ...B1PLUS_PC_LISTENING],
   },
   "b2-pre-advanced": {
     level: "b2-pre-advanced",
     title: "B2 Pre-Advanced — Progress Check",
-    questions: B2_PROGRESS_CHECK_QUESTIONS,
+    questions: [...B2_PROGRESS_CHECK_QUESTIONS, ...B2_PC_LISTENING],
   },
   "c1-advanced": {
     level: "c1-advanced",
     title: "C1 Advanced — Progress Check",
-    questions: C1_PROGRESS_CHECK_QUESTIONS,
+    questions: [...C1_PROGRESS_CHECK_QUESTIONS, ...C1_PC_LISTENING],
   },
 };
 

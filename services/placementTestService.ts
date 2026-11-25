@@ -138,6 +138,7 @@ const STUDY_SUGGESTIONS: Record<Skill, string[]> = {
   reading: ["Practice skimming for the main idea before answering questions", "Work on ordering sentences to see how ideas connect"],
   useOfEnglish: ["Review common prepositional phrases (look forward to, depend on)", "Practice turning verbs into nouns and adjectives"],
   writing: ["Practice formal vs informal greetings and closings", "Practice linking contrasting ideas with although, but, however"],
+  speaking: ["Do a Listen & Repeat speaking lesson at your level", "Read short texts aloud and record yourself"],
 };
 
 const STUDY_PLAN_THRESHOLD = 70; // below this, a skill gets a recommendation group

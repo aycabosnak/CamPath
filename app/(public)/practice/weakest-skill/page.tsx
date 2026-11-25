@@ -28,10 +28,11 @@ import type { Skill } from "@/components/types";
 const SKILL_DESCRIPTIONS: Record<string, string> = {
   grammar: "Short, focused drills on the grammar points you found hardest.",
   vocabulary: "Everyday words and phrases, practiced in context.",
-  listening: "Short audio clips with a focus on numbers, times, and key details.",
+  listening: "Spoken clips with a focus on numbers, times, opinions, and key details.",
   reading: "Short texts with inference and detail questions.",
   useOfEnglish: "Applying grammar and vocabulary in exam-style tasks.",
   writing: "Guided practice for common sentence structures and phrases.",
+  speaking: "Listen & Repeat practice with instant word-by-word feedback.",
 };
 
 export default function WeakestSkillPracticePage() {

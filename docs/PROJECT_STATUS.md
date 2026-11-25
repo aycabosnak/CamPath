@@ -25,6 +25,12 @@
 - **B2 Pre-Advanced:** Same structure — The Passive Voice, Work & Careers, Understanding the Writer's Attitude, Linking Devices (Contrast & Addition); 1 Mixed Test, 1 Progress Check. Every assessment item traced to a lesson objective; all three Reading texts (lesson cinema review, Mixed Test hotel review, Progress Check banking app) are different scenarios with different structure.
 - **C1 Advanced:** Same structure — Inversion for Emphasis, Idiomatic Expressions, Following an Argument (Claim & Concession), Academic Register & Hedging; 1 Mixed Test, 1 Progress Check. Same audit as B2. Progress Check reading uses an unmarked concession ("This is undoubtedly true") — harder framing of the taught skill, not new content.
 
+## Listening & Speaking (2026-11)
+
+- **Engine:** `services/speechService.ts` (speech synthesis, recognition, word-match scoring), `components/audio/ListenPlayer.tsx`, `components/audio/SpeakingPractice.tsx`.
+- **Content:** `lib/mock-data/audioLessons.ts` — one Listening and one Speaking lesson per level (A1–C1); 2 listening items in every Mixed Test and every Progress Check; scripts added to the Placement Test's listening items.
+- **Lesson order per level:** Grammar → Vocabulary → Reading → Listening → Writing → Speaking → Mixed Test → Progress Check.
+
 ## Known Limitations
 
 - **Placement Test is heuristic, not psychometric.** A threshold-based average, not a calibrated adaptive instrument. Flagged explicitly, not fixed.
@@ -33,7 +39,7 @@
 - **Legacy Study Path still exists, unmigrated.** 3 lessons (unit-1/2/3), tied to CamPath Stage, not the Level Curriculum. Still shown in My Journey, still functional, but not expanded and not reconciled into one system.
 - **Each level has one lesson per skill** (4 lessons A1–C1). Depth per level is still thin compared with a real course; breadth now covers A1 to C1.
 - **No C2 level.** A Master-stage Placement result still falls back to C1 Advanced.
-- **Listening and Speaking have no lesson format at all**, at any level — reserved as labeled Coming Soon sections, not designed yet.
+- **Listening/Speaking audio is browser-generated (Web Speech API).** Voice quality varies by browser; Speaking recognition doesn't work in Firefox (self-check fallback is shown). Speaking is Listen & Repeat only — Shadow and Record steps of the original framework are not built.
 - **Mock Exams are not implemented** — Coming Soon placeholders only.
 - **Grammar Shorts has no content** — metadata only.
 - **Search (Home/Nav/Tests expansion, Step 3) was never started.**
@@ -55,8 +61,8 @@
 
 - Real accounts / authentication
 - Real backend / database
-- Listening (needs a resourcing decision: real audio vs. Web Speech API — explicitly deferred, not decided)
-- Speaking (Listen/Repeat/Shadow/Record framework — designed in early planning, never built)
+- Recorded (human) audio for Listening — optional upgrade path, see TechnicalDecisions.md
+- Speaking: Shadow and Record steps (Listen & Repeat is built)
 - Real Mock Exams
 - Search
 - Standalone marketing/info pages (About, Privacy, Terms, etc.)
@@ -71,5 +77,5 @@
 ## Recommended Next Steps, in Order
 
 1. ~~Build B2 and C1 content~~ — done (2026-11).
-2. Make a real resourcing decision on Listening/Speaking — every level now ships without these two skills, so this is the biggest remaining curriculum gap.
+2. ~~Listening/Speaking resourcing decision~~ — done: Web Speech API (2026-11). Every level A1–C1 now has a Listening lesson, a Speaking lesson, listening items in its Mixed Test and Progress Check, and the Placement Test's two listening items now play real audio.
 3. Curriculum breadth (A1–C1) is now in place: begin real backend/auth migration, using the service-layer boundaries already designed for exactly this swap.

@@ -12,7 +12,10 @@ export type Skill =
   | "listening"
   | "reading"
   | "useOfEnglish"
-  | "writing";
+  | "writing"
+  /** Lessons only (Listen & Repeat). Never scored into Mastery by
+   *  Skill — see components/audio/SpeakingPractice.tsx for why. */
+  | "speaking";
 
 export type CefrLevel = "A1" | "A2" | "B1" | "B2" | "C1" | "C2";
 

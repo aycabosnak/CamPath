@@ -16,6 +16,7 @@ const DEFAULT_LABELS: Record<Skill, string> = {
   reading: "Reading",
   useOfEnglish: "Use of English",
   writing: "Writing",
+  speaking: "Speaking",
 };
 
 /**

@@ -20,7 +20,8 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { getTestLevelDetail, getRecommendedLevelSlug } from "@/services/testsService";
-import { getLevelSequence, type LevelSequenceNode } from "@/services/curriculumService";
+import { getLevelSequence, getLessonsForLevel, type LevelSequenceNode } from "@/services/curriculumService";
+import type { Skill } from "@/components/types";
 import type { TestLevelMeta } from "@/constants/testLevels";
 import { Button } from "@/components/ui/Button";
 import { StudyPath } from "@/components/study-path/StudyPath";
@@ -30,6 +31,7 @@ interface LevelData {
   meta: TestLevelMeta;
   sequence: LevelSequenceNode[];
   hasPlacementResult: boolean;
+  skillsWithLessons: Set<Skill>;
 }
 
 export default function TestLevelPage() {
@@ -38,13 +40,18 @@ export default function TestLevelPage() {
   const [data, setData] = useState<LevelData | null | undefined>(undefined);
 
   useEffect(() => {
-    Promise.all([getTestLevelDetail(params.level), getLevelSequence(params.level)]).then(
-      ([detail, sequence]) => {
+    Promise.all([getTestLevelDetail(params.level), getLevelSequence(params.level), getLessonsForLevel(params.level)]).then(
+      ([detail, sequence, lessons]) => {
         if (!detail) {
           setData(null);
           return;
         }
-        setData({ meta: detail.meta, sequence, hasPlacementResult: getRecommendedLevelSlug() !== null });
+        setData({
+          meta: detail.meta,
+          sequence,
+          hasPlacementResult: getRecommendedLevelSlug() !== null,
+          skillsWithLessons: new Set(lessons.map((l) => l.skill)),
+        });
       }
     );
   }, [params.level]);
@@ -68,7 +75,7 @@ export default function TestLevelPage() {
     );
   }
 
-  const { meta, sequence, hasPlacementResult } = data;
+  const { meta, sequence, hasPlacementResult, skillsWithLessons } = data;
 
   const hrefById = new Map(sequence.map((n) => [n.id, n.href]));
   const nodes: StudyPathNodeData[] = sequence.map(({ href, ...node }) => node);
@@ -104,8 +111,8 @@ export default function TestLevelPage() {
         </div>
       )}
 
-      {/* --- Reserved sections: no content yet, architecture already exists --- */}
-      {(["listening", "speaking"] as const).map((skill) => (
+      {/* --- Reserved sections: only for skills this level has no lesson for yet --- */}
+      {(["listening", "speaking"] as const).filter((skill) => !skillsWithLessons.has(skill)).map((skill) => (
         <div key={skill} className="mb-6">
           <p className="card-eyebrow mb-3">{skill === "listening" ? "Listening" : "Speaking"}</p>
           <div className="card" style={{ opacity: 0.6 }}>

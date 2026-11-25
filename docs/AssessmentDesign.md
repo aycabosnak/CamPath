@@ -29,6 +29,8 @@ Discovered during the B1 alignment audit: B1's Mixed Test reused its Reading les
 
 This rule now applies to every future level (A2's remaining gaps if any, B1+, B2, C1) the same way the Governing Rule does.
 
+**Listening scripts follow the same rule.** A Mixed Test or Progress Check listening item tests the same sub-skill as the level's Listening lesson, with a new script (new speakers, scenario and details). Speaking is never assessed in Mixed Tests or Progress Checks — see TechnicalDecisions.md.
+
 ---
 
 ## Placement Test
@@ -68,4 +70,4 @@ This rule now applies to every future level (A2's remaining gaps if any, B1+, B2
 
 **Status: Not implemented.** Every level's Mock Exam entry renders as a "Coming Soon" placeholder card.
 **Intended purpose (not yet built):** A full, timed simulation of the real Cambridge exam format for that level — the closest thing to exam day.
-**Why it's deferred:** Requires real audio for Listening (see `PROJECT_STATUS.md` — Listening/Speaking are deferred as a unit) and a much larger, more exam-faithful question set than the current Mixed Tests/Progress Checks. Building it before that foundation exists would mean either a low-fidelity placeholder mislabeled as a "real exam simulation," or building the same content twice later.
+**Why it's deferred:** Listening audio now exists (browser text-to-speech), but a faithful exam simulation needs a much larger, more exam-faithful question set than the current Mixed Tests/Progress Checks. Building it before that foundation exists would mean either a low-fidelity placeholder mislabeled as a "real exam simulation," or building the same content twice later.

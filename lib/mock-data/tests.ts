@@ -8,10 +8,8 @@
  *
  * Questions reuse the exact PlacementQuestion shape from
  * placementQuestions.ts — no new question schema was introduced.
- * Listening is deliberately NOT a question here: per instructions, no
- * fake audio and no faked listening question — it's rendered as an
- * honest placeholder card by the test-taking page, not as content in
- * this file.
+ * Listening questions carry an `audio_script` that the browser reads
+ * aloud (services/speechService.ts) — real audio, never a faked item.
  */
 import type { PlacementQuestion } from "@/lib/mock-data/placementQuestions";
 import type { Skill } from "@/components/types";
@@ -29,7 +27,9 @@ export interface TestSection {
 
 export interface TestContent extends TestSummary {
   sections: TestSection[];
-  /** Shown as an honest placeholder section — never faked. */
+  /** Legacy: shows a "Listening coming soon" step at the end of the
+   *  test. Every level now has a real listening section instead, so
+   *  this is false everywhere; kept for tests without audio. */
   hasListeningPlaceholder: boolean;
 }
 
@@ -691,14 +691,201 @@ const C1_TEST_1_SECTIONS: TestSection[] = [
   },
 ];
 
+/**
+ * Listening sections (Web Speech API — see services/speechService.ts).
+ * Each tests its level's Listening-lesson sub-skill with a NEW script
+ * (Reading Passage Rule applied to audio).
+ */
+const A1_TEST_1_LISTENING: TestSection = {
+  skill: "listening",
+  questions: [
+    {
+      id: "a1t1_listening_1",
+      skill: "listening",
+      task_type: "audio_multiple_choice",
+      cefr_weight: "A1",
+      prompt: "Listen. How old is David?",
+      options: ["Thirteen", "Thirty", "Forty", "Three"],
+      correct_answer: "Thirty",
+      audio_script: [
+        { text: "Hi, I'm David. I'm thirty years old. I'm from Canada, and I'm a teacher." },
+      ],
+    },
+    {
+      id: "a1t1_listening_2",
+      skill: "listening",
+      task_type: "audio_multiple_choice",
+      cefr_weight: "A1",
+      prompt: "Listen again if you need to. Where is David from?",
+      options: ["Canada", "Spain", "Turkey", "England"],
+      correct_answer: "Canada",
+      audio_script: [
+        { text: "Hi, I'm David. I'm thirty years old. I'm from Canada, and I'm a teacher." },
+      ],
+    },
+  ],
+};
+
+const A2_TEST_1_LISTENING: TestSection = {
+  skill: "listening",
+  questions: [
+    {
+      id: "a2t1_listening_1",
+      skill: "listening",
+      task_type: "audio_multiple_choice",
+      cefr_weight: "A2",
+      prompt: "Listen. What did the speaker do first at the market?",
+      options: ["Bought some bread", "Met Leila", "Walked in the park", "Had lunch"],
+      correct_answer: "Bought some bread",
+      audio_script: [
+        { text: "Last Saturday I went to the market. First, I bought some bread. Then I met my friend Leila for coffee. After that, we walked in the park." },
+      ],
+    },
+    {
+      id: "a2t1_listening_2",
+      skill: "listening",
+      task_type: "audio_multiple_choice",
+      cefr_weight: "A2",
+      prompt: "What did they do after coffee?",
+      options: ["Walked in the park", "Bought bread", "Went home", "Went to the cinema"],
+      correct_answer: "Walked in the park",
+      audio_script: [
+        { text: "Last Saturday I went to the market. First, I bought some bread. Then I met my friend Leila for coffee. After that, we walked in the park." },
+      ],
+    },
+  ],
+};
+
+const B1_TEST_1_LISTENING: TestSection = {
+  skill: "listening",
+  questions: [
+    {
+      id: "b1t1_listening_1",
+      skill: "listening",
+      task_type: "audio_multiple_choice",
+      cefr_weight: "B1",
+      prompt: "Listen to the message. Who is Jo planning to visit?",
+      options: ["Grandma", "A friend", "Her teacher", "Her brother"],
+      correct_answer: "Grandma",
+      audio_script: [
+        { speaker: "Jo", text: "Hi, it's Jo. I'm planning to visit Grandma on Sunday. I'm going to take the train at eleven. If you want to come, meet me at the station at quarter to eleven." },
+      ],
+    },
+    {
+      id: "b1t1_listening_2",
+      skill: "listening",
+      task_type: "audio_multiple_choice",
+      cefr_weight: "B1",
+      prompt: "How is Jo going to travel?",
+      options: ["By train", "By bus", "By car", "On foot"],
+      correct_answer: "By train",
+      audio_script: [
+        { speaker: "Jo", text: "Hi, it's Jo. I'm planning to visit Grandma on Sunday. I'm going to take the train at eleven. If you want to come, meet me at the station at quarter to eleven." },
+      ],
+    },
+  ],
+};
+
+const B1PLUS_TEST_1_LISTENING: TestSection = {
+  skill: "listening",
+  questions: [
+    {
+      id: "b1plust1_listening_1",
+      skill: "listening",
+      task_type: "audio_multiple_choice",
+      cefr_weight: "B1",
+      prompt: "Listen to the conversation. Why does Ben like online shopping?",
+      options: ["It saves time.", "It's cheaper.", "The clothes fit better.", "He can see things first."],
+      correct_answer: "It saves time.",
+      audio_script: [
+        { speaker: "Ben", text: "I think online shopping is great. It saves so much time." },
+        { speaker: "Lucy", text: "Maybe, but I miss seeing things before I buy them. Half my clothes don't fit!" },
+      ],
+    },
+    {
+      id: "b1plust1_listening_2",
+      skill: "listening",
+      task_type: "audio_multiple_choice",
+      cefr_weight: "B1",
+      prompt: "What is Lucy's concern?",
+      options: ["She can't see things before buying them.", "Online shopping takes too long.", "Deliveries are late.", "Shops are too far away."],
+      correct_answer: "She can't see things before buying them.",
+      audio_script: [
+        { speaker: "Ben", text: "I think online shopping is great. It saves so much time." },
+        { speaker: "Lucy", text: "Maybe, but I miss seeing things before I buy them. Half my clothes don't fit!" },
+      ],
+    },
+  ],
+};
+
+const B2_TEST_1_LISTENING: TestSection = {
+  skill: "listening",
+  questions: [
+    {
+      id: "b2t1_listening_1",
+      skill: "listening",
+      task_type: "audio_multiple_choice",
+      cefr_weight: "B2",
+      prompt: "Listen to the message. What is its main purpose?",
+      options: ["To tell the listener about a delay", "To ask for payment", "To cancel the repairs completely", "To offer a new flat"],
+      correct_answer: "To tell the listener about a delay",
+      audio_script: [
+        { speaker: "Mark", text: "Hello, this is Mark from Greenway Lettings. I'm afraid the repairs to your kitchen have been delayed until next Thursday. I do apologise \u2014 I know this isn't what you wanted to hear." },
+      ],
+    },
+    {
+      id: "b2t1_listening_2",
+      skill: "listening",
+      task_type: "audio_multiple_choice",
+      cefr_weight: "B2",
+      prompt: "What is Mark's tone?",
+      options: ["Apologetic", "Angry", "Excited", "Bored"],
+      correct_answer: "Apologetic",
+      audio_script: [
+        { speaker: "Mark", text: "Hello, this is Mark from Greenway Lettings. I'm afraid the repairs to your kitchen have been delayed until next Thursday. I do apologise \u2014 I know this isn't what you wanted to hear." },
+      ],
+    },
+  ],
+};
+
+const C1_TEST_1_LISTENING: TestSection = {
+  skill: "listening",
+  questions: [
+    {
+      id: "c1t1_listening_1",
+      skill: "listening",
+      task_type: "audio_multiple_choice",
+      cefr_weight: "C1",
+      prompt: "Listen to the talk. What is the speaker's main claim?",
+      options: ["Scooters should be allowed only with designated parking zones.", "Scooters should be banned completely.", "Scooters have no benefits.", "Pedestrians should use scooters."],
+      correct_answer: "Scooters should be allowed only with designated parking zones.",
+      audio_script: [
+        { speaker: "Speaker", text: "Admittedly, electric scooters have made short trips quicker for many people. Yet, left unregulated, they clutter pavements and endanger pedestrians. Cities should allow them \u2014 but only with designated parking zones." },
+      ],
+    },
+    {
+      id: "c1t1_listening_2",
+      skill: "listening",
+      task_type: "audio_multiple_choice",
+      cefr_weight: "C1",
+      prompt: "What does the speaker concede?",
+      options: ["Scooters have made short trips quicker.", "Scooters endanger pedestrians.", "Pavements are cluttered.", "Parking zones are expensive."],
+      correct_answer: "Scooters have made short trips quicker.",
+      audio_script: [
+        { speaker: "Speaker", text: "Admittedly, electric scooters have made short trips quicker for many people. Yet, left unregulated, they clutter pavements and endanger pedestrians. Cities should allow them \u2014 but only with designated parking zones." },
+      ],
+    },
+  ],
+};
+
 const TESTS_BY_LEVEL: Record<string, TestContent[]> = {
   "a1-elementary": [
     {
       id: "test-1",
       title: "Test 1: Mixed Practice",
       status: "available",
-      sections: A1_TEST_1_SECTIONS,
-      hasListeningPlaceholder: true,
+      sections: [...A1_TEST_1_SECTIONS, A1_TEST_1_LISTENING],
+      hasListeningPlaceholder: false,
     },
     { id: "review-test", title: "Review Test", status: "coming_soon", sections: [], hasListeningPlaceholder: false },
   ],
@@ -707,8 +894,8 @@ const TESTS_BY_LEVEL: Record<string, TestContent[]> = {
       id: "test-1",
       title: "Test 1: Mixed Practice",
       status: "available",
-      sections: A2_TEST_1_SECTIONS,
-      hasListeningPlaceholder: true,
+      sections: [...A2_TEST_1_SECTIONS, A2_TEST_1_LISTENING],
+      hasListeningPlaceholder: false,
     },
     { id: "mock-test", title: "Mock Test", status: "coming_soon", sections: [], hasListeningPlaceholder: false },
   ],
@@ -717,8 +904,8 @@ const TESTS_BY_LEVEL: Record<string, TestContent[]> = {
       id: "test-1",
       title: "Test 1: Mixed Practice",
       status: "available",
-      sections: B1_TEST_1_SECTIONS,
-      hasListeningPlaceholder: true,
+      sections: [...B1_TEST_1_SECTIONS, B1_TEST_1_LISTENING],
+      hasListeningPlaceholder: false,
     },
     { id: "mock-test", title: "Mock Test", status: "coming_soon", sections: [], hasListeningPlaceholder: false },
   ],
@@ -727,8 +914,8 @@ const TESTS_BY_LEVEL: Record<string, TestContent[]> = {
       id: "test-1",
       title: "Test 1: Mixed Practice",
       status: "available",
-      sections: B1PLUS_TEST_1_SECTIONS,
-      hasListeningPlaceholder: true,
+      sections: [...B1PLUS_TEST_1_SECTIONS, B1PLUS_TEST_1_LISTENING],
+      hasListeningPlaceholder: false,
     },
     { id: "review-test", title: "Review Test", status: "coming_soon", sections: [], hasListeningPlaceholder: false },
   ],
@@ -737,8 +924,8 @@ const TESTS_BY_LEVEL: Record<string, TestContent[]> = {
       id: "test-1",
       title: "Test 1: Mixed Practice",
       status: "available",
-      sections: B2_TEST_1_SECTIONS,
-      hasListeningPlaceholder: true,
+      sections: [...B2_TEST_1_SECTIONS, B2_TEST_1_LISTENING],
+      hasListeningPlaceholder: false,
     },
     { id: "mock-test", title: "Mock Test", status: "coming_soon", sections: [], hasListeningPlaceholder: false },
   ],
@@ -747,8 +934,8 @@ const TESTS_BY_LEVEL: Record<string, TestContent[]> = {
       id: "test-1",
       title: "Test 1: Mixed Practice",
       status: "available",
-      sections: C1_TEST_1_SECTIONS,
-      hasListeningPlaceholder: true,
+      sections: [...C1_TEST_1_SECTIONS, C1_TEST_1_LISTENING],
+      hasListeningPlaceholder: false,
     },
     { id: "mock-test", title: "Mock Test", status: "coming_soon", sections: [], hasListeningPlaceholder: false },
   ],

@@ -90,3 +90,15 @@ campath_analytics_events    - analyticsService
 ### A known, accepted piece of duplication worth naming here
 
 `RESULTS_STORAGE_KEY` (the placement result's localStorage key name) is declared independently in both `myJourneyService.ts` and `testsService.ts` rather than imported from a single constant. Harmless today (identical string, read-only in both places) but should be collapsed into one export the moment a third file needs it, to avoid the two copies silently diverging.
+
+---
+
+### Why Listening and Speaking use the Web Speech API (2026-11)
+
+**Decision:** Listening audio is generated in the browser with `speechSynthesis`; Speaking uses `SpeechRecognition` to check what the learner said. Scripts are plain text (`AudioLine[]`) stored next to the questions they serve. All browser speech code lives in `services/speechService.ts`.
+**Alternative considered:** Recorded audio files per lesson/question.
+**Why chosen:** Zero recording/hosting cost, every level gets both skills immediately, and scripts can be edited like any other content. Recorded audio would have blocked the curriculum on a production process that doesn't exist yet.
+**Accepted costs:** Voices differ by browser/OS and can sound synthetic; SpeechRecognition isn't available in Firefox and needs a network connection in Chrome.
+**How honesty is preserved:** If speech synthesis is unavailable, the transcript is shown and the task becomes reading (stated on screen). If recognition is unavailable or fails, the learner self-checks ("I said it aloud") — no fake score. Speaking results never feed Mastery by Skill and never appear in Mixed Tests or Progress Checks, because a recogniser's word match is not a pronunciation grade.
+**Migration path:** To switch to recorded audio, add an optional `src` to `AudioLine` and teach `playLines()` to play it — no component or content-shape changes needed.
+

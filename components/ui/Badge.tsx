@@ -41,6 +41,7 @@ const SKILL_LABEL: Record<Skill, string> = {
   reading: "Reading",
   useOfEnglish: "Use of English",
   writing: "Writing",
+  speaking: "Speaking",
 };
 
 /** Skill chip, e.g. "Use of English". Neutral tone — skill identity, not a state. */
