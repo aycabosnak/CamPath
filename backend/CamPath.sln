@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{B0E92A4F-7BC9-49FF-88B6-C07E9DF72BEE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CamPath.Api", "src\CamPath.Api\CamPath.Api.csproj", "{702D9E55-DE1A-4619-A20E-617A484777EF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{52E04930-E1B8-428D-B792-53D815F725C9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CamPath.Api.Tests", "tests\CamPath.Api.Tests\CamPath.Api.Tests.csproj", "{58A6EDC5-3764-46DA-B53C-C35E5FD9D1CC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{702D9E55-DE1A-4619-A20E-617A484777EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{702D9E55-DE1A-4619-A20E-617A484777EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{702D9E55-DE1A-4619-A20E-617A484777EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{702D9E55-DE1A-4619-A20E-617A484777EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58A6EDC5-3764-46DA-B53C-C35E5FD9D1CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58A6EDC5-3764-46DA-B53C-C35E5FD9D1CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58A6EDC5-3764-46DA-B53C-C35E5FD9D1CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58A6EDC5-3764-46DA-B53C-C35E5FD9D1CC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{702D9E55-DE1A-4619-A20E-617A484777EF} = {B0E92A4F-7BC9-49FF-88B6-C07E9DF72BEE}
+		{58A6EDC5-3764-46DA-B53C-C35E5FD9D1CC} = {52E04930-E1B8-428D-B792-53D815F725C9}
+	EndGlobalSection
+EndGlobal

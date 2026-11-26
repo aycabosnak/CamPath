@@ -6,7 +6,7 @@
 
 ## 1. Overall Application Architecture
 
-CamPath is a Next.js 14 (App Router) application, currently running entirely client-side against `localStorage` as its persistence layer — there is no real backend yet. Every service in `services/` is written as if it were already talking to a real API (`async` functions, typed responses), specifically so that swapping `localStorage` reads for real `fetch` calls later touches only the inside of these service files, never the pages or components that call them.
+CamPath is a Next.js 14 (App Router) application that runs client-side against `localStorage`, plus an optional ASP.NET Core 8 API (`backend/`) for accounts and cross-device progress sync. Signed out, the app is fully local; signed in, `services/syncService.ts` merges local progress with the account (see `backend/README.md`). Every service in `services/` is written as if it were already talking to a real API (`async` functions, typed responses), specifically so that swapping `localStorage` reads for real `fetch` calls later touches only the inside of these service files, never the pages or components that call them.
 
 ```
 Browser
@@ -83,7 +83,7 @@ A technical note worth documenting explicitly: `unit-1/2/3` (static routes, unde
 | `unitLessonService.ts` | Legacy Study Path lesson accessor | Reads `lib/mock-data/unitLessons.ts` |
 | `readinessCalculator.ts` | **Unused today.** Built ahead of the not-yet-implemented Mock Exam feature (converts a future `MockExamSession.overall_result` enum into the UI's `ReadinessStatus`). Left in place intentionally — see `PROJECT_STATUS.md`. |
 
-**Known, accepted duplication:** `RESULTS_STORAGE_KEY = "campath_level_test_result"` is declared independently in both `myJourneyService.ts` and `testsService.ts`, rather than imported from one place. Harmless today (same string, same read-only usage) but worth collapsing into one export if a third consumer appears.
+**Storage keys:** every localStorage key is defined once in `constants/storageKeys.ts` (the earlier duplicated `RESULTS_STORAGE_KEY` was collapsed there when the sync layer became a third consumer).
 
 ---
 

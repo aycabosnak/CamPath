@@ -17,8 +17,9 @@
  * depends on how many ticks actually fired, only on wall-clock time.
  */
 import type { PlacementAnswerMap } from "@/services/placementTestService";
+import { STORAGE_KEYS } from "@/constants/storageKeys";
 
-const SESSION_KEY = "campath_level_test_session";
+const SESSION_KEY = STORAGE_KEYS.placementSession;
 export const TEST_DURATION_MS = 15 * 60 * 1000;
 
 export interface TimedTestSession {

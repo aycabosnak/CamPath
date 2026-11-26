@@ -1,4 +1,27 @@
-# CamPath — Application Scaffold
+# CamPath
+
+English learning platform for Cambridge-style exam preparation: placement test, A1–C1 curriculum (grammar, vocabulary, reading, listening, writing, speaking), mixed tests, progress checks — plus optional accounts with cross-device progress sync.
+
+- **Frontend:** Next.js 14 · React 18 · TypeScript · Tailwind (this folder)
+- **Backend:** ASP.NET Core 8 · EF Core · SQLite · JWT · xUnit (`backend/`, see `backend/README.md`)
+
+## Run locally
+
+```bash
+# 1. API (http://localhost:5080, Swagger at /swagger)
+cd backend && dotnet run --project src/CamPath.Api
+
+# 2. Web app (http://localhost:3000) — in another terminal
+npm install && npm run dev
+```
+
+The web app works without the API too (everything is saved in the browser); the API adds sign-in and sync.
+
+---
+
+# Original scaffold notes
+
+> Historical — written before any content, accounts or backend existed. For the current state see `docs/PROJECT_STATUS.md`.
 
 This is the Next.js App Router scaffold produced after the Product
 Manifesto → IA/UX Blueprint → Design System → Component Library →

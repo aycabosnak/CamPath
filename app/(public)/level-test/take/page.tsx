@@ -31,8 +31,10 @@ import { ProgressBar } from "@/components/ui/ProgressBar";
 import { Button } from "@/components/ui/Button";
 import { QuestionInput, isQuestionAnswered } from "@/components/practice/QuestionInput";
 import { trackEvent } from "@/services/analyticsService";
+import { STORAGE_KEYS } from "@/constants/storageKeys";
+import { PROGRESS_CHANGED_EVENT } from "@/services/progressService";
 
-const RESULTS_STORAGE_KEY = "campath_level_test_result";
+const RESULTS_STORAGE_KEY = STORAGE_KEYS.placementResult;
 const FIVE_MIN_MS = 5 * 60 * 1000;
 const ONE_MIN_MS = 60 * 1000;
 
@@ -114,9 +116,10 @@ export default function LevelTestTakePage() {
   }
 
   function finishTest(completedOnTime: boolean) {
-    const result = computeResults(questions!, answers, completedOnTime);
+    const result = { ...computeResults(questions!, answers, completedOnTime), completedAt: new Date().toISOString() };
     trackEvent("level_test_completed", { stage: result.stage, cefr: result.cefr, completedOnTime });
     localStorage.setItem(RESULTS_STORAGE_KEY, JSON.stringify(result));
+    window.dispatchEvent(new Event(PROGRESS_CHANGED_EVENT));
     clearSession();
     router.push("/level-test/results");
   }

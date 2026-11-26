@@ -24,7 +24,11 @@ export type AnalyticsEventName =
   | "lesson_completed"
   | "practice_started"
   | "test_started"
-  | "test_completed";
+  | "test_completed"
+  | "signup"
+  | "login"
+  | "logout"
+  | "progress_synced";
 
 export interface AnalyticsEvent {
   event: AnalyticsEventName;
@@ -32,7 +36,9 @@ export interface AnalyticsEvent {
   payload?: Record<string, unknown>;
 }
 
-const STORAGE_KEY = "campath_analytics_events";
+import { STORAGE_KEYS } from "@/constants/storageKeys";
+
+const STORAGE_KEY = STORAGE_KEYS.analytics;
 
 export function trackEvent(event: AnalyticsEventName, payload?: Record<string, unknown>): void {
   const entry: AnalyticsEvent = {

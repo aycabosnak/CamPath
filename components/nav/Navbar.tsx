@@ -25,6 +25,25 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/components/lib/cn";
+import { useEffect, useState } from "react";
+import { readSession, AUTH_CHANGED_EVENT, type AuthSession } from "@/lib/authSession";
+
+/** Signed-in session, read after mount (localStorage isn't available
+ *  during server render) and kept current across tabs and sign-outs. */
+function useSession(): AuthSession | null {
+  const [session, setSession] = useState<AuthSession | null>(null);
+  useEffect(() => {
+    const update = () => setSession(readSession());
+    update();
+    window.addEventListener(AUTH_CHANGED_EVENT, update);
+    window.addEventListener("storage", update);
+    return () => {
+      window.removeEventListener(AUTH_CHANGED_EVENT, update);
+      window.removeEventListener("storage", update);
+    };
+  }, []);
+  return session;
+}
 
 const NAV_LINKS = [
   { label: "Home", href: "/", match: (path: string) => path === "/" },
@@ -36,6 +55,7 @@ const NAV_LINKS = [
 
 export function Navbar() {
   const pathname = usePathname();
+  const session = useSession();
 
   return (
     <nav
@@ -73,9 +93,15 @@ export function Navbar() {
           })}
         </ul>
 
-        <Link href="/login" className="btn btn-secondary btn-sm">
-          Login
-        </Link>
+        {session ? (
+          <Link href="/login" className="btn btn-secondary btn-sm" aria-label={`Account: ${session.user.displayName}`}>
+            {session.user.displayName}
+          </Link>
+        ) : (
+          <Link href="/login" className="btn btn-secondary btn-sm">
+            Login
+          </Link>
+        )}
       </div>
     </nav>
   );

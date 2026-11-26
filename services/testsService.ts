@@ -10,8 +10,9 @@
 import { TEST_LEVELS, getTestLevelBySlug, getTestLevelSlugForStage, type TestLevelMeta } from "@/constants/testLevels";
 import { getTestsForLevel, getTestContent as getTestContentData, type TestSummary, type TestContent } from "@/lib/mock-data/tests";
 import type { PlacementResult } from "@/services/placementTestService";
+import { STORAGE_KEYS } from "@/constants/storageKeys";
 
-const RESULTS_STORAGE_KEY = "campath_level_test_result";
+const RESULTS_STORAGE_KEY = STORAGE_KEYS.placementResult;
 
 export interface TestLevelWithCount extends TestLevelMeta {
   availableCount: number;

@@ -55,6 +55,10 @@ export interface PlacementResult {
    *  the caller (the take page knows the timer state; this service
    *  doesn't) — see computeResults' completedOnTime parameter. */
   completedOnTime: boolean;
+  /** ISO timestamp, set when the result is saved. Lets account sync keep
+   *  the newest result across devices. Missing on results saved before
+   *  accounts existed. */
+  completedAt?: string;
 }
 
 const CEFR_ORDER: CefrLevel[] = ["A1", "A2", "B1", "B2", "C1", "C2"];

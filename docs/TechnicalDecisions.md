@@ -89,7 +89,7 @@ campath_analytics_events    - analyticsService
 
 ### A known, accepted piece of duplication worth naming here
 
-`RESULTS_STORAGE_KEY` (the placement result's localStorage key name) is declared independently in both `myJourneyService.ts` and `testsService.ts` rather than imported from a single constant. Harmless today (identical string, read-only in both places) but should be collapsed into one export the moment a third file needs it, to avoid the two copies silently diverging.
+*Resolved (2026-11):* `RESULTS_STORAGE_KEY` used to be declared separately in several files. When the sync service became another consumer, all keys moved to `constants/storageKeys.ts`.
 
 ---
 
@@ -101,4 +101,14 @@ campath_analytics_events    - analyticsService
 **Accepted costs:** Voices differ by browser/OS and can sound synthetic; SpeechRecognition isn't available in Firefox and needs a network connection in Chrome.
 **How honesty is preserved:** If speech synthesis is unavailable, the transcript is shown and the task becomes reading (stated on screen). If recognition is unavailable or fails, the learner self-checks ("I said it aloud") — no fake score. Speaking results never feed Mastery by Skill and never appear in Mixed Tests or Progress Checks, because a recogniser's word match is not a pronunciation grade.
 **Migration path:** To switch to recorded audio, add an optional `src` to `AudioLine` and teach `playLines()` to play it — no component or content-shape changes needed.
+
+---
+
+### Why the backend is ASP.NET Core, and why sync is "whole state + merge" (2026-11)
+
+**Decision:** A separate ASP.NET Core 8 Web API (`backend/`) with EF Core + SQLite and JWT bearer auth. The frontend keeps `localStorage` as the UI's data source and, when signed in, sends its whole progress state to `PUT /api/progress/sync`, then writes the merged result back.
+**Alternatives considered:** Django REST Framework (the original plan in this repo's design docs); Next.js API routes; per-event endpoints (POST a completion, POST an attempt...).
+**Why chosen:** ASP.NET Core over Django because the project owner targets .NET backend roles and already has a Django project elsewhere. Whole-state merge over per-event endpoints because every existing service stays synchronous and offline-capable (no page had to change), and because the merge rules are idempotent and order-independent — repeated or out-of-order pushes from any number of devices can't lose or double-count progress. Study time is recomputed server-side from lesson minutes for exactly that reason.
+**Token storage:** JWT in `localStorage`, sent as a Bearer header — works across separate frontend/API origins. Upgrade path once they share a domain: httpOnly cookie.
+**Cost accepted:** Each sync sends the full state (a few KB today). If progress data grows large, switch to sending only changes since `lastSyncedAt` — the server merge rules don't change.
 

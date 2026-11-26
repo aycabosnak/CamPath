@@ -1,4 +1,5 @@
 import "./globals.css";
+import { SyncAgent } from "@/components/auth/SyncAgent";
 
 /**
  * Root layout — shared by every route group.
@@ -17,7 +18,10 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <SyncAgent />
+        {children}
+      </body>
     </html>
   );
 }

@@ -15,6 +15,7 @@
  * one place completion is recorded.
  */
 import type { Skill } from "@/components/types";
+import { STORAGE_KEYS } from "@/constants/storageKeys";
 
 export interface LessonCompletionRecord {
   completedAt: string; // ISO timestamp
@@ -59,9 +60,12 @@ export interface ProgressState {
   studyTimeMinutes: number;
   studyDates: string[];
   masteryOverrides: Partial<Record<Skill, number>>;
+  /** When each mastery value was last set (ISO). Lets account sync
+   *  resolve two devices' values by "latest wins". */
+  masteryUpdatedAt: Partial<Record<Skill, string>>;
 }
 
-const STORAGE_KEY = "campath_progress_state";
+const STORAGE_KEY = STORAGE_KEYS.progress;
 
 const DEFAULT_STATE: ProgressState = {
   completions: {},
@@ -72,6 +76,7 @@ const DEFAULT_STATE: ProgressState = {
   studyTimeMinutes: 0,
   studyDates: [],
   masteryOverrides: {},
+  masteryUpdatedAt: {},
 };
 
 function todayIso(): string {
@@ -110,9 +115,24 @@ function readState(): ProgressState {
   }
 }
 
+/** Fired after every local progress change — services/syncService.ts
+ *  listens for it to push changes to the learner's account. */
+export const PROGRESS_CHANGED_EVENT = "campath:progress-changed";
+
 function writeState(state: ProgressState): void {
   if (typeof window === "undefined") return;
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  window.dispatchEvent(new Event(PROGRESS_CHANGED_EVENT));
+}
+
+/**
+ * Replaces the whole local state with the account's merged state after
+ * a sync. Deliberately does NOT fire PROGRESS_CHANGED_EVENT — that
+ * would trigger another sync of data the server just sent.
+ */
+export function replaceProgressState(state: ProgressState): void {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...DEFAULT_STATE, ...state }));
 }
 
 function markStudyDayActive(state: ProgressState): ProgressState {
@@ -277,9 +297,12 @@ export function recordProgressCheck(
   };
 
   if (skillBreakdown) {
+    const now = new Date().toISOString();
+    const stamps = Object.fromEntries(Object.keys(skillBreakdown).map((s) => [s, now]));
     state = {
       ...state,
       masteryOverrides: { ...state.masteryOverrides, ...skillBreakdown },
+      masteryUpdatedAt: { ...state.masteryUpdatedAt, ...stamps },
     };
   }
 
@@ -315,7 +338,11 @@ export function getMilestones(): MilestoneRecord[] {
 export function recordPracticeSession(skill: Skill, currentPercentage: number, bump = 40): ProgressState {
   let state = readState();
   const newValue = Math.min(100, currentPercentage + bump);
-  state = { ...state, masteryOverrides: { ...state.masteryOverrides, [skill]: newValue } };
+  state = {
+    ...state,
+    masteryOverrides: { ...state.masteryOverrides, [skill]: newValue },
+    masteryUpdatedAt: { ...state.masteryUpdatedAt, [skill]: new Date().toISOString() },
+  };
   state = markStudyDayActive(state);
   writeState(state);
   return state;

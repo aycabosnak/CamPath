@@ -26,8 +26,9 @@ import { getLevelProgress, type LevelProgressItem } from "@/services/curriculumS
 import { getProgressState, getMilestones, type ProgressState, type MilestoneRecord } from "@/services/progressService";
 import type { StageName, CefrLevel, Skill, ReadinessStatus, StudyPathNodeState } from "@/components/types";
 import type { StudyPathNodeData } from "@/components/study-path/StudyPath";
+import { STORAGE_KEYS } from "@/constants/storageKeys";
 
-const RESULTS_STORAGE_KEY = "campath_level_test_result";
+const RESULTS_STORAGE_KEY = STORAGE_KEYS.placementResult;
 
 export interface MyJourneySummary {
   stage: StageName;

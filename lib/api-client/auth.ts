@@ -1,15 +1,18 @@
 /**
  * lib/api-client/auth.ts
- * Mirrors Database & API Design doc, Section 4.1 and 5.2.
+ *
+ * Typed calls to the ASP.NET Core API's /api/auth endpoints
+ * (backend/src/CamPath.Api/Controllers/AuthController.cs).
+ *
+ * Replaces the earlier pre-backend sketch (signup/refresh/reset with
+ * snake_case fields): the real API issues one access token per sign-in
+ * and has no refresh or password-reset endpoints yet — see
+ * docs/PROJECT_STATUS.md for what's deferred.
  */
 import { apiRequest } from "./index";
-import type { User } from "@/types/entities";
+import type { AuthSession, SessionUser } from "@/lib/authSession";
 
-export interface AuthResponse {
-  access_token: string;
-  refresh_token: string;
-  user: User;
-}
+export type AuthResponse = AuthSession;
 
 export function login(email: string, password: string) {
   return apiRequest<AuthResponse>("/auth/login", {
@@ -19,29 +22,14 @@ export function login(email: string, password: string) {
   });
 }
 
-/**
- * `guest_token` is optional here specifically to support the Guest →
- * Account Claim flow: if the person just finished a Placement Test as
- * a guest, the token they were issued gets passed through so the
- * backend can attach that LevelTestSession to the new account in the
- * same request — see Database & API Design doc Section 5.2.
- */
-export function signup(params: { email: string; password: string; guest_token?: string }) {
-  return apiRequest<AuthResponse>("/auth/signup", {
+export function register(params: { email: string; password: string; displayName: string }) {
+  return apiRequest<AuthResponse>("/auth/register", {
     method: "POST",
     body: params,
     authenticated: false,
   });
 }
 
-export function refreshSession() {
-  return apiRequest<{ access_token: string }>("/auth/refresh", { method: "POST" });
-}
-
-export function requestPasswordReset(email: string) {
-  return apiRequest<{ ok: true }>("/auth/reset-password", {
-    method: "POST",
-    body: { email },
-    authenticated: false,
-  });
+export function me() {
+  return apiRequest<SessionUser>("/auth/me");
 }

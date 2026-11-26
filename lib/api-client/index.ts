@@ -12,6 +12,10 @@
  * function signatures in the sibling api-client modules.
  */
 
+import { readSession, writeSession } from "@/lib/authSession";
+
+// "/api" is proxied to the ASP.NET Core backend by next.config.js
+// (rewrites), so the browser only ever talks to its own origin.
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "/api";
 
 export class ApiError extends Error {
@@ -23,20 +27,16 @@ export class ApiError extends Error {
 }
 
 interface RequestOptions {
-  method?: "GET" | "POST" | "PATCH" | "DELETE";
+  method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   body?: unknown;
   /** Attach the current access token. Defaults to true — pass false
    *  only for genuinely public endpoints (content graph, guest level test). */
   authenticated?: boolean;
 }
 
-/**
- * TODO once auth exists: read the access token from wherever the
- * chosen auth strategy stores it (httpOnly cookie read server-side,
- * or a client-side store) and attach it as `Authorization: Bearer`.
- */
+/** The signed-in session's JWT (see lib/authSession.ts), if any. */
 function getAccessToken(): string | null {
-  return null;
+  return readSession()?.accessToken ?? null;
 }
 
 export async function apiRequest<T>(path: string, options: RequestOptions = {}): Promise<T> {
@@ -57,10 +57,18 @@ export async function apiRequest<T>(path: string, options: RequestOptions = {}):
   if (!response.ok) {
     // Backend error shape is not finalized yet — normalize defensively
     // rather than assuming a specific error envelope.
+    // A rejected token means the session is over on this device.
+    if (response.status === 401 && authenticated && getAccessToken()) writeSession(null);
+
     let message = `Request failed with status ${response.status}`;
+    if (response.status === 429) message = "Too many attempts. Please wait a minute and try again.";
     try {
       const data = await response.json();
-      message = data.message ?? message;
+      // { message } from CamPath's API, or ASP.NET's ValidationProblemDetails.
+      const firstValidationError = data.errors
+        ? (Object.values(data.errors as Record<string, string[]>)[0] ?? [])[0]
+        : undefined;
+      message = data.message ?? firstValidationError ?? data.detail ?? message;
     } catch {
       /* response wasn't JSON — keep the generic message */
     }

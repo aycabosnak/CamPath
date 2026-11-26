@@ -23,8 +23,9 @@ import { StageBadge, CefrBadge, SkillBadge } from "@/components/ui/Badge";
 import type { PlacementResult, QuestionReviewItem } from "@/services/placementTestService";
 import type { Skill } from "@/components/types";
 import { trackEvent } from "@/services/analyticsService";
+import { STORAGE_KEYS } from "@/constants/storageKeys";
 
-const RESULTS_STORAGE_KEY = "campath_level_test_result";
+const RESULTS_STORAGE_KEY = STORAGE_KEYS.placementResult;
 
 const SKILL_ORDER: Skill[] = [
   "grammar",
