@@ -1,6 +1,6 @@
 # CamPath
 
-[![CI](https://github.com/aycabosnak/CamPath/actions/workflows/ci.yml/badge.svg)](https://github.com/aycabosnak/CamPath/actions/workflows/ci.yml)
+[![CI](https://github.com/aycabosnak/CamPath/actions/workflows/ci.yml/badge.svg)](https://github.com/aycabosnak/CamPath/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 **A full-stack English learning platform for Cambridge-style exam preparation** — placement test, a complete A1–C1 curriculum across six skills, and optional accounts that sync progress across devices.
 
@@ -87,6 +87,10 @@ docs/           Architecture, curriculum, assessment design, technical decisions
 ## Author
 
 **Ayça Boşnak** — Computer Engineering student, Istanbul Bilgi University · [LinkedIn](https://www.linkedin.com/in/ay%C3%A7a-bo%C5%9Fnak-484124294) · [GitHub](https://github.com/aycabosnak)
+
+## License
+
+[MIT](LICENSE) © 2026 Ayça Boşnak
 
 ---
 
